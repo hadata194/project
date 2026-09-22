@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AS Group | Bể BTCT 3D – R2</title>
+<style>
+  :root{
+    --navy:#0b2a4a;
+    --navy2:#123c66;
+    --cyan:#00a7b5;
+    --line:#d9e2ea;
+    --text:#111827;
+    --muted:#64748b;
+    --panel:#ffffff;
+    --bg:#f5f8fb;
+    --accent:#0f6fa8;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;font-family:Arial,Helvetica,sans-serif;color:var(--text);background:var(--bg)}
+  body{overflow:hidden}
+  .app{height:100vh;display:grid;grid-template-columns:330px 1fr}
+  .sidebar{
+    background:#fff;border-right:1px solid var(--line);padding:16px 15px 18px;
+    overflow:auto;z-index:5;box-shadow:0 0 24px rgba(15,23,42,.05)
+  }
+  .brand{display:flex;align-items:center;gap:11px;margin-bottom:14px}
+  .logo{
+    width:42px;height:42px;border:2px solid var(--navy);border-radius:9px;display:grid;place-items:center;
+    font-weight:800;color:var(--navy);letter-spacing:-1px
+  }
+  .brand h1{font-size:15px;margin:0;color:var(--navy);letter-spacing:.2px}
+  .brand small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+  .section{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}
+  .section-title{font-size:12px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:9px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .field{display:flex;flex-direction:column;gap:4px;margin-bottom:7px}
+  label{font-size:11px;color:#334155;font-weight:700}
+  .input-wrap{position:relative}
+  input[type=number]{
+    width:100%;height:34px;border:1px solid #cbd5e1;border-radius:7px;background:#fff;padding:0 42px 0 9px;
+    font-size:13px;color:#0f172a;outline:none
+  }
+  input[type=number]:focus{border-color:#4989b8;box-shadow:0 0 0 2px rgba(73,137,184,.12)}
+  .unit{position:absolute;right:9px;top:9px;font-size:10px;color:#64748b}
+  .checks{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:4px}
+  .check{
+    border:1px solid var(--line);border-radius:7px;padding:7px 8px;display:flex;gap:7px;align-items:center;
+    font-size:11px;background:#fafcfe
+  }
+  .check input{accent-color:var(--navy)}
+  .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}
+  button{
+    border:1px solid #cbd5e1;background:#fff;color:#1e293b;border-radius:7px;height:34px;font-size:11px;
+    font-weight:700;cursor:pointer
+  }
+  button:hover{background:#f8fafc;border-color:#94a3b8}
+  button.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .views{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+  .views button{padding:0 4px}
+  .metric{
+    display:grid;grid-template-columns:1fr auto;gap:8px;border-bottom:1px dashed #dbe3ea;padding:6px 0;font-size:11px
+  }
+  .metric b{color:var(--navy)}
+  .note{
+    margin-top:9px;font-size:10.5px;line-height:1.45;color:#475569;background:#f8fafc;border-left:3px solid var(--navy);
+    padding:8px 9px;border-radius:0 6px 6px 0
+  }
+
+  .stage{position:relative;min-width:0;background:linear-gradient(180deg,#f8fbfd 0%,#eef4f8 100%)}
+  #canvasWrap{position:absolute;inset:0}
+  canvas{display:block;width:100%;height:100%}
+  .topbar{
+    position:absolute;left:18px;right:18px;top:14px;display:flex;justify-content:space-between;align-items:flex-start;
+    pointer-events:none
+  }
+  .title-card,.status-card{
+    pointer-events:auto;background:rgba(255,255,255,.93);border:1px solid rgba(203,213,225,.85);
+    box-shadow:0 5px 18px rgba(15,23,42,.08);border-radius:10px;padding:10px 12px;backdrop-filter:blur(8px)
+  }
+  .title-card strong{display:block;color:var(--navy);font-size:13px}
+  .title-card span{display:block;color:#64748b;font-size:10.5px;margin-top:3px}
+  .status-card{font-size:10.5px;line-height:1.45;color:#334155;text-align:right}
+  .legend{
+    position:absolute;right:16px;bottom:15px;background:rgba(255,255,255,.92);border:1px solid #d8e1e8;
+    padding:9px 10px;border-radius:9px;font-size:10px;line-height:1.7;box-shadow:0 4px 14px rgba(15,23,42,.06)
+  }
+  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+  .help{
+    position:absolute;left:18px;bottom:15px;background:rgba(255,255,255,.92);border:1px solid #d8e1e8;
+    padding:8px 10px;border-radius:9px;font-size:10px;color:#475569
+  }
+  .error{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#fff;border:1px solid #ef4444;
+    border-radius:10px;padding:14px 16px;color:#991b1b;font-size:12px;display:none;z-index:20;max-width:500px
+  }
+  @media(max-width:900px){
+    body{overflow:auto}
+    .app{grid-template-columns:1fr;height:auto;min-height:100vh}
+    .sidebar{height:auto;max-height:none}
+    .stage{height:70vh;min-height:520px}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">AS</div>
+      <div>
+        <h1>AS GROUP · BỂ BTCT 3D</h1>
+        <small>R2 – bỏ thép chéo quanh lỗ, chỉnh lại cao độ MDTN = +0.00</small>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">1. Kích thước hình học</div>
+      <div class="grid2">
+        <div class="field"><label>Dài ngoài L</label><div class="input-wrap"><input id="L" type="number" value="3400" min="1000"><span class="unit">mm</span></div></div>
+        <div class="field"><label>Rộng ngoài B</label><div class="input-wrap"><input id="B" type="number" value="1900" min="800"><span class="unit">mm</span></div></div>
+        <div class="field"><label>Cao thông thủy H</label><div class="input-wrap"><input id="H" type="number" value="1800" min="500"><span class="unit">mm</span></div></div>
+        <div class="field"><label>Dày tường</label><div class="input-wrap"><input id="tw" type="number" value="200" min="100"><span class="unit">mm</span></div></div>
+        <div class="field"><label>Dày nắp</label><div class="input-wrap"><input id="tt" type="number" value="200" min="100"><span class="unit">mm</span></div></div>
+        <div class="field"><label>Dày đáy</label><div class="input-wrap"><input id="tb" type="number" value="200" min="100"><span class="unit">mm</span></div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">2. Lỗ thăm nắp</div>
+      <div class="grid2">
+        <div class="field"><label>Kích thước X</label><div class="input-wrap"><input id="opX" type="number" value="800" min="200"><span class="unit">mm</span></div></div>
+        <div class="field"><label>Kích thước Y</label><div class="input-wrap"><input id="opZ" type="number" value="800" min="200"><span class="unit">mm</span></div></div>
+        <div class="field"><label>Cách mép trái</label><div class="input-wrap"><input id="offX" type="number" value="200" min="0"><span class="unit">mm</span></div></div>
+        <div class="field"><label>Cách mép trước</label><div class="input-wrap"><input id="offZ" type="number" value="200" min="0"><span class="unit">mm</span></div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">3. Vật liệu & cốt thép</div>
+      <div class="grid2">
+        <div class="field"><label>Đường kính thép</label><div class="input-wrap"><input id="dia" type="number" value="12" min="6"><span class="unit">mm</span></div></div>
+        <div class="field"><label>Khoảng cách a</label><div class="input-wrap"><input id="sp" type="number" value="200" min="80"><span class="unit">mm</span></div></div>
+        <div class="field"><label>Lớp bảo vệ</label><div class="input-wrap"><input id="cover" type="number" value="35" min="20"><span class="unit">mm</span></div></div>
+        <div class="field"><label>Thép tăng cường / cạnh</label><div class="input-wrap"><input id="extraN" type="number" value="2" min="0" max="6"><span class="unit">thanh</span></div></div>
+      </div>
+      <div class="note">Mặc định: BT M350, thép CB400-V. Mô hình R2 <b>đã bỏ các thanh chéo</b> ở 4 góc lỗ thăm. Gia cường chỉ còn các thanh thẳng dọc theo 4 cạnh lỗ.</div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">4. Cao độ tham chiếu</div>
+      <div class="grid2">
+        <div class="field"><label>MDTN dưới nắp</label><div class="input-wrap"><input id="topAG" type="number" value="200" min="0"><span class="unit">mm</span></div></div>
+        <div class="field"><label>Mực nước ngầm dưới MDTN</label><div class="input-wrap"><input id="gw" type="number" value="330" min="0"><span class="unit">mm</span></div></div>
+      </div>
+      <div class="note">Hiểu theo setup: <b>MDTN = +0.00</b>; mặt trên nắp bể = <b>+0.20 m</b>; mực nước ngầm = <b>-0.33 m</b> so với MDTN.</div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">5. Hiển thị</div>
+      <div class="checks">
+        <label class="check"><input id="showConcrete" type="checkbox" checked> Bê tông</label>
+        <label class="check"><input id="showTop" type="checkbox" checked> Thép nắp</label>
+        <label class="check"><input id="showWalls" type="checkbox" checked> Thép tường</label>
+        <label class="check"><input id="showBottom" type="checkbox" checked> Thép đáy</label>
+        <label class="check"><input id="showExtra" type="checkbox" checked> Gia cường lỗ</label>
+        <label class="check"><input id="showGW" type="checkbox" checked> MDTN + nước ngầm</label>
+        <label class="check"><input id="xray" type="checkbox"> X-ray cốt thép</label>
+        <label class="check"><input id="wire" type="checkbox" checked> Viền cấu kiện</label>
+      </div>
+      <div class="btn-row">
+        <button class="primary" id="apply">Cập nhật mô hình</button>
+        <button id="reset">Khôi phục mặc định</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">6. Góc nhìn</div>
+      <div class="views">
+        <button data-view="iso">3D</button>
+        <button data-view="top">Bằng</button>
+        <button data-view="front">Đứng</button>
+        <button data-view="right">Cạnh</button>
+      </div>
+      <div class="btn-row">
+        <button id="fit">Fit mô hình</button>
+        <button id="png">Xuất PNG</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">7. Kiểm tra nhanh</div>
+      <div class="metric"><span>Diện tích thép / m / lớp</span><b id="aspm">—</b></div>
+      <div class="metric"><span>Số thanh chính bị lỗ cắt</span><b id="cutbars">—</b></div>
+      <div class="metric"><span>Thép cần bù mỗi cạnh</span><b id="needbars">—</b></div>
+      <div class="metric"><span>BTCT sơ bộ</span><b id="vol">—</b></div>
+      <div class="metric"><span>Lọt lòng</span><b id="clear">—</b></div>
+      <div class="note">Mô hình dùng để bố trí và kiểm tra trực quan. Khi phát hành thiết kế cần kiểm toán tải trọng nắp, nứt, đẩy nổi, nền/cừ tràm và neo nối theo tiêu chuẩn áp dụng.</div>
+    </div>
+  </aside>
+
+  <main class="stage">
+    <div id="canvasWrap"></div>
+    <div class="topbar">
+      <div class="title-card">
+        <strong>BỂ TK01 · MÔ HÌNH CỐT THÉP 3D</strong>
+        <span id="subtitle">3400 × 1900 · H thông thủy 1800 · t = 200 mm</span>
+      </div>
+      <div class="status-card">
+        <b>BT M350 · CB400-V</b><br>
+        D12a200 · 2 phương · 2 lớp/mặt<br>
+        MDTN = +0.00 · Nắp = +0.20
+      </div>
+    </div>
+    <div class="help">Chuột trái: xoay · Chuột phải: di chuyển · Con lăn: zoom · Phím 1/2/3/4: 3D/Bằng/Đứng/Cạnh</div>
+    <div class="legend">
+      <div><span class="dot" style="background:#7dd3fc"></span>Bê tông</div>
+      <div><span class="dot" style="background:#ef4444"></span>Thép lớp trên / mặt trong</div>
+      <div><span class="dot" style="background:#2563eb"></span>Thép lớp dưới / mặt ngoài</div>
+      <div><span class="dot" style="background:#f59e0b"></span>Gia cường cạnh lỗ</div>
+      <div><span class="dot" style="background:#94a3b8"></span>MDTN = +0.00</div>
+      <div><span class="dot" style="background:#38bdf8"></span>Mực nước ngầm</div>
+    </div>
+    <div id="err" class="error"></div>
+  </main>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const wrap = document.getElementById('canvasWrap');
+const errBox = document.getElementById('err');
+
+let scene, camera, renderer, controls;
+let modelRoot, concreteGroup, topRebarGroup, wallRebarGroup, bottomRebarGroup, extraGroup, levelGroup, edgeGroup;
+let current = {};
+const COLORS = {
+  concrete: 0x7dd3fc,
+  edge: 0x0b2a4a,
+  top: 0xef4444,
+  bottom: 0x2563eb,
+  extra: 0xf59e0b,
+  water: 0x38bdf8,
+  ground: 0x94a3b8
+};
+
+function q(id){ return document.getElementById(id); }
+function num(id){ return Number(q(id).value); }
+function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+
+function init(){
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xf4f8fb);
+
+  camera = new THREE.PerspectiveCamera(38, wrap.clientWidth/wrap.clientHeight, 1, 100000);
+  camera.up.set(0,1,0);
+
+  renderer = new THREE.WebGLRenderer({antialias:true, preserveDrawingBuffer:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  wrap.appendChild(renderer.domElement);
+
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.screenSpacePanning = true;
+  controls.mouseButtons.LEFT = THREE.MOUSE.ROTATE;
+  controls.mouseButtons.RIGHT = THREE.MOUSE.PAN;
+  controls.mouseButtons.MIDDLE = THREE.MOUSE.DOLLY;
+  controls.minDistance = 700;
+  controls.maxDistance = 30000;
+
+  const hemi = new THREE.HemisphereLight(0xffffff, 0xb7c5d1, 1.5);
+  scene.add(hemi);
+  const sun = new THREE.DirectionalLight(0xffffff, 2.1);
+  sun.position.set(4500,6500,3000);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(2048,2048);
+  scene.add(sun);
+
+  modelRoot = new THREE.Group();
+  scene.add(modelRoot);
+
+  buildModel();
+  setView('iso');
+  bindEvents();
+  animate();
+}
+
+function readParams(){
+  const p = {
+    L:num('L'), B:num('B'), H:num('H'), tw:num('tw'), tt:num('tt'), tb:num('tb'),
+    opX:num('opX'), opZ:num('opZ'), offX:num('offX'), offZ:num('offZ'),
+    dia:num('dia'), sp:num('sp'), cover:num('cover'), extraN:Math.round(num('extraN')),
+    gw:num('gw'), topAG:num('topAG')
+  };
+  if(!Object.values(p).every(Number.isFinite)) throw new Error('Có giá trị nhập không hợp lệ.');
+  if(p.L <= 2*p.tw+300 || p.B <= 2*p.tw+300) throw new Error('Kích thước ngoài phải lớn hơn 2 lần chiều dày tường.');
+  if(p.offX < 0 || p.offZ < 0 || p.offX+p.opX > p.L || p.offZ+p.opZ > p.B) throw new Error('Lỗ thăm đang vượt ra ngoài phạm vi nắp.');
+  return p;
+}
+
+function disposeObject(obj){
+  obj.traverse(o=>{
+    if(o.geometry) o.geometry.dispose();
+    if(o.material){
+      if(Array.isArray(o.material)) o.material.forEach(m=>m.dispose());
+      else o.material.dispose();
+    }
+  });
+}
+
+function clearModel(){
+  while(modelRoot.children.length){
+    const obj = modelRoot.children.pop();
+    disposeObject(obj);
+  }
+}
+
+function matConcrete(){
+  return new THREE.MeshPhysicalMaterial({
+    color:COLORS.concrete, transparent:true, opacity:0.28, roughness:0.65,
+    metalness:0, side:THREE.DoubleSide, depthWrite:false
+  });
+}
+function matSteel(color){
+  return new THREE.MeshStandardMaterial({
+    color, roughness:0.45, metalness:0.25, transparent:true, opacity:1
+  });
+}
+function addBox(group, sx, sy, sz, x, y, z, material, edges=true){
+  if(sx<=0 || sy<=0 || sz<=0) return;
+  const geo = new THREE.BoxGeometry(sx,sy,sz);
+  const mesh = new THREE.Mesh(geo, material.clone());
+  mesh.position.set(x,y,z);
+  mesh.castShadow = false;
+  mesh.receiveShadow = true;
+  group.add(mesh);
+  if(edges){
+    const e = new THREE.LineSegments(
+      new THREE.EdgesGeometry(geo),
+      new THREE.LineBasicMaterial({color:COLORS.edge,transparent:true,opacity:.7})
+    );
+    e.position.copy(mesh.position);
+    edgeGroup.add(e);
+  }
+  return mesh;
+}
+function cylBetween(group, a, b, radius, color, opacity=1, depthTest=true){
+  const A = new THREE.Vector3(...a), B = new THREE.Vector3(...b);
+  const dir = new THREE.Vector3().subVectors(B,A);
+  const len = dir.length();
+  if(len < 1) return;
+  const geo = new THREE.CylinderGeometry(Math.max(2,radius),Math.max(2,radius),len,8,1,false);
+  const mat = matSteel(color);
+  mat.opacity = opacity; mat.transparent = opacity < 1; mat.depthTest = depthTest;
+  const mesh = new THREE.Mesh(geo,mat);
+  mesh.position.copy(A).add(B).multiplyScalar(.5);
+  mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), dir.clone().normalize());
+  group.add(mesh);
+  return mesh;
+}
+function seq(start,end,step){
+  const arr=[];
+  if(step<=0) return arr;
+  for(let v=start; v<=end+0.001; v+=step) arr.push(v);
+  return arr;
+}
+function splitAround(v, hole0, hole1, start, end, pad=0){
+  if(v > hole0 && v < hole1) return [[start,hole0-pad],[hole1+pad,end]].filter(s=>s[1]-s[0]>2);
+  return [[start,end]];
+}
+
+function makeLevelLine(group, y, lenX, lenZ, color, opacity){
+  const mat = new THREE.MeshBasicMaterial({color, transparent:true, opacity});
+  const stripX = new THREE.Mesh(new THREE.BoxGeometry(lenX,2,2), mat);
+  const stripZ = new THREE.Mesh(new THREE.BoxGeometry(2,2,lenZ), mat);
+  stripX.position.set(0,y,0);
+  stripZ.position.set(0,y,0);
+  group.add(stripX, stripZ);
+
+  const plane = new THREE.Mesh(
+    new THREE.PlaneGeometry(lenX, lenZ),
+    new THREE.MeshBasicMaterial({color, transparent:true, opacity:opacity*0.18, side:THREE.DoubleSide, depthWrite:false})
+  );
+  plane.rotation.x = -Math.PI/2;
+  plane.position.y = y;
+  group.add(plane);
+}
+
+function buildModel(){
+  try{
+    errBox.style.display='none';
+    current = readParams();
+    clearModel();
+
+    concreteGroup = new THREE.Group();
+    topRebarGroup = new THREE.Group();
+    wallRebarGroup = new THREE.Group();
+    bottomRebarGroup = new THREE.Group();
+    extraGroup = new THREE.Group();
+    levelGroup = new THREE.Group();
+    edgeGroup = new THREE.Group();
+    modelRoot.add(concreteGroup,topRebarGroup,wallRebarGroup,bottomRebarGroup,extraGroup,levelGroup,edgeGroup);
+
+    const p=current;
+    const innerL = p.L-2*p.tw;
+    const innerB = p.B-2*p.tw;
+
+    // Coordinate system:
+    // MDTN = +0.00
+    // Top of cover = +topAG
+    // Water table = -gw
+    const yTopSlabTop = p.topAG;
+    const yTopSlabBot = yTopSlabTop - p.tt;
+    const yWallTop = yTopSlabBot;
+    const yWallBot = yWallTop - p.H;
+    const yBottomTop = yWallBot;
+    const yBottomBot = yBottomTop - p.tb;
+
+    const C = matConcrete();
+
+    addBox(concreteGroup,p.L,p.tb,p.B,0,(yBottomBot+yBottomTop)/2,0,C);
+    addBox(concreteGroup,p.tw,p.H,p.B,-p.L/2+p.tw/2,(yWallBot+yWallTop)/2,0,C);
+    addBox(concreteGroup,p.tw,p.H,p.B, p.L/2-p.tw/2,(yWallBot+yWallTop)/2,0,C);
+    addBox(concreteGroup,innerL,p.H,p.tw,0,(yWallBot+yWallTop)/2,-p.B/2+p.tw/2,C);
+    addBox(concreteGroup,innerL,p.H,p.tw,0,(yWallBot+yWallTop)/2, p.B/2-p.tw/2,C);
+
+    const hx0 = -p.L/2 + p.offX;
+    const hx1 = hx0 + p.opX;
+    const hz0 = -p.B/2 + p.offZ;
+    const hz1 = hz0 + p.opZ;
+    const yTopMid = (yTopSlabTop+yTopSlabBot)/2;
+
+    if(hx0 > -p.L/2) addBox(concreteGroup,hx0-(-p.L/2),p.tt,p.B,(-p.L/2+hx0)/2,yTopMid,0,C);
+    if(hx1 < p.L/2) addBox(concreteGroup,p.L/2-hx1,p.tt,p.B,(hx1+p.L/2)/2,yTopMid,0,C);
+    const midW = hx1-hx0;
+    if(hz0 > -p.B/2) addBox(concreteGroup,midW,p.tt,hz0-(-p.B/2),(hx0+hx1)/2,yTopMid,(-p.B/2+hz0)/2,C);
+    if(hz1 < p.B/2) addBox(concreteGroup,midW,p.tt,p.B/2-hz1,(hx0+hx1)/2,yTopMid,(hz1+p.B/2)/2,C);
+
+    const rr = Math.max(3,p.dia/2);
+    const c = clamp(p.cover+p.dia/2, p.dia, Math.max(p.tw,p.tt,p.tb)/2-5);
+    const xMin = -p.L/2+c, xMax = p.L/2-c;
+    const zMin = -p.B/2+c, zMax = p.B/2-c;
+
+    const yTop = yTopSlabTop-c;
+    const yBotTop = yTopSlabBot+c;
+    const slabLayers = [
+      {y:yTop,color:COLORS.top},
+      {y:yBotTop,color:COLORS.bottom}
+    ];
+    for(const lay of slabLayers){
+      for(const z of seq(zMin,zMax,p.sp)){
+        const segments = splitAround(z,hz0,hz1,xMin,xMax,0);
+        for(const [xa,xb] of segments){
+          if(z>hz0 && z<hz1){
+            if(xa < hx0) cylBetween(topRebarGroup,[xa,lay.y,z],[Math.min(xb,hx0),lay.y,z],rr,lay.color);
+            if(xb > hx1) cylBetween(topRebarGroup,[Math.max(xa,hx1),lay.y,z],[xb,lay.y,z],rr,lay.color);
+          } else cylBetween(topRebarGroup,[xa,lay.y,z],[xb,lay.y,z],rr,lay.color);
+        }
+      }
+      for(const x of seq(xMin,xMax,p.sp)){
+        if(x>hx0 && x<hx1){
+          if(zMin < hz0) cylBetween(topRebarGroup,[x,lay.y,zMin],[x,lay.y,hz0],rr,lay.color);
+          if(zMax > hz1) cylBetween(topRebarGroup,[x,lay.y,hz1],[x,lay.y,zMax],rr,lay.color);
+        } else cylBetween(topRebarGroup,[x,lay.y,zMin],[x,lay.y,zMax],rr,lay.color);
+      }
+    }
+
+    const yBU = yBottomTop-c, yBL = yBottomBot+c;
+    for(const [y,color] of [[yBU,COLORS.top],[yBL,COLORS.bottom]]){
+      for(const z of seq(zMin,zMax,p.sp)) cylBetween(bottomRebarGroup,[xMin,y,z],[xMax,y,z],rr,color);
+      for(const x of seq(xMin,xMax,p.sp)) cylBetween(bottomRebarGroup,[x,y,zMin],[x,y,zMax],rr,color);
+    }
+
+    const y0 = yWallBot+c, y1 = yWallTop-c;
+    const wallX1 = -p.L/2+c, wallX2 = -p.L/2+p.tw-c;
+    const wallX3 = p.L/2-p.tw+c, wallX4 = p.L/2-c;
+    const wallZ1 = -p.B/2+c, wallZ2 = -p.B/2+p.tw-c;
+    const wallZ3 = p.B/2-p.tw+c, wallZ4 = p.B/2-c;
+
+    for(const x of [wallX1,wallX2,wallX3,wallX4]){
+      const col = (x===wallX2 || x===wallX3) ? COLORS.top : COLORS.bottom;
+      for(const z of seq(zMin,zMax,p.sp)) cylBetween(wallRebarGroup,[x,y0,z],[x,y1,z],rr,col);
+      for(const y of seq(y0,y1,p.sp)) cylBetween(wallRebarGroup,[x,y,zMin],[x,y,zMax],rr,col);
+    }
+    for(const z of [wallZ1,wallZ2,wallZ3,wallZ4]){
+      const col = (z===wallZ2 || z===wallZ3) ? COLORS.top : COLORS.bottom;
+      for(const x of seq(-innerL/2+c,innerL/2-c,p.sp)) cylBetween(wallRebarGroup,[x,y0,z],[x,y1,z],rr,col);
+      for(const y of seq(y0,y1,p.sp)) cylBetween(wallRebarGroup,[-innerL/2+c,y,z],[innerL/2-c,y,z],rr,col);
+    }
+
+    const extraGap = Math.max(25,p.dia*2.5);
+    const ext = Math.max(400, 40*p.dia);
+    for(const y of [yTop,yBotTop]){
+      for(let i=0;i<p.extraN;i++){
+        const d = extraGap*(i+1);
+        cylBetween(extraGroup,[Math.max(xMin,hx0-ext),y,hz0-d],[Math.min(xMax,hx1+ext),y,hz0-d],rr*1.12,COLORS.extra);
+        cylBetween(extraGroup,[Math.max(xMin,hx0-ext),y,hz1+d],[Math.min(xMax,hx1+ext),y,hz1+d],rr*1.12,COLORS.extra);
+        cylBetween(extraGroup,[hx0-d,y,Math.max(zMin,hz0-ext)],[hx0-d,y,Math.min(zMax,hz1+ext)],rr*1.12,COLORS.extra);
+        cylBetween(extraGroup,[hx1+d,y,Math.max(zMin,hz0-ext)],[hx1+d,y,Math.min(zMax,hz1+ext)],rr*1.12,COLORS.extra);
+      }
+    }
+
+    const lenX = p.L*1.8, lenZ = p.B*2.6;
+    makeLevelLine(levelGroup, 0, lenX, lenZ, COLORS.ground, 0.75);
+    makeLevelLine(levelGroup, -p.gw, lenX*0.95, lenZ*0.95, COLORS.water, 0.65);
+
+    applyVisibility();
+    updateMetrics();
+    q('subtitle').textContent = `${p.L} × ${p.B} · H thông thủy ${p.H} · tường/nắp/đáy ${p.tw}/${p.tt}/${p.tb} mm`;
+  }catch(e){
+    errBox.textContent = e.message || String(e);
+    errBox.style.display='block';
+  }
+}
+
+function applyVisibility(){
+  if(!concreteGroup) return;
+  concreteGroup.visible=q('showConcrete').checked;
+  topRebarGroup.visible=q('showTop').checked;
+  wallRebarGroup.visible=q('showWalls').checked;
+  bottomRebarGroup.visible=q('showBottom').checked;
+  extraGroup.visible=q('showExtra').checked;
+  levelGroup.visible=q('showGW').checked;
+  edgeGroup.visible=q('wire').checked;
+
+  const xray = q('xray').checked;
+  for(const g of [topRebarGroup,wallRebarGroup,bottomRebarGroup,extraGroup]){
+    g.traverse(o=>{
+      if(o.material){
+        o.material.depthTest = !xray;
+        o.material.transparent = xray;
+        o.material.opacity = xray ? .88 : 1;
+        o.material.needsUpdate = true;
+      }
+    });
+  }
+}
+
+function updateMetrics(){
+  const p=current;
+  const Ab = Math.PI*p.dia*p.dia/4;
+  const Asm = Ab*1000/p.sp;
+  const nCut = Math.max(1,Math.round(Math.max(p.opX,p.opZ)/p.sp));
+  const lost = nCut*Ab;
+  const needPerEdge = Math.max(1,Math.ceil(lost/(2*Ab)));
+  const innerL=p.L-2*p.tw, innerB=p.B-2*p.tw;
+  const vBottom=p.L*p.B*p.tb;
+  const vWalls=p.H*(2*p.L*p.tw+2*innerB*p.tw);
+  const vTop=(p.L*p.B-p.opX*p.opZ)*p.tt;
+  const vol=(vBottom+vWalls+vTop)/1e9;
+
+  q('aspm').textContent = `${Asm.toFixed(0)} mm²/m`;
+  q('cutbars').textContent = `≈ ${nCut}D${p.dia}`;
+  q('needbars').textContent = `≈ ${needPerEdge}D${p.dia} / cạnh`;
+  q('vol').textContent = `${vol.toFixed(2)} m³`;
+  q('clear').textContent = `${innerL} × ${innerB} × ${p.H} mm`;
+}
+
+function fitDistance(){
+  const p=current;
+  return Math.max(p.L,p.B,p.H+p.tb+p.tt)*1.65;
+}
+function tankMidY(){
+  const p=current;
+  const yTop = p.topAG;
+  const yBot = p.topAG - (p.tt+p.H+p.tb);
+  return (yTop+yBot)/2;
+}
+function setView(type){
+  const d=fitDistance();
+  const tgt=new THREE.Vector3(0,tankMidY(),0);
+  let pos;
+  if(type==='top') pos=new THREE.Vector3(0,tgt.y+d*1.2,1);
+  else if(type==='front') pos=new THREE.Vector3(0,tgt.y,d*1.35);
+  else if(type==='right') pos=new THREE.Vector3(d*1.35,tgt.y,0);
+  else pos=new THREE.Vector3(d*.95,tgt.y+d*.35,d*.95);
+  camera.position.copy(pos);
+  camera.lookAt(tgt);
+  controls.target.copy(tgt);
+  controls.update();
+}
+function animate(){
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene,camera);
+}
+function bindEvents(){
+  window.addEventListener('resize',()=>{
+    camera.aspect=wrap.clientWidth/wrap.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(wrap.clientWidth,wrap.clientHeight);
+  });
+  q('apply').addEventListener('click',()=>{buildModel();setView('iso');});
+  q('reset').addEventListener('click',()=>{
+    const defaults={L:3400,B:1900,H:1800,tw:200,tt:200,tb:200,opX:800,opZ:800,offX:200,offZ:200,dia:12,sp:200,cover:35,extraN:2,gw:330,topAG:200};
+    for(const [k,v] of Object.entries(defaults)) q(k).value=v;
+    buildModel();setView('iso');
+  });
+  for(const id of ['showConcrete','showTop','showWalls','showBottom','showExtra','showGW','xray','wire']){
+    q(id).addEventListener('change',applyVisibility);
+  }
+  document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
+  q('fit').addEventListener('click',()=>setView('iso'));
+  q('png').addEventListener('click',()=>{
+    renderer.render(scene,camera);
+    const a=document.createElement('a');
+    a.download='AS_Be_BTCT_3D_R2.png';
+    a.href=renderer.domElement.toDataURL('image/png');
+    a.click();
+  });
+  document.addEventListener('keydown',(e)=>{
+    if(e.target.tagName==='INPUT') return;
+    if(e.key==='1') setView('iso');
+    if(e.key==='2') setView('top');
+    if(e.key==='3') setView('front');
+    if(e.key==='4') setView('right');
+  });
+
+  let t;
+  document.querySelectorAll('input[type=number]').forEach(inp=>{
+    inp.addEventListener('input',()=>{
+      clearTimeout(t); t=setTimeout(()=>buildModel(),300);
+    });
+  });
+}
+
+init();
+</script>
+</body>
+</html>
