@@ -1,0 +1,742 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AS – Cụm bể LPG | 3D tham số + DXF R15</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<style>
+  :root{--navy:#0d2a4a;--navy2:#163d67;--line:#d8e0e8;--bg:#f4f7fa;--text:#111827;--muted:#667085;--card:#fff;--accent:#1f5f99}
+  *{box-sizing:border-box} html,body{margin:0;height:100%;font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--text);background:var(--bg);text-size-adjust:100%}body{font-size:17px;line-height:1.55}
+  #app{display:grid;grid-template-columns:460px 1fr;height:100vh;overflow:hidden}
+  aside{background:#fff;border-right:1px solid var(--line);overflow:auto;min-width:0}
+  .brand{position:sticky;top:0;z-index:10;background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:16px 18px;box-shadow:0 2px 8px #0001}
+  .brand h1{font-size:18px;margin:0 0 5px;letter-spacing:.2px}.brand p{font-size:14px;margin:0;opacity:.85;line-height:1.45}
+  .pad{padding:14px}.section{border:1px solid var(--line);border-radius:12px;background:var(--card);margin-bottom:12px;overflow:hidden}
+  .section h2{font-size:16px;margin:0;padding:11px 12px;background:#f8fafc;border-bottom:1px solid var(--line);color:var(--navy);display:flex;align-items:center;justify-content:space-between}
+  .section .body{padding:11px 12px}.hint{font-size:14px;color:var(--muted);line-height:1.5;margin:0 0 9px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  label{display:block;font-size:14px;color:#475467;margin-bottom:3px} input[type=number],input[type=text],input:not([type]),select{width:100%;border:1px solid #cfd8e3;border-radius:7px;padding:7px 8px;font:inherit;font-size:16px;background:#fff;color:#111827;outline:none}
+  input:focus,select:focus{border-color:#6c9bc7;box-shadow:0 0 0 2px #6c9bc722}
+  .row{display:flex;gap:8px;align-items:center}.row>*{flex:1}.btnrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+  button{border:0;border-radius:8px;padding:8px 10px;font-weight:650;font-size:15px;cursor:pointer;background:#e9eef5;color:var(--navy)} button.primary{background:var(--navy);color:#fff} button:hover{filter:brightness(.98)}
+  .statbar{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:9px}.stat{padding:7px 6px;border:1px solid var(--line);border-radius:8px;background:#fff;text-align:center}.stat b{font-size:14px;color:var(--navy);display:block}.stat span{font-size:13px;color:var(--muted)}
+  .cellcard{border:1px solid #dce3eb;border-radius:10px;margin-bottom:8px;padding:9px;background:#fcfdff}.cellhead{display:flex;gap:7px;align-items:center;margin-bottom:7px}.cellhead b{font-size:15px;color:var(--navy)}.cellhead input{font-weight:650;min-width:0}
+  .cellgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.checkline{display:flex;align-items:center;gap:5px;font-size:14px;color:#475467;margin-top:6px}.checkline input{accent-color:var(--navy)}
+  .cellchoices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-bottom:10px}.cellchoices button{border:1px solid #d1dce8;background:#f7fafc;text-align:left}.cellchoices button.active{background:var(--navy);color:white;border-color:var(--navy)}
+  .selected-title{font-size:14px;font-weight:700;color:var(--navy);margin:2px 0 9px}.cellcard[hidden]{display:none}
+  .geometry-status{font-size:14px;line-height:1.45;padding:7px 9px;margin-top:9px;border-radius:7px;background:#eaf5ee;color:#18543a}.geometry-status.warning{background:#fff2df;color:#7c4312}
+  .view-chip{pointer-events:auto;display:inline-flex;align-items:center;gap:5px;padding:7px 9px;border:1px solid #d2deea;border-radius:8px;background:#fffffff2;box-shadow:0 2px 7px #0001;font-size:13px;font-weight:650;color:var(--navy);white-space:nowrap;cursor:pointer;line-height:1.3;margin:0}.view-chip input{width:15px;height:15px;margin:0;accent-color:var(--navy);cursor:pointer}.view-chip:has(input:not(:checked)){opacity:.67;background:#f5f7f9}
+  .color-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.color-row{display:flex;align-items:center;gap:8px;padding:7px 8px;border:1px solid var(--line);border-radius:8px;background:#fbfdff;min-width:0}.color-row label{flex:1;margin:0;color:#344054;line-height:1.3}.color-row input[type=color]{width:42px;height:34px;padding:2px;border:1px solid #bccddd;border-radius:6px;background:#fff;cursor:pointer;flex:none}.color-row output{display:block;font-size:13px;color:#475467;white-space:nowrap}
+  .slope-preview{margin-top:8px;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:#f8fafc}.slope-preview svg{width:100%;height:56px;display:block}.slope-preview p{display:flex;justify-content:space-between;font-size:13px;color:#475467;margin:1px 0 0}
+  .rebar-details{border-top:1px solid var(--line);margin-top:11px;padding-top:8px}.rebar-details summary{cursor:pointer;color:var(--navy);font-size:16px;font-weight:700;padding:4px 0}.rebar-card{border:1px solid var(--line);border-radius:8px;background:#fff;margin-top:8px;padding:8px}.rebar-card strong{font-size:15px;color:var(--navy)}.rebar-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:7px}.rebar-grid select{grid-column:span 3}.rebar-grid label{margin:0;min-width:0}.rebar-grid input{margin-top:3px}.rebar-details .hint{margin:9px 0 0}
+  .steel-trigger{pointer-events:auto;border-color:#b9cde0!important;background:#f5faff!important;font-weight:700;color:var(--navy);cursor:pointer;white-space:nowrap}
+  .steel-overlay[hidden]{display:none}.steel-overlay{position:fixed;inset:0;z-index:60;background:#0d213485;display:grid;place-items:center;padding:15px}.steel-dialog{width:min(920px,100%);max-height:calc(100dvh - 30px);overflow:auto;border-radius:14px;background:#fff;box-shadow:0 15px 55px #07152270;padding:18px 20px}.steel-dialog h2{font-size:21px;color:var(--navy);margin:0 0 8px}.steel-dialog .hint{margin-bottom:12px}.steel-dialog-header{display:flex;gap:12px;align-items:end;justify-content:space-between;flex-wrap:wrap}.steel-dialog-header select{max-width:270px}.steel-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}.steel-card{border:1px solid var(--line);background:#f9fbfe;border-radius:10px;padding:12px;min-width:0}.steel-card h3{margin:0 0 10px;color:var(--navy);font-size:17px}.steel-card .checkline{margin:7px 0;font-size:15px}.steel-card .checkline input{width:17px;height:17px}.steel-card .color-row{margin:10px 0}.steel-card .steel-numbers{display:grid;grid-template-columns:1fr 1fr;gap:8px}.steel-card .steel-numbers label{min-width:0}.steel-actions{text-align:right}.steel-actions button{min-width:100px}
+  .range{display:grid;grid-template-columns:1fr 55px;gap:7px;align-items:center}.range input[type=range]{width:100%;accent-color:var(--navy)}
+  main{position:relative;min-width:0;background:linear-gradient(#eef3f8,#f8fafc)} #view{position:absolute;inset:0}
+  .toolbar{position:absolute;top:12px;left:12px;right:12px;display:flex;flex-direction:column;align-items:flex-start;gap:7px;pointer-events:none;z-index:4}.view-nav,.view-filters{display:flex;align-items:center;gap:5px;flex-wrap:wrap;max-width:100%;pointer-events:auto}.view-nav button{padding:7px 10px}.view-filters{padding:5px;border:1px solid #d9e4ef;border-radius:11px;background:#f9fcffeb;box-shadow:0 3px 12px #0d2a4a1c}.view-filters button{padding:7px 9px;font-size:13px;white-space:nowrap}.view-separator{width:1px;height:23px;background:#c7d4e2;margin:0 3px}.toolbar button{pointer-events:auto;background:#ffffffed;border:1px solid #d7e0e9;box-shadow:0 2px 7px #0001}.toolbar button.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .legend{position:absolute;right:14px;bottom:14px;background:#fffffff2;border:1px solid #d7e0e9;border-radius:10px;padding:9px 11px;box-shadow:0 3px 12px #0001;font-size:14px;z-index:4}.lg{display:flex;align-items:center;gap:6px;margin:4px 0}.sw{width:13px;height:8px;border-radius:2px;border:1px solid #0002}
+  .note{position:absolute;left:14px;bottom:14px;max-width:480px;background:#fffffff2;border:1px solid #d7e0e9;border-radius:10px;padding:9px 11px;font-size:14px;line-height:1.45;color:#475467;box-shadow:0 3px 12px #0001;z-index:4}.note b{color:var(--navy)}
+  .pill{display:inline-block;padding:2px 7px;border-radius:999px;background:#e8f0f8;color:#214d75;font-size:13px;font-weight:700;margin-left:4px}
+  @media(max-width:900px){#app{grid-template-columns:330px 1fr}.cellgrid{grid-template-columns:1fr 1fr}.note{display:none}.rebar-grid{grid-template-columns:1fr 1fr}.rebar-grid select{grid-column:span 2}}
+  @media(max-width:680px){#app{display:flex;flex-direction:column;height:100dvh}aside{height:43dvh;flex:none;border-right:0;border-bottom:1px solid var(--line)}main{flex:1;min-height:0}.toolbar{max-height:min(180px,48%);overflow:auto;scrollbar-width:thin}.view-nav button,.view-chip,.steel-trigger,.view-filters button{min-height:34px}.view-chip{padding:6px 8px}.legend{display:none}.steel-cards{grid-template-columns:1fr}.steel-dialog{padding:14px}}
+  @media(max-width:400px){.color-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="app">
+<aside>
+  <div class="brand"><h1>AS • CỤM BỂ XỬ LÝ – LPG • R15</h1><p>Diễn họa 3D tham số • bố trí thép từng ô • xuất DXF 3D theo đúng tọa độ X–Y–Z.</p></div>
+  <div class="pad">
+    <div class="section"><h2>1. Chọn hạng mục</h2><div class="body">
+      <div id="cellChoices" class="cellchoices" role="group" aria-label="Chọn hạng mục bể"></div>
+      <p id="chooseHint" class="hint">Chọn T01, T02… để hiện thông số cần chỉnh.</p>
+      <div id="selectedCell" hidden><div id="selectedTitle" class="selected-title"></div><div id="cellsBox"></div></div>
+      <div id="geometryStatus" class="geometry-status" role="status"></div>
+    </div></div>
+
+
+    <div class="section"><h2>2. Kích thước chung <span class="pill">m</span></h2><div class="body">
+      <p class="hint">Mô hình dùng quan hệ cộng dồn: <b>L = tổng khoang + các tường</b>; <b>B = 2 dải bể + 3 tường</b>. Đổi một khoang thì toàn bộ vách, nắp, đáy và DXF tự dời theo.</p>
+      <div class="grid2">
+        <div><label>Tường BTCT – t</label><input id="wallT" type="number" step="0.01"></div>
+        <div><label>Bê tông lót nhô biên</label><input id="leanOver" type="number" step="0.05"></div>
+        <div><label>Khoang theo Y – A</label><input id="rowA" type="number" step="0.1"></div>
+        <div><label>Khoang theo Y – B</label><input id="rowB" type="number" step="0.1"></div>
+        <div><label>Kênh giữa T06 – rộng Y</label><input id="channelW" type="number" min="0.1" step="0.1"></div>
+        <div><label>Kênh giữa T06 – dài X</label><input id="channelL" type="number" min="0.1" step="0.1"></div>
+        <div><label>BT tạo dốc tại mép</label><input id="slopeH" type="number" step="0.1"></div>
+      </div>
+      <p class="hint" style="margin:8px 0 0">T06 vát theo cả X và Y: bốn mặt dốc từ mép ô về vùng kênh giữa thấp.</p>
+      <div class="slope-preview" aria-label="Mặt bằng T06: bốn hướng dốc về kênh giữa"><svg viewBox="0 0 300 100" preserveAspectRatio="none" role="img" aria-label="Bốn mặt dốc tiếp giáp theo đường chéo và bao quanh kênh giữa"><path data-slope-preview d="M5 5 L295 5 L190 35 L110 35 Z M295 5 L295 95 L190 65 L190 35 Z M295 95 L5 95 L110 65 L190 65 Z M5 95 L5 5 L110 35 L110 65 Z" fill="#cc9a52" stroke="#765735" stroke-width="1.5"/><rect x="110" y="35" width="80" height="30" fill="#f8fafc" stroke="#1f5f99" stroke-width="2"/></svg><p><span>Dốc X + Y</span><span>Kênh giữa thấp</span><span>Dốc X + Y</span></p></div>
+      <div class="statbar"><div class="stat"><b id="statL">40.10</b><span>L ngoài</span></div><div class="stat"><b id="statB">18.90</b><span>B ngoài</span></div><div class="stat"><b id="statLean">40.70×19.50</b><span>Lót ngoài</span></div></div>
+    </div></div>
+
+    <div class="section"><h2>3. Tùy chỉnh hiển thị</h2><div class="body">
+      <label>Tách cấu kiện (exploded view)</label><div class="range"><input id="explode" type="range" min="0" max="2" step="0.05" value="0"><span id="explodeVal">0.00</span></div>
+      <label style="margin-top:7px">Độ trong nắp</label><div class="range"><input id="roofOp" type="range" min="0.08" max="1" step="0.02" value="0.30"><span id="roofOpVal">0.30</span></div>
+      <p class="hint" style="margin-top:8px;margin-bottom:0">Trên mô hình: X-ray ở ngoài cùng, tick “Thép” để hiện/ẩn cốt thép; bấm “Sửa thép” để chỉnh màu, Ø, khoảng cách và từng lớp.</p>
+      <h3 style="font-size:16px;color:var(--navy);margin:13px 0 8px">Màu cấu kiện (RGB)</h3>
+      <div class="color-grid">
+        <div class="color-row"><label for="colorRoof">Nắp<output id="rgbRoof"></output></label><input id="colorRoof" type="color" data-color-layer="roof" aria-label="Chọn màu nắp"></div>
+        <div class="color-row"><label for="colorWall">Tường<output id="rgbWall"></output></label><input id="colorWall" type="color" data-color-layer="wall" aria-label="Chọn màu tường"></div>
+        <div class="color-row"><label for="colorFloor">Đáy<output id="rgbFloor"></output></label><input id="colorFloor" type="color" data-color-layer="floor" aria-label="Chọn màu đáy"></div>
+        <div class="color-row"><label for="colorLean">BT lót<output id="rgbLean"></output></label><input id="colorLean" type="color" data-color-layer="lean" aria-label="Chọn màu bê tông lót"></div>
+        <div class="color-row"><label for="colorSlope">BT tạo dốc<output id="rgbSlope"></output></label><input id="colorSlope" type="color" data-color-layer="slope" aria-label="Chọn màu bê tông tạo dốc"></div>
+      </div>
+      <div class="btnrow"><button id="saveCfg">Lưu cấu hình</button><button id="resetCfg">Khôi phục gốc</button></div>
+    </div></div>
+
+    <div class="section"><h2>4. Xuất dữ liệu</h2><div class="body">
+      <div class="grid2"><div><label>Đơn vị DXF</label><select id="dxfUnit"><option value="1000">mm</option><option value="1">m</option></select></div><div><label>Phiên bản</label><select><option>3DFACE – AutoCAD 2007+</option></select></div></div>
+      <div class="btnrow"><button class="primary" id="exportDXF">Xuất DXF 3D</button><button id="exportJSON">Xuất JSON</button></div>
+      <p class="hint" style="margin-top:8px;margin-bottom:0">DXF AutoCAD 2007+ tách layer bê tông và sáu lớp thép theo đáy/nắp/tường, lớp dưới/trên hoặc mặt trong/ngoài. Bê tông dùng 3DFACE; thép xuất đúng tim thanh bằng 3D LINE với màu RGB đã chọn.</p>
+    </div></div>
+  </div>
+</aside>
+<main>
+  <div id="view"></div>
+  <div class="toolbar">
+    <div class="view-nav" role="group" aria-label="Góc nhìn mô hình"><button class="primary" id="fitBtn">Fit mô hình</button><button id="isoBtn">3D Iso</button><button id="topBtn">Mặt bằng</button><button id="frontBtn">Nhìn dọc</button><button id="sideBtn">Nhìn ngang</button></div>
+    <div class="view-filters" role="group" aria-label="Bật tắt hiển thị mô hình">
+      <button id="xrayBtn" aria-pressed="false" title="Nhìn xuyên tường và nắp để thấy đáy">X-ray: Tắt</button><label class="view-chip"><input id="visRebar" type="checkbox" checked> Thép</label><button id="steelEditBtn" class="steel-trigger" type="button" aria-controls="steelOverlay" aria-expanded="false">Sửa thép</button><span class="view-separator" aria-hidden="true"></span>
+      <label class="view-chip"><input id="visRoof" type="checkbox" checked> Nắp</label><label class="view-chip"><input id="visWall" type="checkbox" checked> Tường</label><label class="view-chip"><input id="visFloor" type="checkbox" checked> Đáy</label><label class="view-chip"><input id="visLean" type="checkbox" checked> BT lót</label><label class="view-chip"><input id="visSlope" type="checkbox" checked> BT tạo dốc</label><label class="view-chip"><input id="visLabel" type="checkbox" checked> Nhãn/dim</label>
+    </div>
+  </div>
+  <div class="note"><b>Quy ước trục:</b> X = chiều dài bể; Y = chiều rộng bể; Z = cao độ. Chuột trái xoay, chuột phải pan, lăn chuột zoom. <b>DXF giữ nguyên X–Y–Z</b>.</div>
+  <div class="legend">
+    <div class="lg"><span class="sw" data-legend-layer="roof" style="background:#dde6f2"></span>Nắp BTCT</div><div class="lg"><span class="sw" data-legend-layer="wall" style="background:#5c88b2"></span>Tường BTCT</div>
+    <div class="lg"><span class="sw" data-legend-layer="floor" style="background:#86b7d4"></span>Đáy BTCT</div><div class="lg"><span class="sw" data-legend-layer="lean" style="background:#f0c8a0"></span>BT lót</div><div class="lg"><span class="sw" data-legend-layer="slope" style="background:#cc9a52"></span>BT tạo dốc</div>
+    <div class="lg"><span class="sw" data-legend-layer="rebarFloorBottom"></span>Thép đáy</div>
+    <div class="lg"><span class="sw" data-legend-layer="rebarRoofBottom"></span>Thép nắp</div>
+    <div class="lg"><span class="sw" data-legend-layer="rebarWallInner"></span>Thép tường</div>
+  </div>
+</main>
+</div>
+<div id="steelOverlay" class="steel-overlay" hidden>
+  <section class="steel-dialog" role="dialog" aria-modal="true" aria-labelledby="steelTitle">
+    <div class="steel-dialog-header"><div><h2 id="steelTitle">Bố trí cốt thép</h2><p class="hint">Tick lớp cần hiển thị; mỗi cấu kiện dùng chung một màu cho cả hai lớp.</p></div><label>Áp dụng cho<select id="steelScope"><option value="all">Tất cả ô</option><option value="selected">Ô đang chọn</option></select></label></div>
+    <p id="steelScopeHint" class="hint"></p>
+    <div id="steelCards" class="steel-cards"></div>
+    <p class="hint">Đơn vị Ø, khoảng cách và lớp bảo vệ: mm. Bố trí mẫu cần được kiểm tra theo thiết kế kết cấu.</p>
+    <div class="steel-actions"><button id="steelOk" class="primary" type="button">OK</button></div>
+  </section>
+</div>
+<textarea id="cadTemplate" hidden>ICAwClNFQ1RJT04KICAyCkhFQURFUgogIDkKJEFDQURWRVIKICAxCkFDMTAyMQogIDkKJEFDQURNQUlOVFZFUgogNzAKMjUKICA5CiREV0dDT0RFUEFHRQogIDMKQU5TSV8xMjUyCiAgOQokTEFTVFNBVkVEQlkKICAxCmV6ZHhmCiAgOQokSU5TQkFTRQogMTAKMC4wCiAyMAowLjAKIDMwCjAuMAogIDkKJEVYVE1JTgogMTAKMWUrMjAKIDIwCjFlKzIwCiAzMAoxZSsyMAogIDkKJEVYVE1BWAogMTAKLTFlKzIwCiAyMAotMWUrMjAKIDMwCi0xZSsyMAogIDkKJExJTU1JTgogMTAKMC4wCiAyMAowLjAKICA5CiRMSU1NQVgKIDEwCjQyMC4wCiAyMAoyOTcuMAogIDkKJE9SVEhPTU9ERQogNzAKMAogIDkKJFJFR0VOTU9ERQogNzAKMQogIDkKJEZJTExNT0RFCiA3MAoxCiAgOQokUVRFWFRNT0RFCiA3MAowCiAgOQokTUlSUlRFWFQKIDcwCjEKICA5CiRMVFNDQUxFCiA0MAoxLjAKICA5CiRBVFRNT0RFCiA3MAoxCiAgOQokVEVYVFNJWkUKIDQwCjIuNQogIDkKJFRSQUNFV0lECiA0MAoxLjAKICA5CiRURVhUU1RZTEUKICA3ClN0YW5kYXJkCiAgOQokQ0xBWUVSCiAgOAowCiAgOQokQ0VMVFlQRQogIDYKQnlMYXllcgogIDkKJENFQ09MT1IKIDYyCjI1NgogIDkKJENFTFRTQ0FMRQogNDAKMS4wCiAgOQokRElTUFNJTEgKIDcwCjAKICA5CiRESU1TQ0FMRQogNDAKMS4wCiAgOQokRElNQVNaCiA0MAoyLjUKICA5CiRESU1FWE8KIDQwCjAuNjI1CiAgOQokRElNRExJCiA0MAozLjc1CiAgOQokRElNUk5ECiA0MAowLjAKICA5CiRESU1ETEUKIDQwCjAuMAogIDkKJERJTUVYRQogNDAKMS4yNQogIDkKJERJTVRQCiA0MAowLjAKICA5CiRESU1UTQogNDAKMC4wCiAgOQokRElNVFhUCiA0MAoyLjUKICA5CiRESU1DRU4KIDQwCjIuNQogIDkKJERJTVRTWgogNDAKMC4wCiAgOQokRElNVE9MCiA3MAowCiAgOQokRElNTElNCiA3MAowCiAgOQokRElNVElICiA3MAowCiAgOQokRElNVE9ICiA3MAowCiAgOQokRElNU0UxCiA3MAowCiAgOQokRElNU0UyCiA3MAowCiAgOQokRElNVEFECiA3MAoxCiAgOQokRElNWklOCiA3MAo4CiAgOQokRElNQkxLCiAgMQoKICA5CiRESU1BU08KIDcwCjEKICA5CiRESU1TSE8KIDcwCjEKICA5CiRESU1QT1NUCiAgMQoKICA5CiRESU1BUE9TVAogIDEKCiAgOQokRElNQUxUCiA3MAowCiAgOQokRElNQUxURAogNzAKMwogIDkKJERJTUFMVEYKIDQwCjAuMDM5MzcwMDc4NzQKICA5CiRESU1MRkFDCiA0MAoxLjAKICA5CiRESU1UT0ZMCiA3MAoxCiAgOQokRElNVFZQCiA0MAowLjAKICA5CiRESU1USVgKIDcwCjAKICA5CiRESU1TT1hECiA3MAowCiAgOQokRElNU0FICiA3MAowCiAgOQokRElNQkxLMQogIDEKCiAgOQokRElNQkxLMgogIDEKCiAgOQokRElNU1RZTEUKICAyCklTTy0yNQogIDkKJERJTUNMUkQKIDcwCjAKICA5CiRESU1DTFJFCiA3MAowCiAgOQokRElNQ0xSVAogNzAKMAogIDkKJERJTVRGQUMKIDQwCjEuMAogIDkKJERJTUdBUAogNDAKMC42MjUKICA5CiRESU1KVVNUCiA3MAowCiAgOQokRElNU0QxCiA3MAowCiAgOQokRElNU0QyCiA3MAowCiAgOQokRElNVE9MSgogNzAKMAogIDkKJERJTVRaSU4KIDcwCjgKICA5CiRESU1BTFRaCiA3MAowCiAgOQokRElNQUxUVFoKIDcwCjAKICA5CiRESU1VUFQKIDcwCjAKICA5CiRESU1ERUMKIDcwCjIKICA5CiRESU1UREVDCiA3MAoyCiAgOQokRElNQUxUVQogNzAKMgogIDkKJERJTUFMVFRECiA3MAozCiAgOQokRElNVFhTVFkKICA3ClN0YW5kYXJkCiAgOQokRElNQVVOSVQKIDcwCjAKICA5CiRESU1BREVDCiA3MAowCiAgOQokRElNQUxUUk5ECiA0MAowLjAKICA5CiRESU1BWklOCiA3MAowCiAgOQokRElNRFNFUAogNzAKNDQKICA5CiRESU1BVEZJVAogNzAKMwogIDkKJERJTUZSQUMKIDcwCjAKICA5CiRESU1MRFJCTEsKICAxCgogIDkKJERJTUxVTklUCiA3MAoyCiAgOQokRElNTFdECiA3MAotMgogIDkKJERJTUxXRQogNzAKLTIKICA5CiRESU1UTU9WRQogNzAKMAogIDkKJERJTUZYTAogNDAKMS4wCiAgOQokRElNRlhMT04KIDcwCjAKICA5CiRESU1KT0dBTkcKIDQwCjAuNzg1Mzk4MTYzMzk3CiAgOQokRElNVEZJTEwKIDcwCjAKICA5CiRESU1URklMTENMUgogNzAKMAogIDkKJERJTUFSQ1NZTQogNzAKMAogIDkKJERJTUxUWVBFCiAgNgoKICA5CiRESU1MVEVYMQogIDYKCiAgOQokRElNTFRFWDIKICA2CgogIDkKJExVTklUUwogNzAKMgogIDkKJExVUFJFQwogNzAKNAogIDkKJFNLRVRDSElOQwogNDAKMS4wCiAgOQokRklMTEVUUkFECiA0MAoxMC4wCiAgOQokQVVOSVRTCiA3MAowCiAgOQokQVVQUkVDCiA3MAoyCiAgOQokTUVOVQogIDEKLgogIDkKJEVMRVZBVElPTgogNDAKMC4wCiAgOQokUEVMRVZBVElPTgogNDAKMC4wCiAgOQokVEhJQ0tORVNTCiA0MAowLjAKICA5CiRMSU1DSEVDSwogNzAKMAogIDkKJENIQU1GRVJBCiA0MAowLjAKICA5CiRDSEFNRkVSQgogNDAKMC4wCiAgOQokQ0hBTUZFUkMKIDQwCjAuMAogIDkKJENIQU1GRVJECiA0MAowLjAKICA5CiRTS1BPTFkKIDcwCjAKICA5CiRURENSRUFURQogNDAKMjQ2MTMwNy40NjAyMzE0ODE2CiAgOQokVERVQ1JFQVRFCiA0MAoyNDU4NTMyLjE1Mzk5Njg5OAogIDkKJFREVVBEQVRFCiA0MAoyNDYxMzA3LjQ2MDIzMTQ4MTYKICA5CiRURFVVUERBVEUKIDQwCjI0NTg1MzIuMTU0NDMxMQogIDkKJFRESU5EV0cKIDQwCjAuMAogIDkKJFREVVNSVElNRVIKIDQwCjAuMAogIDkKJFVTUlRJTUVSCiA3MAoxCiAgOQokQU5HQkFTRQogNTAKMC4wCiAgOQokQU5HRElSCiA3MAowCiAgOQokUERNT0RFCiA3MAowCiAgOQokUERTSVpFCiA0MAowLjAKICA5CiRQTElORVdJRAogNDAKMC4wCiAgOQokU1BMRlJBTUUKIDcwCjAKICA5CiRTUExJTkVUWVBFCiA3MAo2CiAgOQokU1BMSU5FU0VHUwogNzAKOAogIDkKJEhBTkRTRUVECiAgNQp7e0hBTkRTRUVEfX0KICA5CiRTVVJGVEFCMQogNzAKNgogIDkKJFNVUkZUQUIyCiA3MAo2CiAgOQokU1VSRlRZUEUKIDcwCjYKICA5CiRTVVJGVQogNzAKNgogIDkKJFNVUkZWCiA3MAo2CiAgOQokVUNTQkFTRQogIDIKCiAgOQokVUNTTkFNRQogIDIKCiAgOQokVUNTT1JHCiAxMAowLjAKIDIwCjAuMAogMzAKMC4wCiAgOQokVUNTWERJUgogMTAKMS4wCiAyMAowLjAKIDMwCjAuMAogIDkKJFVDU1lESVIKIDEwCjAuMAogMjAKMS4wCiAzMAowLjAKICA5CiRVQ1NPUlRIT1JFRgogIDIKCiAgOQokVUNTT1JUSE9WSUVXCiA3MAowCiAgOQokVUNTT1JHVE9QCiAxMAowLjAKIDIwCjAuMAogMzAKMC4wCiAgOQokVUNTT1JHQk9UVE9NCiAxMAowLjAKIDIwCjAuMAogMzAKMC4wCiAgOQokVUNTT1JHTEVGVAogMTAKMC4wCiAyMAowLjAKIDMwCjAuMAogIDkKJFVDU09SR1JJR0hUCiAxMAowLjAKIDIwCjAuMAogMzAKMC4wCiAgOQokVUNTT1JHRlJPTlQKIDEwCjAuMAogMjAKMC4wCiAzMAowLjAKICA5CiRVQ1NPUkdCQUNLCiAxMAowLjAKIDIwCjAuMAogMzAKMC4wCiAgOQokUFVDU0JBU0UKICAyCgogIDkKJFBVQ1NOQU1FCiAgMgoKICA5CiRQVUNTT1JHCiAxMAowLjAKIDIwCjAuMAogMzAKMC4wCiAgOQokUFVDU1hESVIKIDEwCjEuMAogMjAKMC4wCiAzMAowLjAKICA5CiRQVUNTWURJUgogMTAKMC4wCiAyMAoxLjAKIDMwCjAuMAogIDkKJFBVQ1NPUlRIT1JFRgogIDIKCiAgOQokUFVDU09SVEhPVklFVwogNzAKMAogIDkKJFBVQ1NPUkdUT1AKIDEwCjAuMAogMjAKMC4wCiAzMAowLjAKICA5CiRQVUNTT1JHQk9UVE9NCiAxMAowLjAKIDIwCjAuMAogMzAKMC4wCiAgOQokUFVDU09SR0xFRlQKIDEwCjAuMAogMjAKMC4wCiAzMAowLjAKICA5CiRQVUNTT1JHUklHSFQKIDEwCjAuMAogMjAKMC4wCiAzMAowLjAKICA5CiRQVUNTT1JHRlJPTlQKIDEwCjAuMAogMjAKMC4wCiAzMAowLjAKICA5CiRQVUNTT1JHQkFDSwogMTAKMC4wCiAyMAowLjAKIDMwCjAuMAogIDkKJFVTRVJJMQogNzAKMAogIDkKJFVTRVJJMgogNzAKMAogIDkKJFVTRVJJMwogNzAKMAogIDkKJFVTRVJJNAogNzAKMAogIDkKJFVTRVJJNQogNzAKMAogIDkKJFVTRVJSMQogNDAKMC4wCiAgOQokVVNFUlIyCiA0MAowLjAKICA5CiRVU0VSUjMKIDQwCjAuMAogIDkKJFVTRVJSNAogNDAKMC4wCiAgOQokVVNFUlI1CiA0MAowLjAKICA5CiRXT1JMRFZJRVcKIDcwCjEKICA5CiRTSEFERURHRQogNzAKMwogIDkKJFNIQURFRElGCiA3MAo3MAogIDkKJFRJTEVNT0RFCiA3MAoxCiAgOQokTUFYQUNUVlAKIDcwCjY0CiAgOQokUElOU0JBU0UKIDEwCjAuMAogMjAKMC4wCiAzMAowLjAKICA5CiRQTElNQ0hFQ0sKIDcwCjAKICA5CiRQRVhUTUlOCiAxMAoxZSsyMAogMjAKMWUrMjAKIDMwCjFlKzIwCiAgOQokUEVYVE1BWAogMTAKLTFlKzIwCiAyMAotMWUrMjAKIDMwCi0xZSsyMAogIDkKJFBMSU1NSU4KIDEwCjAuMAogMjAKMC4wCiAgOQokUExJTU1BWAogMTAKNDIwLjAKIDIwCjI5Ny4wCiAgOQokVU5JVE1PREUKIDcwCjAKICA5CiRWSVNSRVRBSU4KIDcwCjEKICA5CiRQTElORUdFTgogNzAKMAogIDkKJFBTTFRTQ0FMRQogNzAKMQogIDkKJFRSRUVERVBUSAogNzAKMzAyMAogIDkKJENNTFNUWUxFCiAgMgpTdGFuZGFyZAogIDkKJENNTEpVU1QKIDcwCjAKICA5CiRDTUxTQ0FMRQogNDAKMjAuMAogIDkKJFBST1hZR1JBUEhJQ1MKIDcwCjEKICA5CiRNRUFTVVJFTUVOVAogNzAKMQogIDkKJENFTFdFSUdIVAozNzAKLTEKICA5CiRFTkRDQVBTCjI4MAowCiAgOQokSk9JTlNUWUxFCjI4MAowCiAgOQokTFdESVNQTEFZCjI5MAowCiAgOQokSU5TVU5JVFMKIDcwCnt7SU5TVU5JVFN9fQogIDkKJEhZUEVSTElOS0JBU0UKICAxCgogIDkKJFNUWUxFU0hFRVQKICAxCgogIDkKJFhFRElUCjI5MAoxCiAgOQokQ0VQU05UWVBFCjM4MAowCiAgOQokUFNUWUxFTU9ERQoyOTAKMQogIDkKJEZJTkdFUlBSSU5UR1VJRAogIDIKezVCQUFDRjIzLTZCNjgtNDVBOC05MERCLUY1NDk5MTYwMTE3OX0KICA5CiRWRVJTSU9OR1VJRAogIDIKezk5MTU3REIyLTkwMDktNDM2RC1BNUU2LTQwODM1NTVGNEQ4NX0KICA5CiRFWFROQU1FUwoyOTAKMQogIDkKJFBTVlBTQ0FMRQogNDAKMC4wCiAgOQokT0xFU1RBUlRVUAoyOTAKMAogIDkKJFNPUlRFTlRTCjI4MAoxMjcKICA5CiRJTkRFWENUTAoyODAKMAogIDkKJEhJREVURVhUCjI4MAoxCiAgOQokWENMSVBGUkFNRQoyOTAKMQogIDkKJEhBTE9HQVAKMjgwCjAKICA5CiRPQlNDT0xPUgogNzAKMjU3CiAgOQokT0JTTFRZUEUKMjgwCjAKICA5CiRJTlRFUlNFQ1RJT05ESVNQTEFZCjI4MAowCiAgOQokSU5URVJTRUNUSU9OQ09MT1IKIDcwCjI1NwogIDkKJERJTUFTU09DCjI4MAoyCiAgOQokUFJPSkVDVE5BTUUKICAxCgogIDkKJENBTUVSQURJU1BMQVkKMjkwCjAKICA5CiRMRU5TTEVOR1RICiA0MAo1MC4wCiAgOQokQ0FNRVJBSEVJR0hUCiA0MAowLjAKICA5CiRTVEVQU1BFUlNFQwogNDAKMjQuMAogIDkKJFNURVBTSVpFCiA0MAoxMDAuMAogIDkKJDNERFdGUFJFQwogNDAKMi4wCiAgOQokUFNPTFdJRFRICiA0MAowLjAwNQogIDkKJFBTT0xIRUlHSFQKIDQwCjAuMDgKICA5CiRMT0ZUQU5HMQogNDAKMS41NzA3OTYzMjY3OTUKICA5CiRMT0ZUQU5HMgogNDAKMS41NzA3OTYzMjY3OTUKICA5CiRMT0ZUTUFHMQogNDAKMC4wCiAgOQokTE9GVE1BRzIKIDQwCjAuMAogIDkKJExPRlRQQVJBTQogNzAKNwogIDkKJExPRlROT1JNQUxTCjI4MAoxCiAgOQokTEFUSVRVREUKIDQwCjM3Ljc5NQogIDkKJExPTkdJVFVERQogNDAKLTEyMi4zOTQKICA5CiROT1JUSERJUkVDVElPTgogNDAKMC4wCiAgOQokVElNRVpPTkUKIDcwCi04MDAwCiAgOQokTElHSFRHTFlQSERJU1BMQVkKMjgwCjEKICA5CiRUSUxFTU9ERUxJR0hUU1lOQ0gKMjgwCjEKICA5CiRDTUFURVJJQUwKMzQ3CjIwCiAgOQokU09MSURISVNUCjI4MAowCiAgOQokU0hPV0hJU1QKMjgwCjEKICA5CiREV0ZGUkFNRQoyODAKMgogIDkKJERHTkZSQU1FCjI4MAoyCiAgOQokUkVBTFdPUkxEU0NBTEUKMjkwCjEKICA5CiRJTlRFUkZFUkVDT0xPUgogNjIKMjU2CiAgOQokQ1NIQURPVwoyODAKMAogIDkKJFNIQURPV1BMQU5FTE9DQVRJT04KIDQwCjAuMAogIDAKRU5EU0VDCiAgMApTRUNUSU9OCiAgMgpDTEFTU0VTCiAgMApDTEFTUwogIDEKQUNEQkRJQ1RJT05BUllXREZMVAogIDIKQWNEYkRpY3Rpb25hcnlXaXRoRGVmYXVsdAogIDMKT2JqZWN0REJYIENsYXNzZXMKIDkwCjAKIDkxCjAKMjgwCjAKMjgxCjAKICAwCkNMQVNTCiAgMQpTVU4KICAyCkFjRGJTdW4KICAzClNDRU5FT0UKIDkwCjExNTMKIDkxCjAKMjgwCjAKMjgxCjAKICAwCkNMQVNTCiAgMQpWSVNVQUxTVFlMRQogIDIKQWNEYlZpc3VhbFN0eWxlCiAgMwpPYmplY3REQlggQ2xhc3NlcwogOTAKNDA5NQogOTEKMAoyODAKMAoyODEKMAogIDAKQ0xBU1MKICAxCk1BVEVSSUFMCiAgMgpBY0RiTWF0ZXJpYWwKICAzCk9iamVjdERCWCBDbGFzc2VzCiA5MAoxMTUzCiA5MQowCjI4MAowCjI4MQowCiAgMApDTEFTUwogIDEKU0NBTEUKICAyCkFjRGJTY2FsZQogIDMKT2JqZWN0REJYIENsYXNzZXMKIDkwCjExNTMKIDkxCjAKMjgwCjAKMjgxCjAKICAwCkNMQVNTCiAgMQpUQUJMRVNUWUxFCiAgMgpBY0RiVGFibGVTdHlsZQogIDMKT2JqZWN0REJYIENsYXNzZXMKIDkwCjQwOTUKIDkxCjAKMjgwCjAKMjgxCjAKICAwCkNMQVNTCiAgMQpNTEVBREVSU1RZTEUKICAyCkFjRGJNTGVhZGVyU3R5bGUKICAzCkFDREJfTUxFQURFUlNUWUxFX0NMQVNTCiA5MAo0MDk1CiA5MQowCjI4MAowCjI4MQowCiAgMApDTEFTUwogIDEKRElDVElPTkFSWVZBUgogIDIKQWNEYkRpY3Rpb25hcnlWYXIKICAzCk9iamVjdERCWCBDbGFzc2VzCiA5MAowCiA5MQowCjI4MAowCjI4MQowCiAgMApDTEFTUwogIDEKQ0VMTFNUWUxFTUFQCiAgMgpBY0RiQ2VsbFN0eWxlTWFwCiAgMwpPYmplY3REQlggQ2xhc3NlcwogOTAKMTE1MgogOTEKMAoyODAKMAoyODEKMAogIDAKQ0xBU1MKICAxCk1FTlRBTFJBWVJFTkRFUlNFVFRJTkdTCiAgMgpBY0RiTWVudGFsUmF5UmVuZGVyU2V0dGluZ3MKICAzClNDRU5FT0UKIDkwCjEwMjQKIDkxCjAKMjgwCjAKMjgxCjAKICAwCkNMQVNTCiAgMQpBQ0RCREVUQUlMVklFV1NUWUxFCiAgMgpBY0RiRGV0YWlsVmlld1N0eWxlCiAgMwpPYmplY3REQlggQ2xhc3NlcwogOTAKMTAyNQogOTEKMAoyODAKMAoyODEKMAogIDAKQ0xBU1MKICAxCkFDREJTRUNUSU9OVklFV1NUWUxFCiAgMgpBY0RiU2VjdGlvblZpZXdTdHlsZQogIDMKT2JqZWN0REJYIENsYXNzZXMKIDkwCjEwMjUKIDkxCjAKMjgwCjAKMjgxCjAKICAwCkNMQVNTCiAgMQpSQVNURVJWQVJJQUJMRVMKICAyCkFjRGJSYXN0ZXJWYXJpYWJsZXMKICAzCklTTQogOTAKMAogOTEKMAoyODAKMAoyODEKMAogIDAKQ0xBU1MKICAxCkFDREJQTEFDRUhPTERFUgogIDIKQWNEYlBsYWNlSG9sZGVyCiAgMwpPYmplY3REQlggQ2xhc3NlcwogOTAKMAogOTEKMAoyODAKMAoyODEKMAogIDAKQ0xBU1MKICAxCkxBWU9VVAogIDIKQWNEYkxheW91dAogIDMKT2JqZWN0REJYIENsYXNzZXMKIDkwCjAKIDkxCjAKMjgwCjAKMjgxCjAKICAwCkVORFNFQwogIDAKU0VDVElPTgogIDIKVEFCTEVTCiAgMApUQUJMRQogIDIKVlBPUlQKICA1CjgKMzMwCjAKMTAwCkFjRGJTeW1ib2xUYWJsZQogNzAKMQogIDAKVlBPUlQKICA1CjIzCjMzMAo4CjEwMApBY0RiU3ltYm9sVGFibGVSZWNvcmQKMTAwCkFjRGJWaWV3cG9ydFRhYmxlUmVjb3JkCiAgMgoqQWN0aXZlCiA3MAowCiAxMAowLjAKIDIwCjAuMAogMTEKMS4wCiAyMQoxLjAKIDEyCjAuMAogMjIKMC4wCiAxMwowLjAKIDIzCjAuMAogMTQKMC41CiAyNAowLjUKIDE1CjAuNQogMjUKMC41CiAxNgowLjAKIDI2CjAuMAogMzYKMS4wCiAxNwowLjAKIDI3CjAuMAogMzcKMC4wCiA0MAoxMDAwLjAKIDQxCjEuMzQKIDQyCjUwLjAKIDQzCjAuMAogNDQKMC4wCiA1MAowLjAKIDUxCjAuMAogNzEKMAogNzIKMTAwMAogNzMKMQogNzQKMwogNzUKMAogNzYKMAogNzcKMAogNzgKMAoyODEKMAogNjUKMAoxNDYKMC4wCiAgMApFTkRUQUIKICAwClRBQkxFCiAgMgpMVFlQRQogIDUKMgozMzAKMAoxMDAKQWNEYlN5bWJvbFRhYmxlCiA3MAozCiAgMApMVFlQRQogIDUKMjQKMzMwCjIKMTAwCkFjRGJTeW1ib2xUYWJsZVJlY29yZAoxMDAKQWNEYkxpbmV0eXBlVGFibGVSZWNvcmQKICAyCkJ5QmxvY2sKIDcwCjAKICAzCgogNzIKNjUKIDczCjAKIDQwCjAuMAogIDAKTFRZUEUKICA1CjI1CjMzMAoyCjEwMApBY0RiU3ltYm9sVGFibGVSZWNvcmQKMTAwCkFjRGJMaW5ldHlwZVRhYmxlUmVjb3JkCiAgMgpCeUxheWVyCiA3MAowCiAgMwoKIDcyCjY1CiA3MwowCiA0MAowLjAKICAwCkxUWVBFCiAgNQoyNgozMzAKMgoxMDAKQWNEYlN5bWJvbFRhYmxlUmVjb3JkCjEwMApBY0RiTGluZXR5cGVUYWJsZVJlY29yZAogIDIKQ29udGludW91cwogNzAKMAogIDMKCiA3Mgo2NQogNzMKMAogNDAKMC4wCiAgMApFTkRUQUIKICAwClRBQkxFCiAgMgpMQVlFUgogIDUKMQozMzAKMAoxMDAKQWNEYlN5bWJvbFRhYmxlCiA3MAp7e0xBWUVSX0NPVU5UfX0KICAwCkxBWUVSCiAgNQoyNwozMzAKMQoxMDAKQWNEYlN5bWJvbFRhYmxlUmVjb3JkCjEwMApBY0RiTGF5ZXJUYWJsZVJlY29yZAogIDIKMAogNzAKMAogNjIKNwogIDYKQ29udGludW91cwozNzAKLTMKMzkwCjEzCjM0NwoyMQogIDAKTEFZRVIKICA1CjI4CjMzMAoxCjEwMApBY0RiU3ltYm9sVGFibGVSZWNvcmQKMTAwCkFjRGJMYXllclRhYmxlUmVjb3JkCiAgMgpEZWZwb2ludHMKIDcwCjAKIDYyCjcKICA2CkNvbnRpbnVvdXMKMjkwCjAKMzcwCi0zCjM5MAoxMwozNDcKMjEKe3tFWFRSQV9MQVlFUlN9fQogIDAKRU5EVEFCCiAgMApUQUJMRQogIDIKU1RZTEUKICA1CjUKMzMwCjAKMTAwCkFjRGJTeW1ib2xUYWJsZQogNzAKMQogIDAKU1RZTEUKICA1CjI5CjMzMAo1CjEwMApBY0RiU3ltYm9sVGFibGVSZWNvcmQKMTAwCkFjRGJUZXh0U3R5bGVUYWJsZVJlY29yZAogIDIKU3RhbmRhcmQKIDcwCjAKIDQwCjAuMAogNDEKMS4wCiA1MAowLjAKIDcxCjAKIDQyCjIuNQogIDMKdHh0CiAgNAoKICAwCkVORFRBQgogIDAKVEFCTEUKICAyClZJRVcKICA1CjcKMzMwCjAKMTAwCkFjRGJTeW1ib2xUYWJsZQogNzAKMAogIDAKRU5EVEFCCiAgMApUQUJMRQogIDIKVUNTCiAgNQo2CjMzMAowCjEwMApBY0RiU3ltYm9sVGFibGUKIDcwCjAKICAwCkVORFRBQgogIDAKVEFCTEUKICAyCkFQUElECiAgNQozCjMzMAowCjEwMApBY0RiU3ltYm9sVGFibGUKIDcwCjMKICAwCkFQUElECiAgNQoyQQozMzAKMwoxMDAKQWNEYlN5bWJvbFRhYmxlUmVjb3JkCjEwMApBY0RiUmVnQXBwVGFibGVSZWNvcmQKICAyCkFDQUQKIDcwCjAKICAwCkFQUElECiAgNQoyRgozMzAKMwoxMDAKQWNEYlN5bWJvbFRhYmxlUmVjb3JkCjEwMApBY0RiUmVnQXBwVGFibGVSZWNvcmQKICAyCkhBVENIQkFDS0dST1VORENPTE9SCiA3MAowCiAgMApBUFBJRAogIDUKMzAKMzMwCjMKMTAwCkFjRGJTeW1ib2xUYWJsZVJlY29yZAoxMDAKQWNEYlJlZ0FwcFRhYmxlUmVjb3JkCiAgMgpFWkRYRgogNzAKMAogIDAKRU5EVEFCCiAgMApUQUJMRQogIDIKRElNU1RZTEUKICA1CjQKMzMwCjAKMTAwCkFjRGJTeW1ib2xUYWJsZQogNzAKMQoxMDAKQWNEYkRpbVN0eWxlVGFibGUKICAwCkRJTVNUWUxFCjEwNQoyQgozMzAKNAoxMDAKQWNEYlN5bWJvbFRhYmxlUmVjb3JkCjEwMApBY0RiRGltU3R5bGVUYWJsZVJlY29yZAogIDIKU3RhbmRhcmQKIDcwCjAKIDQwCjEuMAogNDEKMi41CiA0MgowLjYyNQogNDMKMy43NQogNDQKMS4yNQogNDUKMC4wCiA0NgowLjAKIDQ3CjAuMAogNDgKMC4wCiA0OQoyLjUKMTQwCjIuNQoxNDEKMi41CjE0MgowLjAKMTQzCjAuMDM5MzcwMDc4NzQKMTQ0CjEuMAoxNDUKMC4wCjE0NgoxLjAKMTQ3CjAuNjI1CjE0OAowLjAKIDY5CjAKIDcwCjAKIDcxCjAKIDcyCjAKIDczCjAKIDc0CjAKIDc1CjAKIDc2CjAKIDc3CjEKIDc4CjgKIDc5CjMKMTcwCjAKMTcxCjMKMTcyCjEKMTczCjAKMTc0CjAKMTc1CjAKMTc2CjAKMTc3CjAKMTc4CjAKMTc5CjIKMjcxCjIKMjcyCjIKMjczCjIKMjc0CjMKMjc1CjAKMjc2CjAKMjc3CjIKMjc4CjQ0CjI3OQowCjI4MAowCjI4MQowCjI4MgowCjI4MwowCjI4NAo4CjI4NQowCjI4NgowCjI4OAowCjI4OQozCjI5MAowCjM3MQotMgozNzIKLTIKICAwCkVORFRBQgogIDAKVEFCTEUKICAyCkJMT0NLX1JFQ09SRAogIDUKOQozMzAKMAoxMDAKQWNEYlN5bWJvbFRhYmxlCiA3MAoyCiAgMApCTE9DS19SRUNPUkQKICA1CjE3CjMzMAo5CjEwMApBY0RiU3ltYm9sVGFibGVSZWNvcmQKMTAwCkFjRGJCbG9ja1RhYmxlUmVjb3JkCiAgMgoqTW9kZWxfU3BhY2UKMzQwCjFBCiA3MAowCjI4MAoxCjI4MQowCiAgMApCTE9DS19SRUNPUkQKICA1CjFCCjMzMAo5CjEwMApBY0RiU3ltYm9sVGFibGVSZWNvcmQKMTAwCkFjRGJCbG9ja1RhYmxlUmVjb3JkCiAgMgoqUGFwZXJfU3BhY2UKMzQwCjFFCiA3MAowCjI4MAoxCjI4MQowCiAgMApFTkRUQUIKICAwCkVORFNFQwogIDAKU0VDVElPTgogIDIKQkxPQ0tTCiAgMApCTE9DSwogIDUKMTgKMzMwCjE3CjEwMApBY0RiRW50aXR5CiAgOAowCjEwMApBY0RiQmxvY2tCZWdpbgogIDIKKk1vZGVsX1NwYWNlCiA3MAowCiAxMAowLjAKIDIwCjAuMAogMzAKMC4wCiAgMwoqTW9kZWxfU3BhY2UKICAxCgogIDAKRU5EQkxLCiAgNQoxOQozMzAKMTcKMTAwCkFjRGJFbnRpdHkKICA4CjAKMTAwCkFjRGJCbG9ja0VuZAogIDAKQkxPQ0sKICA1CjFDCjMzMAoxQgoxMDAKQWNEYkVudGl0eQogIDgKMAoxMDAKQWNEYkJsb2NrQmVnaW4KICAyCipQYXBlcl9TcGFjZQogNzAKMAogMTAKMC4wCiAyMAowLjAKIDMwCjAuMAogIDMKKlBhcGVyX1NwYWNlCiAgMQoKICAwCkVOREJMSwogIDUKMUQKMzMwCjFCCjEwMApBY0RiRW50aXR5CiAgOAowCjEwMApBY0RiQmxvY2tFbmQKICAwCkVORFNFQwogIDAKU0VDVElPTgogIDIKRU5USVRJRVMKe3tFTlRJVElFU319CiAgMApFTkRTRUMKICAwClNFQ1RJT04KICAyCk9CSkVDVFMKICAwCkRJQ1RJT05BUlkKICA1CkEKMzMwCjAKMTAwCkFjRGJEaWN0aW9uYXJ5CjI4MQoxCiAgMwpBQ0FEX0NPTE9SCjM1MApCCiAgMwpBQ0FEX0dST1VQCjM1MApDCiAgMwpBQ0FEX0xBWU9VVAozNTAKRAogIDMKQUNBRF9NQVRFUklBTAozNTAKRQogIDMKQUNBRF9NTEVBREVSU1RZTEUKMzUwCkYKICAzCkFDQURfTUxJTkVTVFlMRQozNTAKMTAKICAzCkFDQURfUExPVFNFVFRJTkdTCjM1MAoxMQogIDMKQUNBRF9QTE9UU1RZTEVOQU1FCjM1MAoxMgogIDMKQUNBRF9TQ0FMRUxJU1QKMzUwCjE0CiAgMwpBQ0FEX1RBQkxFU1RZTEUKMzUwCjE1CiAgMwpBQ0FEX1ZJU1VBTFNUWUxFCjM1MAoxNgogIDMKRVpEWEZfTUVUQQozNTAKMkQKICAwCkRJQ1RJT05BUlkKICA1CkIKMzMwCkEKMTAwCkFjRGJEaWN0aW9uYXJ5CjI4MQoxCiAgMApESUNUSU9OQVJZCiAgNQpDCjMzMApBCjEwMApBY0RiRGljdGlvbmFyeQoyODEKMQogIDAKRElDVElPTkFSWQogIDUKRAozMzAKQQoxMDAKQWNEYkRpY3Rpb25hcnkKMjgxCjEKICAzCk1vZGVsCjM1MAoxQQogIDMKTGF5b3V0MQozNTAKMUUKICAwCkRJQ1RJT05BUlkKICA1CkUKMzMwCkEKMTAwCkFjRGJEaWN0aW9uYXJ5CjI4MQoxCiAgMwpCeUJsb2NrCjM1MAoxRgogIDMKQnlMYXllcgozNTAKMjAKICAzCkdsb2JhbAozNTAKMjEKICAwCkRJQ1RJT05BUlkKICA1CkYKMzMwCkEKMTAwCkFjRGJEaWN0aW9uYXJ5CjI4MQoxCiAgMwpTdGFuZGFyZAozNTAKMkMKICAwCkRJQ1RJT05BUlkKICA1CjEwCjMzMApBCjEwMApBY0RiRGljdGlvbmFyeQoyODEKMQogIDMKU3RhbmRhcmQKMzUwCjIyCiAgMApESUNUSU9OQVJZCiAgNQoxMQozMzAKQQoxMDAKQWNEYkRpY3Rpb25hcnkKMjgxCjEKICAwCkFDREJESUNUSU9OQVJZV0RGTFQKICA1CjEyCjMzMApBCjEwMApBY0RiRGljdGlvbmFyeQoyODEKMQogIDMKTm9ybWFsCjM1MAoxMwoxMDAKQWNEYkRpY3Rpb25hcnlXaXRoRGVmYXVsdAozNDAKMTMKICAwCkFDREJQTEFDRUhPTERFUgogIDUKMTMKMzMwCjEyCiAgMApESUNUSU9OQVJZCiAgNQoxNAozMzAKQQoxMDAKQWNEYkRpY3Rpb25hcnkKMjgxCjEKICAwCkRJQ1RJT05BUlkKICA1CjE1CjMzMApBCjEwMApBY0RiRGljdGlvbmFyeQoyODEKMQogIDAKRElDVElPTkFSWQogIDUKMTYKMzMwCkEKMTAwCkFjRGJEaWN0aW9uYXJ5CjI4MQoxCiAgMApMQVlPVVQKICA1CjFBCjMzMApECjEwMApBY0RiUGxvdFNldHRpbmdzCiAgMQoKICA0CkEzCiAgNgoKIDQwCjcuNQogNDEKMjAuMAogNDIKNy41CiA0MwoyMC4wCiA0NAo0MjAuMAogNDUKMjk3LjAKIDQ2CjAuMAogNDcKMC4wCiA0OAowLjAKIDQ5CjAuMAoxNDAKMC4wCjE0MQowLjAKMTQyCjEuMAoxNDMKMS4wCiA3MAoxMDI0CiA3MgoxCiA3MwowCiA3NAo1CiAgNwoKIDc1CjE2CiA3NgowCiA3NwoyCiA3OAozMDAKMTQ3CjEuMAoxNDgKMC4wCjE0OQowLjAKMTAwCkFjRGJMYXlvdXQKICAxCk1vZGVsCiA3MAoxCiA3MQowCiAxMAowLjAKIDIwCjAuMAogMTEKNDIwLjAKIDIxCjI5Ny4wCiAxMgowLjAKIDIyCjAuMAogMzIKMC4wCiAxNAoxZSsyMAogMjQKMWUrMjAKIDM0CjFlKzIwCiAxNQotMWUrMjAKIDI1Ci0xZSsyMAogMzUKLTFlKzIwCjE0NgowLjAKIDEzCjAuMAogMjMKMC4wCiAzMwowLjAKIDE2CjEuMAogMjYKMC4wCiAzNgowLjAKIDE3CjAuMAogMjcKMS4wCiAzNwowLjAKIDc2CjEKMzMwCjE3CiAgMApMQVlPVVQKICA1CjFFCjMzMApECjEwMApBY0RiUGxvdFNldHRpbmdzCiAgMQoKICA0CkEzCiAgNgoKIDQwCjcuNQogNDEKMjAuMAogNDIKNy41CiA0MwoyMC4wCiA0NAo0MjAuMAogNDUKMjk3LjAKIDQ2CjAuMAogNDcKMC4wCiA0OAowLjAKIDQ5CjAuMAoxNDAKMC4wCjE0MQowLjAKMTQyCjEuMAoxNDMKMS4wCiA3MAowCiA3MgoxCiA3MwowCiA3NAo1CiAgNwoKIDc1CjE2CiA3NgowCiA3NwoyCiA3OAozMDAKMTQ3CjEuMAoxNDgKMC4wCjE0OQowLjAKMTAwCkFjRGJMYXlvdXQKICAxCkxheW91dDEKIDcwCjEKIDcxCjEKIDEwCjAuMAogMjAKMC4wCiAxMQo0MjAuMAogMjEKMjk3LjAKIDEyCjAuMAogMjIKMC4wCiAzMgowLjAKIDE0CjFlKzIwCiAyNAoxZSsyMAogMzQKMWUrMjAKIDE1Ci0xZSsyMAogMjUKLTFlKzIwCiAzNQotMWUrMjAKMTQ2CjAuMAogMTMKMC4wCiAyMwowLjAKIDMzCjAuMAogMTYKMS4wCiAyNgowLjAKIDM2CjAuMAogMTcKMC4wCiAyNwoxLjAKIDM3CjAuMAogNzYKMQozMzAKMUIKICAwCk1BVEVSSUFMCiAgNQoxRgoxMDIKe0FDQURfUkVBQ1RPUlMKMzMwCkUKMTAyCn0KMzMwCkUKMTAwCkFjRGJNYXRlcmlhbAogIDEKQnlCbG9jawogIDIKCiA3MAowCiA0MAoxLjAKIDcxCjEKIDQxCjEuMAogOTEKLTEwMjM0MTAxNzcKIDQyCjEuMAogNzIKMQogIDMKCiA3MwoxCiA3NAoxCiA3NQoxCiA0NAowLjUKIDczCjAKIDQ1CjEuMAogNDYKMS4wCiA3NwoxCiAgNAoKIDc4CjEKIDc5CjEKMTcwCjEKIDQ4CjEuMAoxNzEKMQogIDYKCjE3MgoxCjE3MwoxCjE3NAoxCjE0MAoxLjAKMTQxCjEuMAoxNzUKMQogIDcKCjE3NgoxCjE3NwoxCjE3OAoxCjE0MwoxLjAKMTc5CjEKICA4CgoyNzAKMQoyNzEKMQoyNzIKMQoxNDUKMS4wCjE0NgoxLjAKMjczCjEKICA5CgoyNzQKMQoyNzUKMQoyNzYKMQogNDIKMS4wCiA3MgoxCiAgMwoKIDczCjEKIDc0CjEKIDc1CjEKIDk0CjYzCiAgMApNQVRFUklBTAogIDUKMjAKMTAyCntBQ0FEX1JFQUNUT1JTCjMzMApFCjEwMgp9CjMzMApFCjEwMApBY0RiTWF0ZXJpYWwKICAxCkJ5TGF5ZXIKICAyCgogNzAKMAogNDAKMS4wCiA3MQoxCiA0MQoxLjAKIDkxCi0xMDIzNDEwMTc3CiA0MgoxLjAKIDcyCjEKICAzCgogNzMKMQogNzQKMQogNzUKMQogNDQKMC41CiA3MwowCiA0NQoxLjAKIDQ2CjEuMAogNzcKMQogIDQKCiA3OAoxCiA3OQoxCjE3MAoxCiA0OAoxLjAKMTcxCjEKICA2CgoxNzIKMQoxNzMKMQoxNzQKMQoxNDAKMS4wCjE0MQoxLjAKMTc1CjEKICA3CgoxNzYKMQoxNzcKMQoxNzgKMQoxNDMKMS4wCjE3OQoxCiAgOAoKMjcwCjEKMjcxCjEKMjcyCjEKMTQ1CjEuMAoxNDYKMS4wCjI3MwoxCiAgOQoKMjc0CjEKMjc1CjEKMjc2CjEKIDQyCjEuMAogNzIKMQogIDMKCiA3MwoxCiA3NAoxCiA3NQoxCiA5NAo2MwogIDAKTUFURVJJQUwKICA1CjIxCjEwMgp7QUNBRF9SRUFDVE9SUwozMzAKRQoxMDIKfQozMzAKRQoxMDAKQWNEYk1hdGVyaWFsCiAgMQpHbG9iYWwKICAyCgogNzAKMAogNDAKMS4wCiA3MQoxCiA0MQoxLjAKIDkxCi0xMDIzNDEwMTc3CiA0MgoxLjAKIDcyCjEKICAzCgogNzMKMQogNzQKMQogNzUKMQogNDQKMC41CiA3MwowCiA0NQoxLjAKIDQ2CjEuMAogNzcKMQogIDQKCiA3OAoxCiA3OQoxCjE3MAoxCiA0OAoxLjAKMTcxCjEKICA2CgoxNzIKMQoxNzMKMQoxNzQKMQoxNDAKMS4wCjE0MQoxLjAKMTc1CjEKICA3CgoxNzYKMQoxNzcKMQoxNzgKMQoxNDMKMS4wCjE3OQoxCiAgOAoKMjcwCjEKMjcxCjEKMjcyCjEKMTQ1CjEuMAoxNDYKMS4wCjI3MwoxCiAgOQoKMjc0CjEKMjc1CjEKMjc2CjEKIDQyCjEuMAogNzIKMQogIDMKCiA3MwoxCiA3NAoxCiA3NQoxCiA5NAo2MwogIDAKTUxJTkVTVFlMRQogIDUKMjIKMTAyCntBQ0FEX1JFQUNUT1JTCjMzMAoxMAoxMDIKfQozMzAKMTAKMTAwCkFjRGJNbGluZVN0eWxlCiAgMgpTdGFuZGFyZAogNzAKMAogIDMKCiA2MgoyNTYKIDUxCjkwLjAKIDUyCjkwLjAKIDcxCjIKIDQ5CjAuNQogNjIKMjU2CiAgNgpCWUxBWUVSCiA0OQotMC41CiA2MgoyNTYKICA2CkJZTEFZRVIKICAwCk1MRUFERVJTVFlMRQogIDUKMkMKMTAyCntBQ0FEX1JFQUNUT1JTCjMzMApGCjEwMgp9CjMzMApGCjEwMApBY0RiTUxlYWRlclN0eWxlCjE3OQoyCjE3MAoyCjE3MQoxCjE3MgowCiA5MAoyCiA0MAowLjAKIDQxCjAuMAoxNzMKMQogOTEKLTEwNTY5NjQ2MDgKIDkyCi0yCjI5MAoxCiA0MgoyLjAKMjkxCjEKIDQzCjguMAogIDMKU3RhbmRhcmQKIDQ0CjQuMAozMDAKCjM0MgoyOQoxNzQKMQoxNzUKMQoxNzYKMAoxNzgKMQogOTMKLTEwNTY5NjQ2MDgKIDQ1CjQuMAoyOTIKMAoyOTcKMAogNDYKNC4wCiA5NAotMTA1Njk2NDYwOAogNDcKMS4wCiA0OQoxLjAKMTQwCjEuMAoyOTQKMQoxNDEKMC4wCjE3NwowCjE0MgoxLjAKMjk1CjAKMjk2CjAKMTQzCjMuNzUKMjcxCjAKMjcyCjkKMjczCjkKICAwCkRJQ1RJT05BUlkKICA1CjJECjMzMApBCjEwMApBY0RiRGljdGlvbmFyeQoyODAKMQoyODEKMQogIDMKQ1JFQVRFRF9CWV9FWkRYRgozNTAKMkUKICAzCldSSVRURU5fQllfRVpEWEYKMzUwCjMxCiAgMApESUNUSU9OQVJZVkFSCiAgNQoyRQozMzAKMkQKMTAwCkRpY3Rpb25hcnlWYXJpYWJsZXMKMjgwCjAKICAxCjEuNC40IEAgMjAyNi0wOS0yM1QxNTowMjo0NC43MDQyMjMrMDA6MDAKICAwCkRJQ1RJT05BUllWQVIKICA1CjMxCjMzMAoyRAoxMDAKRGljdGlvbmFyeVZhcmlhYmxlcwoyODAKMAogIDEKMS40LjQgQCAyMDI2LTA5LTIzVDE1OjAyOjQ0LjcwNDczMyswMDowMAogIDAKRU5EU0VDCiAgMApFT0YK</textarea>
+<script>
+const DEFAULT = {
+  wallT:0.30, leanOver:0.10, rowA:9.00, rowB:9.00, channelW:1.20, channelL:1.20, slopeH:1.30,
+  colors:{roof:'#dde6f2',wall:'#5c88b2',floor:'#86b7d4',lean:'#f0c8a0',slope:'#cc9a52',rebarFloorBottom:'#bc6c25',rebarFloorTop:'#bc6c25',rebarRoofBottom:'#69519d',rebarRoofTop:'#69519d',rebarWallInner:'#aa394b',rebarWallOuter:'#aa394b'},
+  bays:[
+    {name:'T01 / T09',w:3.00},{name:'T02 / T03',w:10.00},{name:'T04',w:4.50},{name:'T05',w:9.50},{name:'T06',w:9.00},{name:'T08 / M-01',w:2.00}
+  ],
+  cells:[
+    [
+      {name:'T01',floorTop:-7.00,floorT:0.30,roofTop:0.00,roofT:0.15,leanT:0.10,roof:true,slope:false},
+      {name:'T02',floorTop:-5.00,floorT:0.30,roofTop:0.00,roofT:0.15,leanT:0.10,roof:true,slope:false},
+      {name:'T04-A',floorTop:-5.00,floorT:0.30,roofTop:0.00,roofT:0.15,leanT:0.10,roof:true,slope:false},
+      {name:'T05-A',floorTop:-5.00,floorT:0.30,roofTop:0.00,roofT:0.15,leanT:0.10,roof:true,slope:false},
+      {name:'T06-A',floorTop:-5.00,floorT:0.30,roofTop:0.00,roofT:0.15,leanT:0.10,roof:true,slope:true},
+      {name:'T08',floorTop:-1.35,floorT:0.20,roofTop:0.00,roofT:0.15,leanT:0.10,roof:true,slope:false}
+    ],
+    [
+      {name:'T09',floorTop:-3.20,floorT:0.30,roofTop:0.00,roofT:0.15,leanT:0.10,roof:true,slope:false},
+      {name:'T03',floorTop:-5.00,floorT:0.30,roofTop:0.00,roofT:0.15,leanT:0.10,roof:true,slope:false},
+      {name:'T04-B',floorTop:-5.00,floorT:0.30,roofTop:0.00,roofT:0.15,leanT:0.10,roof:true,slope:false},
+      {name:'T05-B',floorTop:-5.00,floorT:0.30,roofTop:0.00,roofT:0.15,leanT:0.10,roof:true,slope:false},
+      {name:'T06-B',floorTop:-5.00,floorT:0.30,roofTop:0.00,roofT:0.15,leanT:0.10,roof:true,slope:true},
+      {name:'M-01',floorTop:-1.35,floorT:0.20,roofTop:0.00,roofT:0.15,leanT:0.10,roof:true,slope:false}
+    ]
+  ]
+};
+let state = JSON.parse(JSON.stringify(DEFAULT));
+let migratedPrior=false,migratedBeforeR10=false;
+try{
+  const current=localStorage.getItem('AS_LPG_TANK_R15');
+  const prior=current?null:(localStorage.getItem('AS_LPG_TANK_R14')||localStorage.getItem('AS_LPG_TANK_R13')||localStorage.getItem('AS_LPG_TANK_R12')||localStorage.getItem('AS_LPG_TANK_R11')||localStorage.getItem('AS_LPG_TANK_R10')||localStorage.getItem('AS_LPG_TANK_R9')||localStorage.getItem('AS_LPG_TANK_R8')||localStorage.getItem('AS_LPG_TANK_R7')||localStorage.getItem('AS_LPG_TANK_R6')||localStorage.getItem('AS_LPG_TANK_R5')||localStorage.getItem('AS_LPG_TANK_R4'));
+  migratedPrior=!!prior;
+  migratedBeforeR10=!!prior&&!localStorage.getItem('AS_LPG_TANK_R14')&&!localStorage.getItem('AS_LPG_TANK_R13')&&!localStorage.getItem('AS_LPG_TANK_R12')&&!localStorage.getItem('AS_LPG_TANK_R11')&&!localStorage.getItem('AS_LPG_TANK_R10');
+  if(current||prior){
+    const saved=JSON.parse(current||prior);state=Object.assign(state,saved);
+    if(prior&&!Number.isFinite(saved.channelL))state.channelL=state.channelW;
+    if(migratedBeforeR10&&saved.leanOver===0.30)state.leanOver=0.10;
+  }
+  // Với cấu hình cũ, chỉ cập nhật M-01 nếu còn đúng cao độ/chiều dày mặc định cũ.
+  if(prior&&state.cells[1][5].floorTop===-3.30&&state.cells[1][5].floorT===0.30){
+    state.cells[1][5].floorTop=-1.35;state.cells[1][5].floorT=0.20;
+  }
+}catch(e){}
+// Cấu hình cũ dùng một màu chung cho mỗi cấu kiện; giữ màu đó ở lớp gần người quan sát.
+if(state.colors){
+  for(const [oldKey,newKey] of [['rebarFloor','rebarFloorBottom'],['rebarRoof','rebarRoofTop'],['rebarWall','rebarWallInner']]){
+    if(state.colors[oldKey]&&!state.colors[newKey])state.colors[newKey]=state.colors[oldKey];
+  }
+}
+state.colors={...DEFAULT.colors,...state.colors};
+for(const layer of Object.keys(DEFAULT.colors))if(!/^#[0-9a-f]{6}$/i.test(state.colors[layer]))state.colors[layer]=DEFAULT.colors[layer];
+// Chỉ đổi màu mẫu cũ; màu thép người dùng đã chỉnh vẫn được giữ.
+if(migratedPrior)for(const [first,second,previous] of [
+  ['rebarFloorBottom','rebarFloorTop','#ef6925'],
+  ['rebarRoofBottom','rebarRoofTop','#504ed1'],
+  ['rebarWallInner','rebarWallOuter','#db3d46']
+])if(state.colors[first].toLowerCase()===previous&&state.colors[second].toLowerCase()===previous){
+  state.colors[first]=DEFAULT.colors[first];state.colors[second]=DEFAULT.colors[second];
+}
+for(const [first,second] of [['rebarFloorBottom','rebarFloorTop'],['rebarRoofBottom','rebarRoofTop'],['rebarWallInner','rebarWallOuter']])state.colors[second]=state.colors[first];
+const REBAR_DEFAULT={floor:{mode:'both',dia:12,spacing:200,cover:35},roof:{mode:'both',dia:10,spacing:200,cover:30},wall:{mode:'boundary',dia:12,spacing:200,cover:35}};
+// Bản R9 mặc định không có thép: bật thép mẫu khi nâng cấp, trừ khi người dùng đã bố trí riêng.
+if(migratedBeforeR10&&state.cells.every(row=>row.every(cell=>['floor','roof','wall'].every(k=>(cell.rebar?.[k]?.mode||'none')==='none')))){
+  for(const row of state.cells)for(const cell of row)delete cell.rebar;
+}
+function normalizeRebar(){for(const row of state.cells)for(const cell of row){
+  const old=cell.rebar||{};cell.rebar={};
+  for(const layer of ['floor','roof','wall'])cell.rebar[layer]={...REBAR_DEFAULT[layer],...old[layer]};
+}}
+normalizeRebar();
+let selectedCell=null;
+
+const $=id=>document.getElementById(id);
+function num(v,d=0){const x=parseFloat(v); return Number.isFinite(x)?x:d}
+function esc(s){return String(s).replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[m]))}
+const REBAR_LAYERS=['rebarFloorBottom','rebarFloorTop','rebarRoofBottom','rebarRoofTop','rebarWallInner','rebarWallOuter'];
+const COLOR_LAYERS=['roof','wall','floor','lean','slope',...REBAR_LAYERS];
+function updateColorUI(){
+  for(const layer of COLOR_LAYERS){
+    const hex=state.colors[layer],key=layer[0].toUpperCase()+layer.slice(1),n=parseInt(hex.slice(1),16);
+    if($('color'+key))$('color'+key).value=hex;
+    if($('rgb'+key))$('rgb'+key).textContent=`RGB ${n>>16}, ${(n>>8)&255}, ${n&255}`;
+    const legend=document.querySelector(`[data-legend-layer="${layer}"]`);if(legend)legend.style.backgroundColor=hex;
+    if(materials[layer])materials[layer].color.set(hex);
+    if(materials[layer+'Guide'])materials[layer+'Guide'].color.set(hex);
+  }
+  document.querySelectorAll('[data-steel-color]').forEach(el=>el.value=state.colors[STEEL_PAIRS[el.dataset.steelColor][0]]);
+  document.querySelector('[data-slope-preview]').setAttribute('fill',state.colors.slope);
+}
+const STEEL_PAIRS={floor:['rebarFloorBottom','rebarFloorTop'],roof:['rebarRoofBottom','rebarRoofTop'],wall:['rebarWallInner','rebarWallOuter']};
+
+function calcLayout(){
+  const t=state.wallT;
+  const xs=[]; let x=t;
+  for(let i=0;i<state.bays.length;i++){ const x0=x, x1=x+state.bays[i].w; xs.push({x0,x1}); x=x1+t; }
+  const L=x;
+  const ya={y0:t,y1:t+state.rowA};
+  const yb={y0:ya.y1+t,y1:ya.y1+t+state.rowB};
+  const B=yb.y1+t;
+  return {xs,ys:[ya,yb],L,B};
+}
+function slabExtents(X,Y,lay){
+  const t=state.wallT;
+  return {
+    x0:X.x0<=t+1e-8?0:X.x0-t/2,
+    x1:X.x1>=lay.L-t-1e-8?lay.L:X.x1+t/2,
+    y0:Y.y0<=t+1e-8?0:Y.y0-t/2,
+    y1:Y.y1>=lay.B-t-1e-8?lay.B:Y.y1+t/2
+  };
+}
+function roofExtents(S,r,c,lay){
+  return {
+    x0:c===0?0:S.x0,x1:c===lay.xs.length-1?lay.L:S.x1,
+    y0:r===0?0:S.y0,y1:r===1?lay.B:S.y1
+  };
+}
+function wallLongExtents(X,lay){
+  const t=state.wallT;
+  return {x0:Math.max(0,X.x0-t/2), x1:Math.min(lay.L,X.x1+t/2)};
+}
+function wallShortExtents(Y,lay){
+  const t=state.wallT;
+  return {y0:Math.max(0,Y.y0-t/2), y1:Math.min(lay.B,Y.y1+t/2)};
+}
+
+function selectCell(r,c){
+  selectedCell=[r,c];const o=state.cells[r][c];
+  $('chooseHint').hidden=true;$('selectedCell').hidden=false;
+  $('selectedTitle').textContent=`${o.name} · Dải ${r===0?'A':'B'} · Khoang ${c+1}`;
+  document.querySelectorAll('[data-pick]').forEach(el=>{const active=+el.dataset.r===r&&+el.dataset.c===c;el.classList.toggle('active',active);el.setAttribute('aria-pressed',String(active))});
+  document.querySelectorAll('.cellcard').forEach(el=>el.hidden=!(+el.dataset.r===r&&+el.dataset.c===c));
+  updateStats();
+}
+function renderForm(){
+  $('wallT').value=state.wallT; $('leanOver').value=state.leanOver; $('rowA').value=state.rowA; $('rowB').value=state.rowB; $('channelW').value=state.channelW; $('channelL').value=state.channelL; $('slopeH').value=state.slopeH;
+  updateColorUI();
+  const choices=$('cellChoices'),cb=$('cellsBox');choices.innerHTML='';cb.innerHTML='';
+  for(let r=0;r<2;r++) for(let c=0;c<state.bays.length;c++){
+    const o=state.cells[r][c]; const btn=document.createElement('button');btn.type='button';btn.dataset.pick='1';btn.dataset.r=r;btn.dataset.c=c;btn.textContent=o.name;btn.onclick=()=>selectCell(r,c);choices.appendChild(btn);
+    const d=document.createElement('div');d.className='cellcard';d.dataset.r=r;d.dataset.c=c;d.hidden=true;
+    d.innerHTML=`<div class="cellhead"><b>${r===0?'Dải A':'Dải B'} • ${c+1}</b><input aria-label="Tên hạng mục" data-cell="name" data-r="${r}" data-c="${c}" value="${esc(o.name)}"></div>
+    <div class="grid2" style="margin-bottom:9px"><div><label>Tên chuỗi khoang X</label><input data-bay-name="${c}" value="${esc(state.bays[c].name)}"></div><div><label>Chiều dài thông thủy X (m)</label><input type="number" step="0.1" min="0.1" data-bay-w="${c}" value="${state.bays[c].w}"></div></div>
+    <div class="cellgrid">
+      <div><label>Z mặt đáy</label><input type="number" step="0.05" data-cell="floorTop" data-r="${r}" data-c="${c}" value="${o.floorTop}"></div>
+      <div><label>d đáy</label><input type="number" step="0.05" min="0.05" data-cell="floorT" data-r="${r}" data-c="${c}" value="${o.floorT}"></div>
+      <div><label>d lót</label><input type="number" step="0.05" min="0" data-cell="leanT" data-r="${r}" data-c="${c}" value="${o.leanT}"></div>
+      <div><label>Z đỉnh nắp</label><input type="number" step="0.05" data-cell="roofTop" data-r="${r}" data-c="${c}" value="${o.roofTop}"></div>
+      <div><label>d nắp</label><input type="number" step="0.05" min="0.05" data-cell="roofT" data-r="${r}" data-c="${c}" value="${o.roofT}"></div>
+      <div><label>Kiểu</label><select data-cell="slope" data-r="${r}" data-c="${c}"><option value="0" ${!o.slope?'selected':''}>Đáy phẳng</option><option value="1" ${o.slope?'selected':''}>Tạo dốc T06</option></select></div>
+    </div><label class="checkline"><input type="checkbox" data-cell="roof" data-r="${r}" data-c="${c}" ${o.roof?'checked':''}> Có nắp BTCT cho ô này</label>`;
+    cb.appendChild(d);
+  }
+  bindDynamic();if(selectedCell)selectCell(...selectedCell);updateStats();
+}
+function bindDynamic(){
+  document.querySelectorAll('[data-bay-w]').forEach(el=>el.oninput=()=>{state.bays[+el.dataset.bayW].w=Math.max(.1,num(el.value,.1));document.querySelectorAll(`[data-bay-w="${el.dataset.bayW}"]`).forEach(peer=>{if(peer!==el)peer.value=el.value});scheduleBuild()});
+  document.querySelectorAll('[data-bay-name]').forEach(el=>el.oninput=()=>{state.bays[+el.dataset.bayName].name=el.value;document.querySelectorAll(`[data-bay-name="${el.dataset.bayName}"]`).forEach(peer=>{if(peer!==el)peer.value=el.value});scheduleBuild()});
+  document.querySelectorAll('[data-cell]').forEach(el=>el.oninput=()=>{
+    const r=+el.dataset.r,c=+el.dataset.c,k=el.dataset.cell;
+    if(k==='name'){state.cells[r][c][k]=el.value;document.querySelector(`[data-pick][data-r="${r}"][data-c="${c}"]`).textContent=el.value;$('selectedTitle').textContent=`${el.value} · Dải ${r===0?'A':'B'} · Khoang ${c+1}`;}
+    else if(k==='roof') state.cells[r][c][k]=el.checked;
+    else if(k==='slope') state.cells[r][c][k]=el.value==='1';
+    else state.cells[r][c][k]=num(el.value,state.cells[r][c][k]);
+    scheduleBuild();
+  });
+}
+function steelTargets(){return $('steelScope').value==='selected'&&selectedCell?[state.cells[selectedCell[0]][selectedCell[1]]]:state.cells.flat()}
+function steelChecks(layer,mode){return layer==='wall'?[mode==='inside'||mode==='boundary',mode==='outside'||mode==='boundary']:[mode==='bottom'||mode==='both',mode==='top'||mode==='both']}
+function steelMode(layer,first,second){if(first&&second)return layer==='wall'?'boundary':'both';if(first)return layer==='wall'?'inside':'bottom';if(second)return layer==='wall'?'outside':'top';return 'none'}
+function renderSteelDialog(){
+  const targets=steelTargets(),sample=targets[0];
+  $('steelScopeHint').textContent=$('steelScope').value==='selected'&&selectedCell?`Đang chỉnh ô ${sample.name}.`:`Đang chỉnh cả ${targets.length} ô; thay đổi thông số nào sẽ áp dụng thông số đó cho tất cả ô.`;
+  $('steelCards').innerHTML=['floor','roof','wall'].map(layer=>{
+    const b=sample.rebar[layer],[first,second]=steelChecks(layer,b.mode);
+    const title={floor:'Đáy',roof:'Nắp',wall:'Tường'}[layer];
+    const labels=layer==='wall'?['Mặt trong','Mặt ngoài (tường biên)']:['Lớp dưới','Lớp trên'];
+    return `<div class="steel-card" data-steel-card="${layer}"><h3>Thép ${title}</h3>
+      <label class="checkline"><input type="checkbox" data-steel-side="0" ${first?'checked':''}> ${labels[0]}</label>
+      <label class="checkline"><input type="checkbox" data-steel-side="1" ${second?'checked':''}> ${labels[1]}</label>
+      <div class="color-row"><label for="steelColor${title}">Màu chung hai lớp</label><input id="steelColor${title}" type="color" data-steel-color="${layer}" aria-label="Màu thép ${title.toLowerCase()}"></div>
+      <div class="steel-numbers"><label>Ø (mm)<input type="number" min="6" max="40" step="1" data-steel-number="dia" value="${b.dia}"></label>
+      <label>Khoảng cách a (mm)<input type="number" min="50" step="10" data-steel-number="spacing" value="${b.spacing}"></label>
+      <label>Lớp bảo vệ (mm)<input type="number" min="10" step="5" data-steel-number="cover" value="${b.cover}"></label></div></div>`;
+  }).join('');
+  updateColorUI();
+}
+function closeSteelDialog(){
+  $('steelOverlay').hidden=true;$('steelEditBtn').setAttribute('aria-expanded','false');$('steelEditBtn').focus();
+}
+$('steelEditBtn').onclick=()=>{
+  const selectedOption=$('steelScope').querySelector('option[value="selected"]');selectedOption.disabled=!selectedCell;
+  selectedOption.textContent=selectedCell?`Ô ${state.cells[selectedCell[0]][selectedCell[1]].name}`:'Ô đang chọn';
+  $('steelScope').value=selectedCell?'selected':'all';renderSteelDialog();
+  $('steelOverlay').hidden=false;$('steelEditBtn').setAttribute('aria-expanded','true');$('steelScope').focus();
+};
+$('steelScope').onchange=renderSteelDialog;
+$('steelCards').addEventListener('change',event=>{
+  const input=event.target,card=input.closest('[data-steel-card]');if(!card)return;
+  const layer=card.dataset.steelCard;
+  if(input.dataset.steelSide!==undefined){
+    const sides=card.querySelectorAll('[data-steel-side]'),mode=steelMode(layer,sides[0].checked,sides[1].checked);
+    for(const cell of steelTargets())cell.rebar[layer].mode=mode;
+  }else if(input.dataset.steelNumber){
+    const field=input.dataset.steelNumber,min=field==='dia'?6:field==='spacing'?50:10;
+    const value=Math.max(min,num(input.value,steelTargets()[0].rebar[layer][field]));input.value=value;
+    for(const cell of steelTargets())cell.rebar[layer][field]=value;
+  }else return;
+  scheduleBuild();
+});
+$('steelCards').addEventListener('input',event=>{
+  const input=event.target,layer=input.dataset.steelColor;if(!layer)return;
+  for(const colorKey of STEEL_PAIRS[layer])state.colors[colorKey]=input.value.toLowerCase();
+  updateColorUI();
+});
+$('steelOk').onclick=()=>{localStorage.setItem('AS_LPG_TANK_R15',JSON.stringify(state));closeSteelDialog()};
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!$('steelOverlay').hidden)closeSteelDialog()});
+['wallT','leanOver','rowA','rowB','channelW','channelL','slopeH'].forEach(id=>{
+  $(id).addEventListener('input',()=>{state[id]=Math.max(id==='rowA'||id==='rowB'?0.5:id==='channelW'||id==='channelL'?0.1:0,num($(id).value,state[id]));scheduleBuild()});
+});
+
+let scene,camera,renderer,controls,root,dimGroup,groups={},materials={},dxfParts=[],solidBoxes=[],rebarSegments=[],rebarWarnings=[]; let timer,xrayOn=false;
+let leanReport={contact:0,total:0,levelJumps:0,blocked:[],issues:[]};
+function init3D(){
+  scene=new THREE.Scene(); scene.background=new THREE.Color(0xf3f6f9);
+  camera=new THREE.PerspectiveCamera(42,1,.01,500); camera.up.set(0,0,1);
+  renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true}); renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.outputEncoding=THREE.sRGBEncoding; $('view').appendChild(renderer.domElement);
+  controls=new THREE.OrbitControls(camera,renderer.domElement); controls.enableDamping=true; controls.dampingFactor=.07; controls.screenSpacePanning=true; controls.mouseButtons={LEFT:THREE.MOUSE.ROTATE,MIDDLE:THREE.MOUSE.DOLLY,RIGHT:THREE.MOUSE.PAN};
+  scene.add(new THREE.HemisphereLight(0xffffff,0x61758b,1.1)); const dl=new THREE.DirectionalLight(0xffffff,.75);dl.position.set(-20,-30,50);scene.add(dl);
+  const axes=new THREE.AxesHelper(3); scene.add(axes);
+  window.addEventListener('resize',resize); resize(); animate();
+}
+function resize(){const v=$('view');const w=v.clientWidth,h=v.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
+function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}
+function scheduleBuild(){clearTimeout(timer);timer=setTimeout(()=>{buildModel();updateStats()},90)}
+
+function makeMaterials(){
+  materials={
+    roof:new THREE.MeshPhongMaterial({color:state.colors.roof,transparent:true,opacity:xrayOn?Math.min(.12,num($('roofOp').value,.30)):num($('roofOp').value,.30),side:THREE.DoubleSide,depthWrite:false}),
+    wall:new THREE.MeshPhongMaterial({color:state.colors.wall,side:THREE.DoubleSide,transparent:xrayOn,opacity:xrayOn?.20:1,depthWrite:!xrayOn}),
+    floor:new THREE.MeshPhongMaterial({color:state.colors.floor,side:THREE.DoubleSide}),
+    lean:new THREE.MeshPhongMaterial({color:state.colors.lean,side:THREE.DoubleSide}),
+    slope:new THREE.MeshPhongMaterial({color:state.colors.slope,side:THREE.DoubleSide}),
+    ...Object.fromEntries(REBAR_LAYERS.map(layer=>[layer,new THREE.MeshBasicMaterial({color:state.colors[layer],depthTest:false,depthWrite:false})])),
+    ...Object.fromEntries(REBAR_LAYERS.map(layer=>[layer+'Guide',new THREE.LineBasicMaterial({color:state.colors[layer],depthTest:false,depthWrite:false})]))
+  }
+}
+function layerGroup(layer){if(!groups[layer]){groups[layer]=new THREE.Group();groups[layer].name=layer;root.add(groups[layer])}return groups[layer]}
+function spaced(a,b,spacing){
+  if(b<=a+1e-8)return [];
+  const n=Math.max(1,Math.ceil((b-a)/spacing));
+  return Array.from({length:n+1},(_,i)=>a+(b-a)*i/n);
+}
+function pushBar(layer,name,a,b,dia){
+  if(a.some(v=>!Number.isFinite(v))||b.some(v=>!Number.isFinite(v)))return;
+  if(Math.hypot(b[0]-a[0],b[1]-a[1],b[2]-a[2])<1e-6)return;
+  rebarSegments.push({layer,name,a,b,dia});
+}
+function barSettingsValid(o,layer,thickness){
+  const b=o.rebar[layer],dia=num(b.dia),spacing=num(b.spacing),cover=num(b.cover);
+  if(b.mode==='none')return false;
+  if(dia<6||spacing<50||cover<10){rebarWarnings.push(`${o.name}: kiểm tra Ø, bước hoặc lớp bảo vệ thép ${layer==='floor'?'đáy':layer==='roof'?'nắp':'tường'}`);return false}
+  const layers=b.mode==='both'||b.mode==='boundary'?2:1;
+  const required=(2*cover+(layers===2?4:2)*dia)/1000;
+  if(thickness+1e-8<required){rebarWarnings.push(`${o.name}: ${layer==='floor'?'đáy':layer==='roof'?'nắp':'tường'} quá mỏng cho thép đã chọn (cần ≥ ${required.toFixed(3)} m)`);return false}
+  return true;
+}
+function addSlabRebar(o,S,layer,z0,z1){
+  const b=o.rebar[layer];if(!barSettingsValid(o,layer,z1-z0))return;
+  const dia=b.dia/1000,off=(b.cover+b.dia/2)/1000,step=b.spacing/1000;
+  const x0=S.x0+off,x1=S.x1-off,y0=S.y0+off,y1=S.y1-off;
+  if(x1<=x0||y1<=y0){rebarWarnings.push(`${o.name}: không đủ diện tích đặt thép ${layer==='floor'?'đáy':'nắp'}`);return}
+  const places=b.mode==='both'?['bottom','top']:[b.mode];
+  for(const place of places){
+    const target=(layer==='floor'?'rebarFloor':'rebarRoof')+(place==='bottom'?'Bottom':'Top');
+    const low=place==='bottom',base=low?z0+off:z1-off,sign=low?1:-1;
+    for(const y of spaced(y0,y1,step))pushBar(target,`${o.name}_${place}_X`,[x0,y,base],[x1,y,base],b.dia);
+    for(const x of spaced(x0,x1,step))pushBar(target,`${o.name}_${place}_Y`,[x,y0,base+sign*dia],[x,y1,base+sign*dia],b.dia);
+  }
+}
+function addWallFaceBars(o,b,face,axis,coord,innerSign,run0,run1,z0,z1){
+  const dia=b.dia/1000,off=(b.cover+b.dia/2)/1000,step=b.spacing/1000;
+  const pV=coord+innerSign*off,pH=coord+innerSign*(off+dia);
+  const a=run0+off,bb=run1-off,zA=z0+off,zB=z1-off;
+  if(bb<=a||zB<=zA)return;
+  const make=(p,s,z)=>axis==='x'?[p,s,z]:[s,p,z];
+  const target=face.endsWith('_NGOAI')?'rebarWallOuter':'rebarWallInner';
+  for(const s of spaced(a,bb,step))pushBar(target,`${o.name}_${face}_DUNG`,make(pV,s,zA),make(pV,s,zB),b.dia);
+  for(const z of spaced(zA,zB,step))pushBar(target,`${o.name}_${face}_NGANG`,make(pH,a,z),make(pH,bb,z),b.dia);
+}
+function addWallRebar(o,X,Y,r,c,lay){
+  const b=o.rebar.wall;if(!barSettingsValid(o,'wall',state.wallT))return;
+  const z0=o.floorTop,z1=o.roof?o.roofTop-o.roofT:o.roofTop;
+  if(z1-z0<.1){rebarWarnings.push(`${o.name}: tường không đủ chiều cao bố trí thép`);return}
+  const t=state.wallT;
+  if(b.mode!=='outside'){
+    addWallFaceBars(o,b,'TRAI_TRONG','x',X.x0,-1,Y.y0,Y.y1,z0,z1);
+    addWallFaceBars(o,b,'PHAI_TRONG','x',X.x1,1,Y.y0,Y.y1,z0,z1);
+    addWallFaceBars(o,b,'DUOI_TRONG','y',Y.y0,-1,X.x0,X.x1,z0,z1);
+    addWallFaceBars(o,b,'TREN_TRONG','y',Y.y1,1,X.x0,X.x1,z0,z1);
+  }
+  if(b.mode==='boundary'||b.mode==='outside'){
+    if(c===0)addWallFaceBars(o,b,'TRAI_NGOAI','x',X.x0-t,1,Y.y0,Y.y1,z0,z1);
+    if(c===lay.xs.length-1)addWallFaceBars(o,b,'PHAI_NGOAI','x',X.x1+t,-1,Y.y0,Y.y1,z0,z1);
+    if(r===0)addWallFaceBars(o,b,'DUOI_NGOAI','y',Y.y0-t,1,X.x0,X.x1,z0,z1);
+    if(r===1)addWallFaceBars(o,b,'TREN_NGOAI','y',Y.y1+t,-1,X.x0,X.x1,z0,z1);
+  }
+}
+function buildRebar(lay){
+  for(let r=0;r<2;r++)for(let c=0;c<state.bays.length;c++){
+    const o=state.cells[r][c],X=lay.xs[c],Y=lay.ys[r],S=slabExtents(X,Y,lay);
+    addSlabRebar(o,S,'floor',o.floorTop-o.floorT,o.floorTop);
+    if(o.roof){const R=roofExtents(S,r,c,lay);addSlabRebar(o,R,'roof',o.roofTop-o.roofT,o.roofTop)}
+    else if(o.rebar.roof.mode!=='none')rebarWarnings.push(`${o.name}: đã chọn thép nắp nhưng ô không có nắp`);
+    addWallRebar(o,X,Y,r,c,lay);
+  }
+  // Thanh thép là trụ 3D dùng chung hình học theo từng màu/Ø; vẫn giữ tim thanh để xuất DXF.
+  const batches=new Map();
+  for(const bar of rebarSegments){const key=`${bar.layer}:${bar.dia}`;if(!batches.has(key))batches.set(key,[]);batches.get(key).push(bar)}
+  const up=new THREE.Vector3(0,1,0),a=new THREE.Vector3(),b=new THREE.Vector3(),direction=new THREE.Vector3(),part=new THREE.Object3D();
+  for(const [key,bars] of batches){
+    const layer=bars[0].layer,dia=bars[0].dia;
+    const mesh=new THREE.InstancedMesh(new THREE.CylinderGeometry(1,1,1,6),materials[layer],bars.length);
+    mesh.name=key;mesh.frustumCulled=false;mesh.renderOrder=80;
+    bars.forEach((bar,i)=>{
+      a.set(...bar.a);b.set(...bar.b);direction.subVectors(b,a);
+      const length=direction.length();part.position.copy(a).add(b).multiplyScalar(.5);
+      part.quaternion.setFromUnitVectors(up,direction.multiplyScalar(1/length));
+      part.scale.set(dia/2000,length,dia/2000);part.updateMatrix();mesh.setMatrixAt(i,part.matrix);
+    });
+    mesh.instanceMatrix.needsUpdate=true;layerGroup(layer).add(mesh);
+  }
+  // Đường tim dày một pixel giúp quan sát được thép khi zoom toàn bộ bể.
+  for(const layer of REBAR_LAYERS){
+    const positions=[];
+    for(const bar of rebarSegments)if(bar.layer===layer)positions.push(...bar.a,...bar.b);
+    if(!positions.length)continue;
+    const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));
+    const line=new THREE.LineSegments(geometry,materials[layer+'Guide']);line.renderOrder=81;layerGroup(layer).add(line);
+  }
+}
+function addEdges(mesh){const e=new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry,18),new THREE.LineBasicMaterial({color:0x26445f,transparent:true,opacity:.65}));mesh.add(e)}
+function pushBoxDXF(layer,name,x0,x1,y0,y1,z0,z1){
+  const v=[[x0,y0,z0],[x1,y0,z0],[x1,y1,z0],[x0,y1,z0],[x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1]];
+  const f=[[v[0],v[1],v[2],v[3]],[v[4],v[7],v[6],v[5]],[v[0],v[4],v[5],v[1]],[v[1],v[5],v[6],v[2]],[v[2],v[6],v[7],v[3]],[v[3],v[7],v[4],v[0]]];
+  dxfParts.push({layer,name,faces:f});
+}
+function addPlanGuideRect(x0,x1,y0,y1,z=.015,color=0x1c4f80){
+  const pts=[new THREE.Vector3(x0,y0,z),new THREE.Vector3(x1,y0,z),new THREE.Vector3(x1,y0,z),new THREE.Vector3(x1,y1,z),new THREE.Vector3(x1,y1,z),new THREE.Vector3(x0,y1,z),new THREE.Vector3(x0,y1,z),new THREE.Vector3(x0,y0,z)];
+  const g=new THREE.BufferGeometry().setFromPoints(pts);
+  const l=new THREE.LineSegments(g,new THREE.LineBasicMaterial({color,transparent:true,opacity:.95,depthTest:false}));
+  l.renderOrder=90; layerGroup('guide').add(l);
+}
+function addBox(layer,name,x0,x1,y0,y1,z0,z1,adj){
+  if(x1<=x0||y1<=y0||z1<=z0)return;
+  adj=adj||{};
+  const vx0=x0+(adj.x0||0), vx1=x1+(adj.x1||0), vy0=y0+(adj.y0||0), vy1=y1+(adj.y1||0), vz0=z0+(adj.z0||0), vz1=z1+(adj.z1||0);
+  const g=new THREE.BoxGeometry(vx1-vx0,vy1-vy0,vz1-vz0);const m=new THREE.Mesh(g,materials[layer]);m.position.set((vx0+vx1)/2,(vy0+vy1)/2,(vz0+vz1)/2);m.userData={layer,name};layerGroup(layer).add(m);
+  if(layer==='wall'&&xrayOn)m.renderOrder=5;
+  solidBoxes.push({x0:vx0,x1:vx1,y0:vy0,y1:vy1,z0:vz0,z1:vz1,layer,name});
+  pushBoxDXF(layer,name,vx0,vx1,vy0,vy1,vz0,vz1);
+}
+function boxesClash(a,b){
+  return Math.min(a.x1,b.x1)-Math.max(a.x0,b.x0)>1e-8 &&
+         Math.min(a.y1,b.y1)-Math.max(a.y0,b.y0)>1e-8 &&
+         Math.min(a.z1,b.z1)-Math.max(a.z0,b.z0)>1e-8;
+}
+function firstLeanObstacle(box){return solidBoxes.find(other=>boxesClash(box,other))}
+function checkLeanElevation(lay){
+  const report={contact:0,total:0,levelJumps:0,blocked:[],issues:[]};
+  for(let r=0;r<2;r++)for(let c=0;c<state.bays.length;c++){
+    const o=state.cells[r][c],S=slabExtents(lay.xs[c],lay.ys[r],lay);
+    const samePlan=b=>Math.abs(b.x0-S.x0)<1e-7&&Math.abs(b.x1-S.x1)<1e-7&&Math.abs(b.y0-S.y0)<1e-7&&Math.abs(b.y1-S.y1)<1e-7;
+    const pad=solidBoxes.find(b=>b.layer==='lean'&&samePlan(b)&&Math.abs(b.z1-(o.floorTop-o.floorT))<1e-7);
+    const slab=solidBoxes.find(b=>b.layer==='floor'&&samePlan(b)&&Math.abs(b.z1-o.floorTop)<1e-7);
+    if(o.leanT<=0)continue;
+    report.total++;
+    if(pad&&slab&&Math.abs(pad.z1-slab.z0)<1e-7)report.contact++;
+    else report.issues.push(`${o.name}: mặt lót không tiếp xúc đáy`);
+    if(pad){
+      const clash=solidBoxes.find(b=>b!==pad&&b.layer!=='lean'&&boxesClash(pad,b));
+      if(clash)report.issues.push(`${o.name}: lõi lót giao ${clash.name}`);
+    }
+    if(c<state.bays.length-1&&Math.abs((o.floorTop-o.floorT)-(state.cells[r][c+1].floorTop-state.cells[r][c+1].floorT))>1e-7)report.levelJumps++;
+    if(r===0&&Math.abs((o.floorTop-o.floorT)-(state.cells[1][c].floorTop-state.cells[1][c].floorT))>1e-7)report.levelJumps++;
+  }
+  return report;
+}
+function addLeanOverhang(lay){
+  const over=Math.max(0,num(state.leanOver,0));
+  leanReport=checkLeanElevation(lay);if(!over)return;
+  // Mỗi dải nhô cả cạnh phải thông suốt. Nếu gặp đáy/tường/lót ở bất kỳ
+  // đoạn nào theo chiều dài cạnh thì hủy toàn bộ phần nhô ở hướng đó.
+  for(let r=0;r<2;r++)for(let c=0;c<state.bays.length;c++){
+    const o=state.cells[r][c];if(o.leanT<=0)continue;
+    const S=slabExtents(lay.xs[c],lay.ys[r],lay),z1=o.floorTop-o.floorT,z0=z1-o.leanT;
+    const xMin=c===0?-over:S.x0-over,xMax=c===lay.xs.length-1?lay.L+over:S.x1+over;
+    const yMin=r===0?-over:S.y0-over,yMax=r===1?lay.B+over:S.y1+over;
+    const sides={
+      trai:{x0:xMin,x1:S.x0,y0:S.y0,y1:S.y1,z0,z1},
+      phai:{x0:S.x1,x1:xMax,y0:S.y0,y1:S.y1,z0,z1},
+      duoi:{x0:S.x0,x1:S.x1,y0:yMin,y1:S.y0,z0,z1},
+      tren:{x0:S.x0,x1:S.x1,y0:S.y1,y1:yMax,z0,z1}
+    };
+    const approved={};
+    for(const [side,strip] of Object.entries(sides)){
+      const obstacle=firstLeanObstacle(strip);
+      approved[side]=!obstacle;
+      if(obstacle)leanReport.blocked.push({r,c,name:o.name,side,obstacle:obstacle.name,layer:obstacle.layer});
+    }
+    for(const [side,strip] of Object.entries(sides)){
+      if(approved[side])addBox('lean',`LOT_NHO_${o.name}_${side}`,strip.x0,strip.x1,strip.y0,strip.y1,z0,z1);
+    }
+    // Góc chỉ được nhô khi cả hai cạnh kề đều thông và chính góc đó không vướng.
+    const corners=[
+      ['trai','duoi',xMin,S.x0,yMin,S.y0],['trai','tren',xMin,S.x0,S.y1,yMax],
+      ['phai','duoi',S.x1,xMax,yMin,S.y0],['phai','tren',S.x1,xMax,S.y1,yMax]
+    ];
+    for(const [sx,sy,x0,x1,y0,y1] of corners){
+      if(!approved[sx]||!approved[sy])continue;
+      const corner={x0,x1,y0,y1,z0,z1};
+      if(!firstLeanObstacle(corner))addBox('lean',`LOT_GOC_${o.name}_${sx}_${sy}`,x0,x1,y0,y1,z0,z1);
+    }
+  }
+}
+function addRampPatch(name,outer0,outer1,inner0,inner1,z,h){
+  if(h<=0)return;
+  // Tứ giác mặt bằng theo thứ tự ngược chiều kim đồng hồ. Hai đỉnh ngoài
+  // cao h, hai đỉnh trong nằm ở mặt đáy. Các cạnh xiên chạm mặt bên cạnh.
+  const a=[...outer0,z],b=[...outer1,z],c=[...inner1,z],d=[...inner0,z];
+  const ah=[...outer0,z+h],bh=[...outer1,z+h];
+  const faces=[
+    [ah,bh,c,d],  // mặt dốc trên
+    [a,d,c,b],    // mặt đáy
+    [a,b,bh,ah]   // mép ngoài; hai mặt cạnh chéo là mặt trong, không xuất trùng
+  ];
+  const pos=[];faces.forEach(face=>{if(face.length===3){pos.push(...face[0],...face[1],...face[2])}else{pos.push(...face[0],...face[1],...face[2],...face[0],...face[2],...face[3])}});
+  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));geo.computeVertexNormals();const m=new THREE.Mesh(geo,materials.slope);m.userData={layer:'slope',name};addEdges(m);layerGroup('slope').add(m);dxfParts.push({layer:'slope',name,faces});
+}
+function addFourWaySlope(o,X,Y){
+  const x0=X.x0,x1=X.x1,y0=Y.y0,y1=Y.y1;
+  const w=Math.max(.05,Math.min(num(state.channelW,1.2),(y1-y0)*.7));
+  const l=Math.max(.05,Math.min(num(state.channelL,1.2),(x1-x0)*.7));
+  const ix0=(x0+x1-l)/2,ix1=ix0+l,iy0=(y0+y1-w)/2,iy1=iy0+w;
+  const z=o.floorTop,h=state.slopeH;
+  // Bốn miền có mặt bằng không giao thể tích. Mỗi cặp miền tiếp nhau từ
+  // góc ngoài đến góc của kênh giữa và cùng cao độ trên cạnh tiếp giáp.
+  addRampPatch(`DOC_Y0_${o.name}`,[x0,y0],[x1,y0],[ix0,iy0],[ix1,iy0],z,h);
+  addRampPatch(`DOC_X1_${o.name}`,[x1,y0],[x1,y1],[ix1,iy0],[ix1,iy1],z,h);
+  addRampPatch(`DOC_Y1_${o.name}`,[x1,y1],[x0,y1],[ix1,iy1],[ix0,iy1],z,h);
+  addRampPatch(`DOC_X0_${o.name}`,[x0,y1],[x0,y0],[ix0,iy1],[ix0,iy0],z,h);
+}
+function addWallTile(name,r,c,x0,x1,y0,y1){
+  const o=state.cells[r][c];
+  // Bản đáy phủ toàn bộ chân tường ngoài và tới tim các vách trong.
+  // Mọi đoạn tường/vách đặt trên mặt bản đáy tương ứng, không xuống dưới đáy.
+  const low=o.floorTop;
+  const high=o.roof?o.roofTop-o.roofT:o.roofTop;
+  addBox('wall',name,x0,x1,y0,y1,low,high);
+}
+function buildModel(){
+  if(root){scene.remove(root);disposeTree(root)}; if(dimGroup){scene.remove(dimGroup);disposeTree(dimGroup)};
+  root=new THREE.Group();scene.add(root);groups={};dxfParts=[];solidBoxes=[];rebarSegments=[];rebarWarnings=[];makeMaterials(); const lay=calcLayout(); const t=state.wallT;
+  // slabs, lean concrete and sloped fill by cell
+  for(let r=0;r<2;r++)for(let c=0;c<state.bays.length;c++){
+    const o=state.cells[r][c],X=lay.xs[c],Y=lay.ys[r], S=slabExtents(X,Y,lay);
+    // Ô đáy phủ trọn chân tường ngoài; ô kề nhau chạm tại tim vách trong.
+    addBox('floor',`DAY_${o.name}`,S.x0,S.x1,S.y0,S.y1,o.floorTop-o.floorT,o.floorTop);
+    // Lõi lót nằm dưới đáy; phần nhô được tính sau khi đã dựng hết tường.
+    addBox('lean',`LOT_${o.name}`,S.x0,S.x1,S.y0,S.y1,o.floorTop-o.floorT-o.leanT,o.floorTop-o.floorT);
+    if(o.roof){const R=roofExtents(S,r,c,lay);addBox('roof',`NAP_${o.name}`,R.x0,R.x1,R.y0,R.y1,o.roofTop-o.roofT,o.roofTop)}
+    if(o.slope)addFourWaySlope(o,X,Y);
+  }
+  // Dải tường Y chạy xuyên suốt giao điểm. Chia tại tim vách X và giữa bề dày
+  // tường Y, để mỗi mảnh thuộc đúng một ô và không có hai khối cùng thể tích.
+  const yBands=[
+    [0,t/2,0,false,'Y0_NGOAI'],[t/2,t,0,true,'Y0_TRONG'],
+    [lay.ys[0].y1,lay.ys[0].y1+t/2,0,true,'YGIUA_A'],
+    [lay.ys[1].y0-t/2,lay.ys[1].y0,1,true,'YGIUA_B'],
+    [lay.B-t,lay.B-t/2,1,true,'YMAX_TRONG'],[lay.B-t/2,lay.B,1,false,'YMAX_NGOAI']
+  ];
+  const xTiles=[[0,t/2,0,false]];
+  lay.xs.forEach((X,c)=>xTiles.push([Math.max(0,X.x0-t/2),Math.min(lay.L,X.x1+t/2),c,true]));
+  xTiles.push([lay.L-t/2,lay.L,lay.xs.length-1,false]);
+  for(const [x0,x1,c,hasX] of xTiles)for(const [y0,y1,r,hasY,tag] of yBands)
+    addWallTile(`TUONG_${tag}_${c+1}_${hasX?'O':'GOC'}`,r,c,x0,x1,y0,y1);
+  // Tường X chỉ đi qua hai khoảng thông thủy Y, chạm vào tường Y tại mặt biên.
+  const xBands=[[0,t/2,0,false,'X0_NGOAI'],[t/2,t,0,true,'X0_TRONG']];
+  for(let c=0;c<lay.xs.length-1;c++){
+    const mid=(lay.xs[c].x1+lay.xs[c+1].x0)/2;
+    xBands.push([lay.xs[c].x1,mid,c,true,`X${c+1}_TRAI`]);
+    xBands.push([mid,lay.xs[c+1].x0,c+1,true,`X${c+1}_PHAI`]);
+  }
+  xBands.push([lay.L-t,lay.L-t/2,lay.xs.length-1,true,'XMAX_TRONG']);
+  xBands.push([lay.L-t/2,lay.L,lay.xs.length-1,false,'XMAX_NGOAI']);
+  for(const [x0,x1,c,hasSlab,tag] of xBands)for(let r=0;r<2;r++){
+    const Y=lay.ys[r];addWallTile(`TUONG_${tag}_R${r+1}`,r,c,x0,x1,Y.y0,Y.y1);
+  }
+  addLeanOverhang(lay);
+  buildRebar(lay);
+  applyVisibility();applyExplode();buildDims(lay);updateStats(); if(!window.__fitted){fitModel();window.__fitted=true}
+}
+function disposeTree(o){o.traverse(x=>{if(x.geometry)x.geometry.dispose();if(x.material){if(Array.isArray(x.material))x.material.forEach(m=>m.dispose());else x.material.dispose()}})}
+function buildDims(lay){
+  dimGroup=new THREE.Group();scene.add(dimGroup);const mat=new THREE.LineBasicMaterial({color:0x1d466d,transparent:true,opacity:.8});
+  const z=.35,off=1.15;
+  function line(a,b){const g=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(...a),new THREE.Vector3(...b)]);dimGroup.add(new THREE.Line(g,mat))}
+  line([0,-off,z],[lay.L,-off,z]);line([0,-off-.18,z],[0,-off+.18,z]);line([lay.L,-off-.18,z],[lay.L,-off+.18,z]);dimGroup.add(textSprite(`L = ${lay.L.toFixed(2)} m`,[lay.L/2,-off,z+.18]));
+  line([lay.L+off,0,z],[lay.L+off,lay.B,z]);line([lay.L+off-.18,0,z],[lay.L+off+.18,0,z]);line([lay.L+off-.18,lay.B,z],[lay.L+off+.18,lay.B,z]);dimGroup.add(textSprite(`B = ${lay.B.toFixed(2)} m`,[lay.L+off,lay.B/2,z+.18]));
+  for(let r=0;r<2;r++)for(let c=0;c<state.bays.length;c++){const X=lay.xs[c],Y=lay.ys[r],o=state.cells[r][c];dimGroup.add(textSprite(o.name,[(X.x0+X.x1)/2,(Y.y0+Y.y1)/2,.45],.74));}
+}
+function textSprite(txt,pos,scale=.9){
+  const cv=document.createElement('canvas');cv.width=512;cv.height=128;const c=cv.getContext('2d');c.clearRect(0,0,512,128);c.font='700 48px Segoe UI,Arial';c.textAlign='center';c.textBaseline='middle';c.lineWidth=10;c.strokeStyle='rgba(255,255,255,.92)';c.strokeText(txt,256,64);c.fillStyle='#0d2a4a';c.fillText(txt,256,64);
+  const tx=new THREE.CanvasTexture(cv);tx.minFilter=THREE.LinearFilter;const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tx,transparent:true,depthTest:false}));sp.position.set(...pos);sp.scale.set(4*scale,1*scale,1);sp.renderOrder=99;return sp;
+}
+function applyVisibility(){if(!root)return;for(const [layer,id] of [...[['roof','visRoof'],['wall','visWall'],['floor','visFloor'],['lean','visLean'],['slope','visSlope']],...REBAR_LAYERS.map(layer=>[layer,'visRebar'])])if(groups[layer])groups[layer].visible=$(id).checked;if(dimGroup)dimGroup.visible=$('visLabel').checked}
+function applyExplode(){if(!root)return;const e=num($('explode').value,0);$('explodeVal').textContent=e.toFixed(2);if(groups.roof)groups.roof.position.z=e*1.20;if(groups.wall)groups.wall.position.z=0;if(groups.floor)groups.floor.position.z=-e*.35;if(groups.lean)groups.lean.position.z=-e*.75;if(groups.slope)groups.slope.position.z=-e*.08;for(const layer of REBAR_LAYERS){if(!groups[layer])continue;groups[layer].position.z=layer.startsWith('rebarRoof')?e*1.20:layer.startsWith('rebarFloor')?-e*.35:0}}
+function updateStats(){
+  const l=calcLayout();$('statL').textContent=l.L.toFixed(2);$('statB').textContent=l.B.toFixed(2);$('statLean').textContent=`${(l.L+2*state.leanOver).toFixed(2)}×${(l.B+2*state.leanOver).toFixed(2)}`;
+  const issues=[];
+  for(let r=0;r<2;r++)for(let c=0;c<state.bays.length;c++){
+    const o=state.cells[r][c],ceiling=o.roof?o.roofTop-o.roofT:o.roofTop;
+    if(o.floorTop>=ceiling)issues.push(`${o.name}: đáy chạm/vượt đỉnh dưới nắp`);
+    if(o.slope&&o.floorTop+state.slopeH>ceiling)issues.push(`${o.name}: BT tạo dốc chạm/vượt nắp`);
+  }
+  issues.push(...leanReport.issues,...rebarWarnings);
+  const e=$('geometryStatus');e.classList.toggle('warning',!!issues.length);
+  const selected=selectedCell?leanReport.blocked.filter(b=>b.r===selectedCell[0]&&b.c===selectedCell[1]):[];
+  const names={trai:'trái',phai:'phải',duoi:'dưới',tren:'trên'};
+  const layerNames={wall:'tường',floor:'bản đáy',lean:'BT lót',roof:'nắp'};
+  const blockedText=selected.length?` Ô đang chọn: giữ nguyên mép ${selected.map(b=>`${names[b.side]} (vướng ${layerNames[b.layer]||'cấu kiện'}${/^(DAY|LOT)_/.test(b.obstacle)?' '+b.obstacle.replace(/^(DAY|LOT)_/,''):''})`).join(', ')}.`:'';
+  const lead=issues.length?`Cần kiểm tra: ${issues.join('; ')}.`:'Đáy, dốc và nắp không xung đột.';
+  e.textContent=`${lead} BT lót tiếp xúc đáy ${leanReport.contact}/${leanReport.total} ô; ${leanReport.levelJumps} ranh thay đổi cao độ; ${leanReport.blocked.length} cạnh không mở rộng do vướng cấu kiện. ${rebarSegments.length} thanh thép hiển thị 3D, xuất DXF theo tim.${blockedText}`;
+}
+
+function modelBox(){const box=new THREE.Box3().setFromObject(root);return box}
+function fitModel(mode='iso'){
+  const box=modelBox();if(box.isEmpty())return;const s=new THREE.Vector3(),c=new THREE.Vector3();box.getSize(s);box.getCenter(c);const d=Math.max(s.x,s.y,s.z)*1.25;controls.target.copy(c);
+  if(mode==='top')camera.position.set(c.x,c.y,c.z+d*1.2);
+  else if(mode==='front')camera.position.set(c.x,-d,c.z+s.z*.25);
+  else if(mode==='side')camera.position.set(c.x+d,c.y,c.z+s.z*.25);
+  else camera.position.set(c.x+d*.8,c.y-d*.9,c.z+d*.65);
+  camera.near=.01;camera.far=1000;camera.updateProjectionMatrix();controls.update();
+}
+
+function dxfTag(code,value){return `${String(code).padStart(3,' ')}\n${value}\n`}
+function dxfEntity(type,layer,subclass,handle){return dxfTag(0,type)+dxfTag(5,handle)+dxfTag(330,'17')+dxfTag(100,'AcDbEntity')+dxfTag(8,layer)+dxfTag(100,subclass)}
+function dxfPoint(i,v,scale){return dxfTag(10+i,(v[0]*scale).toFixed(3))+dxfTag(20+i,(v[1]*scale).toFixed(3))+dxfTag(30+i,(v[2]*scale).toFixed(3))}
+function dxfFace(face,layer,scale,handle){
+  const v=face.length===3?[face[0],face[1],face[2],face[2]]:face;
+  let s=dxfEntity('3DFACE',layer,'AcDbFace',handle);
+  for(let i=0;i<4;i++)s+=dxfPoint(i,v[i],scale);
+  return s;
+}
+function steelLayer(bar){
+  const base={rebarFloorBottom:'THEP_DAY_DUOI',rebarFloorTop:'THEP_DAY_TREN',rebarRoofBottom:'THEP_NAP_DUOI',rebarRoofTop:'THEP_NAP_TREN',rebarWallInner:'THEP_TUONG_TRONG',rebarWallOuter:'THEP_TUONG_NGOAI'}[bar.layer];
+  return `${base}_D${String(bar.dia).replace('.','_')}`;
+}
+function dxfBar(bar,scale,handle){
+  const a=bar.a,b=bar.b;
+  return dxfEntity('LINE',steelLayer(bar),'AcDbLine',handle)+dxfPoint(0,a,scale)+dxfPoint(1,b,scale);
+}
+function safeLayer(layer){return ({roof:'NAP_BTCT',wall:'TUONG_BTCT',floor:'DAY_BTCT',lean:'BT_LOT',slope:'BT_TAO_DOC'})[layer]||'MODEL'}
+function dxfLayerRecord(name,aci,color,handle){
+  let s=dxfTag(0,'LAYER')+dxfTag(5,handle)+dxfTag(330,'1')+dxfTag(100,'AcDbSymbolTableRecord')+dxfTag(100,'AcDbLayerTableRecord');
+  s+=dxfTag(2,name)+dxfTag(70,0)+dxfTag(62,aci);
+  if(color)s+=dxfTag(420,parseInt(color.slice(1),16));
+  return s+dxfTag(6,'Continuous')+dxfTag(370,-3)+dxfTag(390,'13')+dxfTag(347,'21');
+}
+function exportDXF(){
+  const sc=num($('dxfUnit').value,1000),unit=sc===1000?4:6;
+  const steelLayers=new Map(rebarSegments.map(b=>[steelLayer(b),b.layer]));
+  // Dùng toàn bộ HEADER/TABLES/BLOCKS/OBJECTS do ezdxf tạo, chỉ điền layer và hình học thay đổi.
+  let nextHandle=0x10000;const handle=()=>(nextHandle++).toString(16).toUpperCase();
+  const lays=[['NAP_BTCT',8,'roof'],['TUONG_BTCT',5,'wall'],['DAY_BTCT',3,'floor'],['BT_LOT',30,'lean'],['BT_TAO_DOC',2,'slope'],['TEXT',7,null]];
+  for(const [name,layer] of steelLayers)lays.push([name,layer.startsWith('rebarFloor')?30:layer.startsWith('rebarRoof')?200:1,layer]);
+  const records=lays.map(([n,c,layer])=>dxfLayerRecord(n,c,layer?state.colors[layer]:null,handle())).join('');
+  const entities=[];
+  dxfParts.forEach(p=>p.faces.forEach(f=>entities.push(dxfFace(f,safeLayer(p.layer),sc,handle()))));
+  rebarSegments.forEach(bar=>entities.push(dxfBar(bar,sc,handle())));
+  const lay=calcLayout();for(let r=0;r<2;r++)for(let c=0;c<state.bays.length;c++){
+    const X=lay.xs[c],Y=lay.ys[r],o=state.cells[r][c],x=(X.x0+X.x1)/2*sc,y=(Y.y0+Y.y1)/2*sc,z=.35*sc,h=sc===1000?300:.30;
+    const title=o.name.replace(/[^A-Za-z0-9_\-\/ ]/g,'');
+    entities.push(dxfEntity('TEXT','TEXT','AcDbText',handle())+dxfPoint(0,[x/sc,y/sc,z/sc],sc)+dxfTag(40,h)+dxfTag(1,title)+dxfTag(72,1)+dxfPoint(1,[x/sc,y/sc,z/sc],sc)+dxfTag(100,'AcDbText')+dxfTag(73,2));
+  }
+  const template=atob($('cadTemplate').textContent.trim());
+  const fields={HANDSEED:nextHandle.toString(16).toUpperCase(),INSUNITS:String(unit),LAYER_COUNT:String(2+lays.length),EXTRA_LAYERS:records.trimEnd(),ENTITIES:entities.join('').trimEnd()};
+  let dxf=template;
+  for(const [key,value] of Object.entries(fields))dxf=dxf.replace(`{{${key}}}`,value);
+  downloadBlob(dxf.replace(/\n/g,'\r\n'),'AS_CumBe_LPG_3D_R15.dxf','application/dxf');
+}
+function downloadBlob(txt,name,type){const b=new Blob([txt],{type});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},100)}
+
+$('fitBtn').onclick=()=>fitModel('iso');$('isoBtn').onclick=()=>fitModel('iso');$('topBtn').onclick=()=>fitModel('top');$('frontBtn').onclick=()=>fitModel('front');$('sideBtn').onclick=()=>fitModel('side');
+document.querySelectorAll('[data-color-layer]').forEach(input=>input.oninput=()=>{
+  state.colors[input.dataset.colorLayer]=input.value.toLowerCase();updateColorUI();
+});
+function applyXray(){
+  $('xrayBtn').textContent=xrayOn?'X-ray: Bật':'X-ray: Tắt';
+  $('xrayBtn').classList.toggle('primary',xrayOn);
+  $('xrayBtn').setAttribute('aria-pressed',String(xrayOn));
+  if(!materials.wall)return;
+  materials.wall.transparent=xrayOn;materials.wall.opacity=xrayOn?.20:1;materials.wall.depthWrite=!xrayOn;materials.wall.needsUpdate=true;
+  materials.roof.opacity=xrayOn?Math.min(.12,num($('roofOp').value,.30)):num($('roofOp').value,.30);
+  if(groups.wall)groups.wall.traverse(obj=>{if(obj.isMesh)obj.renderOrder=xrayOn?5:0});
+}
+$('xrayBtn').onclick=()=>{xrayOn=!xrayOn;applyXray()};
+['visRoof','visWall','visFloor','visLean','visSlope','visLabel','visRebar'].forEach(id=>$(id).onchange=applyVisibility);
+$('explode').oninput=applyExplode;$('roofOp').oninput=()=>{$('roofOpVal').textContent=num($('roofOp').value,.3).toFixed(2);if(materials.roof)materials.roof.opacity=xrayOn?Math.min(.12,num($('roofOp').value,.3)):num($('roofOp').value,.3)};
+$('exportDXF').onclick=exportDXF;$('exportJSON').onclick=()=>downloadBlob(JSON.stringify(state,null,2),'AS_CumBe_LPG_3D_R15.json','application/json');
+$('saveCfg').onclick=()=>{localStorage.setItem('AS_LPG_TANK_R15',JSON.stringify(state));$('saveCfg').textContent='Đã lưu';setTimeout(()=>$('saveCfg').textContent='Lưu cấu hình',1100)};
+$('resetCfg').onclick=()=>{state=JSON.parse(JSON.stringify(DEFAULT));normalizeRebar();selectedCell=null;closeSteelDialog();localStorage.setItem('AS_LPG_TANK_R15',JSON.stringify(state));$('selectedCell').hidden=true;$('chooseHint').hidden=false;renderForm();buildModel();fitModel('iso')};
+
+renderForm();init3D();buildModel();
+</script>
+</body>
+</html>
