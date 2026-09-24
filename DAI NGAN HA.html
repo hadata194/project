@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galaxy — 100% Procedural</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #000;
+    font-family: 'Segoe UI', system-ui, sans-serif; }
+  canvas { display: block; cursor: grab; }
+  canvas:active { cursor: grabbing; }
+
+  #loading {
+    position: fixed; inset: 0; display: flex; flex-direction: column; gap: 20px;
+    align-items: center; justify-content: center;
+    background: #000; color: #b0d0ff; font-family: monospace; font-size: 12px;
+    letter-spacing: 5px; z-index: 100; transition: opacity 1s ease;
+  }
+  #loading .spinner {
+    width: 56px; height: 56px; border-radius: 50%;
+    border: 2px solid rgba(120, 180, 255, 0.15);
+    border-top-color: #8fdcff;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  #info {
+    position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+    color: rgba(180, 210, 255, 0.4);
+    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    pointer-events: none; z-index: 10;
+    animation: fade 6s ease-in-out infinite;
+  }
+  @keyframes fade { 0%,100% { opacity: .3; } 50% { opacity: .85; } }
+
+  #title {
+    position: fixed; top: 24px; left: 24px;
+    color: rgba(200, 220, 255, 0.7);
+    font-size: 13px; letter-spacing: 8px; text-transform: uppercase;
+    font-weight: 300; z-index: 10; pointer-events: none;
+  }
+  #title::after {
+    content: ''; display: block; height: 1px; width: 60px;
+    background: linear-gradient(90deg, rgba(140,200,255,.8), transparent);
+    margin-top: 8px;
+  }
+  #perf {
+    position: fixed; top: 24px; left: 50%; transform: translateX(-50%);
+    color: rgba(180, 210, 255, 0.5);
+    font-family: monospace; font-size: 11px; letter-spacing: 2px;
+    z-index: 10; pointer-events: none;
+  }
+
+  .settings-btn {
+    position: fixed; top: 20px; right: 20px; z-index: 50;
+    width: 48px; height: 48px; border-radius: 14px;
+    background: rgba(10, 15, 35, 0.75);
+    border: 1px solid rgba(130, 190, 255, 0.3);
+    color: #a0d8ff; font-size: 22px; cursor: pointer;
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    transition: all .25s ease;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 24px rgba(80, 160, 255, 0.15);
+  }
+  .settings-btn:hover {
+    background: rgba(25, 40, 80, 0.9);
+    border-color: rgba(160, 220, 255, 0.7);
+    box-shadow: 0 6px 32px rgba(100, 190, 255, 0.4);
+    transform: translateY(-2px) rotate(60deg);
+  }
+  .settings-btn:active { transform: scale(0.95) rotate(60deg); }
+
+  .settings-panel {
+    position: fixed; top: 80px; right: 20px; z-index: 49;
+    width: 300px; max-height: calc(100vh - 110px);
+    background: rgba(8, 12, 28, 0.85);
+    border: 1px solid rgba(130, 190, 255, 0.22);
+    border-radius: 16px;
+    backdrop-filter: blur(20px) saturate(1.4);
+    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    color: #d8e8ff;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.7), 0 0 40px rgba(80, 140, 255, 0.1);
+    transform: translateX(calc(100% + 40px)) scale(0.95);
+    opacity: 0;
+    transition: transform .35s cubic-bezier(0.22, 1, 0.36, 1), opacity .3s ease;
+    display: flex; flex-direction: column;
+  }
+  .settings-panel.open { transform: translateX(0) scale(1); opacity: 1; }
+
+  .panel-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px; border-bottom: 1px solid rgba(130, 190, 255, 0.15);
+    flex-shrink: 0;
+  }
+  .panel-header h2 {
+    font-size: 12px; font-weight: 600; letter-spacing: 2.5px;
+    text-transform: uppercase; color: #a0d8ff;
+  }
+  #close-panel {
+    background: none; border: none; color: #7c9ac0; font-size: 16px;
+    cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: all .2s;
+  }
+  #close-panel:hover { color: #ff8aa8; background: rgba(255, 120, 160, 0.12); }
+
+  .panel-body {
+    padding: 14px 16px 18px; overflow-y: auto;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .panel-body::-webkit-scrollbar { width: 6px; }
+  .panel-body::-webkit-scrollbar-thumb {
+    background: rgba(130, 190, 255, 0.25); border-radius: 3px;
+  }
+
+  .section { display: flex; flex-direction: column; gap: 8px; }
+  .section-title {
+    font-size: 10px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: #5a90c0;
+    padding-bottom: 4px; border-bottom: 1px dashed rgba(130, 190, 255, 0.12);
+  }
+
+  .row {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px; font-size: 12px;
+  }
+  .row > span { color: #a8c0d8; flex: 1; }
+
+  input[type="range"] {
+    -webkit-appearance: none; appearance: none;
+    width: 130px; height: 4px; border-radius: 2px;
+    background: linear-gradient(90deg, #0a3a6a, #00d4ff);
+    outline: none; cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 15px; height: 15px; border-radius: 50%;
+    background: #8fdcff;
+    box-shadow: 0 0 10px rgba(0, 200, 255, 0.8);
+    transition: transform .15s; cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+  input[type="range"]::-moz-range-thumb {
+    width: 15px; height: 15px; border-radius: 50%; border: none;
+    background: #8fdcff; box-shadow: 0 0 10px rgba(0, 200, 255, 0.8);
+    cursor: pointer;
+  }
+
+  input[type="checkbox"] {
+    -webkit-appearance: none; appearance: none;
+    width: 36px; height: 20px; border-radius: 10px;
+    background: rgba(20, 30, 55, 0.9);
+    border: 1px solid rgba(130, 190, 255, 0.3);
+    position: relative; cursor: pointer; transition: all .2s;
+  }
+  input[type="checkbox"]::before {
+    content: ''; position: absolute; top: 2px; left: 2px;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: #5a90c0; transition: all .25s;
+  }
+  input[type="checkbox"]:checked {
+    background: rgba(0, 140, 255, 0.4);
+    border-color: rgba(140, 220, 255, 0.7);
+  }
+  input[type="checkbox"]:checked::before {
+    left: 18px; background: #8fdcff;
+    box-shadow: 0 0 8px rgba(0, 200, 255, 0.9);
+  }
+
+  .reset-btn {
+    margin-top: 4px; padding: 10px;
+    background: rgba(255, 90, 140, 0.12);
+    border: 1px solid rgba(255, 120, 160, 0.35);
+    color: #ff9ec0; border-radius: 10px;
+    font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+    text-transform: uppercase; cursor: pointer; transition: all .2s;
+  }
+  .reset-btn:hover {
+    background: rgba(255, 90, 140, 0.25);
+    border-color: rgba(255, 150, 180, 0.7);
+    box-shadow: 0 0 20px rgba(255, 90, 140, 0.25);
+  }
+
+  @media (max-width: 560px) {
+    .settings-panel { width: calc(100vw - 40px); right: 20px; }
+    input[type="range"] { width: 100px; }
+    #title { font-size: 10px; letter-spacing: 5px; }
+  }
+</style>
+</head>
+<body>
+  <div id="loading">
+    <div class="spinner"></div>
+    <div>GENERATING GALAXY...</div>
+  </div>
+  <div id="title">Milky Way</div>
+  <div id="perf"></div>
+  <div id="info">Kéo chuột để xoay • Cuộn để zoom</div>
+
+  <button id="settings-btn" class="settings-btn">⚙</button>
+
+  <aside id="settings-panel" class="settings-panel">
+    <div class="panel-header">
+      <h2>⚙ Điều chỉnh</h2>
+      <button id="close-panel">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="section">
+        <div class="section-title">🌌 Thành phần</div>
+        <div class="row"><span>Ngôi sao nền</span><input type="checkbox" id="t-stars" checked></div>
+        <div class="row"><span>Dải Ngân Hà</span><input type="checkbox" id="t-milky" checked></div>
+        <div class="row"><span>Thiên hà xa</span><input type="checkbox" id="t-galaxy" checked></div>
+        <div class="row"><span>Tinh vân</span><input type="checkbox" id="t-nebula" checked></div>
+        <div class="row"><span>Chòm sao</span><input type="checkbox" id="t-constel" checked></div>
+        <div class="row"><span>Tên chòm sao</span><input type="checkbox" id="t-labels" checked></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">⚡ Chuyển động</div>
+        <div class="row"><span>Auto xoay cam</span><input type="range" id="s-auto" min="0" max="1" step="0.02"></div>
+        <div class="row"><span>Xoay thiên hà</span><input type="range" id="s-galaxy" min="0" max="1" step="0.02"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">✨ Hiệu ứng</div>
+        <div class="row"><span>Bloom</span><input type="range" id="s-bloom" min="0" max="2.5" step="0.05"></div>
+        <div class="row"><span>Nhấp nháy sao</span><input type="range" id="s-twinkle" min="0" max="1" step="0.02"></div>
+      </div>
+
+      <button id="reset-btn" class="reset-btn">↺ Đặt lại mặc định</button>
+    </div>
+  </aside>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script type="module">
+  import * as THREE from 'three';
+  import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+  import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+  import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+  import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+  import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+
+  /* ============================================================
+     UTILITY — RNG & MATH
+  ============================================================ */
+  function mulberry32(seed) {
+    return function() {
+      seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function gaussian(rng) {
+    let u = 0, v = 0;
+    while (u === 0) u = rng();
+    while (v === 0) v = rng();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  }
+
+  // Chuyển RA (giờ) + Dec (độ) → Vector3 trên mặt cầu
+  function raDecToVec3(ra, dec, radius) {
+    const raRad = (ra * 15) * Math.PI / 180;
+    const decRad = dec * Math.PI / 180;
+    return new THREE.Vector3(
+      radius * Math.cos(decRad) * Math.cos(raRad),
+      radius * Math.sin(decRad),
+      radius * Math.cos(decRad) * Math.sin(raRad)
+    );
+  }
+
+  /* ============================================================
+     RENDERER / SCENE / CAMERA
+  ============================================================ */
+  const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.15;
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  document.body.appendChild(renderer.domElement);
+
+  const scene = new THREE.Scene();
+  scene.fog = null;
+
+  const camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 0.1, 8000);
+  camera.position.set(0, 120, 380);
+
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
+  controls.minDistance = 40;
+  controls.maxDistance = 1600;
+  controls.autoRotate = false;
+  controls.target.set(0, 0, 0);
+
+  /* ============================================================
+     STAR FIELD GENERATOR (custom shader points)
+  ============================================================ */
+  const starVertexShader = /* glsl */`
+    attribute float aSize;
+    attribute vec3  aColor;
+    attribute float aPhase;
+    uniform float uTime;
+    uniform float uTwinkle;
+    varying vec3 vColor;
+    varying float vAlpha;
+    void main() {
+      vColor = aColor;
+      float tw = mix(1.0, 0.55 + 0.45 * sin(uTime * 3.0 + aPhase), uTwinkle);
+      vAlpha = tw;
+      vec4 mv = modelViewMatrix * vec4(position, 1.0);
+      gl_PointSize = aSize * (400.0 / -mv.z) * tw;
+      gl_Position = projectionMatrix * mv;
+    }
+  `;
+
+  const starFragmentShader = /* glsl */`
+    varying vec3 vColor;
+    varying float vAlpha;
+    void main() {
+      vec2 c = gl_PointCoord - 0.5;
+      float d = length(c);
+      float core = smoothstep(0.5, 0.0, d);
+      float a = pow(core, 2.5);
+      // Tia sáng (diffraction spikes) rất nhẹ cho sao sáng
+      float spikes = max(0.0, 1.0 - abs(c.x) * 40.0) + max(0.0, 1.0 - abs(c.y) * 40.0);
+      spikes *= smoothstep(0.5, 0.0, d) * 0.15;
+      float alpha = a + spikes;
+      gl_FragColor = vec4(vColor * alpha * vAlpha, alpha * vAlpha);
+    }
+  `;
+
+  function makeStarMaterial() {
+    return new THREE.ShaderMaterial({
+      uniforms: {
+        uTime: { value: 0 },
+        uTwinkle: { value: 0.7 },
+      },
+      vertexShader: starVertexShader,
+      fragmentShader: starFragmentShader,
+      transparent: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+    });
+  }
+
+  // Star color palettes by stellar class
+  const STAR_COLORS = {
+    O: new THREE.Color('#9bb0ff'),
+    B: new THREE.Color('#aabfff'),
+    A: new THREE.Color('#cad7ff'),
+    F: new THREE.Color('#f8f7ff'),
+    G: new THREE.Color('#fff4ea'),
+    K: new THREE.Color('#ffd2a1'),
+    M: new THREE.Color('#ffcc6f'),
+  };
+  const STAR_CLASSES = [
+    { c: 'O', w: 0.005 }, { c: 'B', w: 0.02 }, { c: 'A', w: 0.06 },
+    { c: 'F', w: 0.12 }, { c: 'G', w: 0.20 }, { c: 'K', w: 0.30 },
+    { c: 'M', w: 0.295 },
+  ];
+  function pickStarColor(rng) {
+    let r = rng(), acc = 0;
+    for (const s of STAR_CLASSES) {
+      acc += s.w;
+      if (r <= acc) return STAR_COLORS[s.c];
+    }
+    return STAR_COLORS.M;
+  }
+
+  /* ============================================================
+     1. BACKGROUND STARS — 18k sao rải khắp mặt cầu
+  ============================================================ */
+  function createStarField() {
+    const N = 18000;
+    const positions = new Float32Array(N * 3);
+    const colors    = new Float32Array(N * 3);
+    const sizes     = new Float32Array(N);
+    const phases    = new Float32Array(N);
+    const rng = mulberry32(1337);
+    const R = 3500;
+
+    for (let i = 0; i < N; i++) {
+      // Phân bố đều trên mặt cầu
+      const u = rng() * 2 - 1;
+      const theta = rng() * Math.PI * 2;
+      const s = Math.sqrt(1 - u * u);
+      positions[i*3]     = R * s * Math.cos(theta);
+      positions[i*3 + 1] = R * u;
+      positions[i*3 + 2] = R * s * Math.sin(theta);
+
+      const c = pickStarColor(rng);
+      // Sao sáng hơn thì ít hơn
+      const mag = Math.pow(rng(), 3);
+      const bright = 0.35 + mag * 0.65;
+      colors[i*3]     = c.r * bright;
+      colors[i*3 + 1] = c.g * bright;
+      colors[i*3 + 2] = c.b * bright;
+
+      sizes[i] = 0.8 + mag * 2.5;
+      phases[i] = rng() * 6.28;
+    }
+
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geo.setAttribute('aColor',   new THREE.BufferAttribute(colors, 3));
+    geo.setAttribute('aSize',    new THREE.BufferAttribute(sizes, 1));
+    geo.setAttribute('aPhase',   new THREE.BufferAttribute(phases, 1));
+
+    const mat = makeStarMaterial();
+    const points = new THREE.Points(geo, mat);
+    points.frustumCulled = false;
+    return { points, mat };
+  }
+
+  /* ============================================================
+     2. MILKY WAY BAND — dải sao dày đặc theo 1 vòng tròn lớn
+  ============================================================ */
+  function createMilkyWayBand() {
+    const N = 25000;
+    const positions = new Float32Array(N * 3);
+    const colors    = new Float32Array(N * 3);
+    const sizes     = new Float32Array(N);
+    const phases    = new Float32Array(N);
+    const rng = mulberry32(7777);
+    const R = 3300;
+
+    // Axis of the band (tilted) — hướng "trục Bắc" của dải
+    const axis = new THREE.Vector3(0.35, 0.85, 0.15).normalize();
+
+    for (let i = 0; i < N; i++) {
+      // Chọn hướng ngẫu nhiên trong mặt phẳng vuông góc với axis → vòng tròn lớn
+      let dir = new THREE.Vector3(rng() * 2 - 1, rng() * 2 - 1, rng() * 2 - 1);
+      dir.sub(axis.clone().multiplyScalar(dir.dot(axis))).normalize();
+
+      // Thêm nhiễu theo phương vuông góc (làm dải có bề dày)
+      const offsetMag = gaussian(rng) * 0.25;
+      const perp = new THREE.Vector3().crossVectors(dir, axis).normalize();
+      const radial = dir.clone().multiplyScalar(R);
+      radial.add(perp.multiplyScalar(offsetMag * R * 0.15));
+      // Sóng mây (không đều)
+      const lump = 0.4 + 0.6 * Math.abs(Math.sin(dir.x * 4 + dir.y * 3 + dir.z * 5));
+      radial.multiplyScalar(0.95 + lump * 0.05);
+
+      positions[i*3]     = radial.x;
+      positions[i*3 + 1] = radial.y;
+      positions[i*3 + 2] = radial.z;
+
+      // Đa số sao mờ; thỉnh thoảng 1 ngôi sáng
+      const mag = Math.pow(rng(), 4);
+      // Màu: ngoài rìa hơi xanh hơn, trung tâm vàng hơn
+      const dist = Math.abs(offsetMag);
+      const colorMix = rng();
+      let c;
+      if (dist > 0.18) c = new THREE.Color('#ffcc88'); // vàng cam
+      else if (dist > 0.05) c = new THREE.Color('#fff0d0'); // trắng ấm
+      else c = new THREE.Color('#ffd8a0'); // vàng
+
+      // Thêm chút xanh cho đa dạng
+      if (colorMix > 0.85) c = new THREE.Color('#c0d0ff');
+      const bright = 0.25 + mag * 0.7;
+
+      colors[i*3]     = c.r * bright;
+      colors[i*3 + 1] = c.g * bright;
+      colors[i*3 + 2] = c.b * bright;
+
+      sizes[i] = 0.6 + mag * 2.0;
+      phases[i] = rng() * 6.28;
+    }
+
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geo.setAttribute('aColor',   new THREE.BufferAttribute(colors, 3));
+    geo.setAttribute('aSize',    new THREE.BufferAttribute(sizes, 1));
+    geo.setAttribute('aPhase',   new THREE.BufferAttribute(phases, 1));
+
+    const mat = makeStarMaterial();
+    mat.uniforms.uTwinkle.value = 0.35;
+    const points = new THREE.Points(geo, mat);
+    points.frustumCulled = false;
+    return { points, mat };
+  }
+
+  /* ============================================================
+     3. SPIRAL GALAXY (xa) — 55k điểm, xoáy ốc nhìn nghiêng
+  ============================================================ */
+  function createSpiralGalaxy() {
+    const N = 55000;
+    const positions = new Float32Array(N * 3);
+    const colors    = new Float32Array(N * 3);
+    const sizes     = new Float32Array(N);
+    const phases    = new Float32Array(N);
+    const rng = mulberry32(2024);
+
+    const GALAXY_R = 160;
+    const ARMS = 4;
+    const SPIN = 2.4;
+
+    for (let i = 0; i < N; i++) {
+      // 20% cho halo (đều), 80% cho đĩa xoáy
+      const isHalo = rng() < 0.20;
+      let r, x, y, z, color;
+
+      if (isHalo) {
+        // Halo cầu — cụm sao già
+        r = Math.pow(rng(), 0.5) * GALAXY_R * 1.2;
+        const u = rng() * 2 - 1;
+        const th = rng() * Math.PI * 2;
+        const s = Math.sqrt(1 - u * u);
+        x = r * s * Math.cos(th);
+        y = r * u * 0.7;
+        z = r * s * Math.sin(th);
+        const t = rng();
+        color = t < 0.7
+          ? new THREE.Color('#ffd8a0')
+          : (t < 0.95 ? new THREE.Color('#ffaa70') : new THREE.Color('#c0d8ff'));
+      } else {
+        // Đĩa xoáy
+        r = Math.pow(rng(), 0.65) * GALAXY_R;
+
+        // Chọn nhánh
+        const arm = Math.floor(rng() * ARMS);
+        const armAngle = (arm / ARMS) * Math.PI * 2;
+
+        // Xoắn ốc log: θ = armAngle + log(r) * spin
+        const spiralAngle = armAngle + Math.log(r / 3 + 1) * SPIN;
+
+        // Spread theo nhánh
+        const armSpread = gaussian(rng) * 0.35 * (1 - r / GALAXY_R * 0.5);
+
+        const angle = spiralAngle + armSpread;
+        x = Math.cos(angle) * r + gaussian(rng) * 4;
+        z = Math.sin(angle) * r + gaussian(rng) * 4;
+        // Bề dày đĩa giảm dần ra ngoài
+        y = gaussian(rng) * (3.5 - 3.0 * (r / GALAXY_R));
+
+        // Màu theo bán kính
+        const tt = r / GALAXY_R;
+        if (tt < 0.10) {
+          // Core: trắng-vàng rực
+          color = new THREE.Color('#fff8d0');
+        } else if (tt < 0.30) {
+          // Bulge
+          color = new THREE.Color('#ffe0a0').lerp(new THREE.Color('#ffd070'), (tt - 0.10) / 0.20);
+        } else if (tt < 0.60) {
+          // Đĩa trong
+          color = new THREE.Color('#ffe0b0').lerp(new THREE.Color('#e8f0ff'), (tt - 0.30) / 0.30);
+        } else {
+          // Đĩa ngoài
+          color = new THREE.Color('#d0e0ff').lerp(new THREE.Color('#a0b8ff'), (tt - 0.60) / 0.40);
+        }
+        // 5% HII regions (hồng)
+        if (rng() < 0.05 && tt > 0.20) {
+          color = new THREE.Color('#ff6a9a');
+        }
+        // 3% xanh lam chói
+        if (rng() < 0.03 && tt > 0.35) {
+          color = new THREE.Color('#80d0ff');
+        }
+      }
+
+      positions[i*3]     = x;
+      positions[i*3 + 1] = y;
+      positions[i*3 + 2] = z;
+
+      const mag = Math.pow(rng(), 2.5);
+      const bright = 0.45 + mag * 0.75;
+      colors[i*3]     = color.r * bright;
+      colors[i*3 + 1] = color.g * bright;
+      colors[i*3 + 2] = color.b * bright;
+
+      sizes[i] = 0.6 + mag * 2.2;
+      phases[i] = rng() * 6.28;
+    }
+
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geo.setAttribute('aColor',   new THREE.BufferAttribute(colors, 3));
+    geo.setAttribute('aSize',    new THREE.BufferAttribute(sizes, 1));
+    geo.setAttribute('aPhase',   new THREE.BufferAttribute(phases, 1));
+
+    const mat = makeStarMaterial();
+    mat.uniforms.uTwinkle.value = 0.15;
+
+    const points = new THREE.Points(geo, mat);
+    points.frustumCulled = false;
+    return { points, mat };
+  }
+
+  /* ============================================================
+     4. NEBULAE — 6 tinh vân procedural bằng shader
+  ============================================================ */
+  const nebulaVertex = /* glsl */`
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `;
+
+  const nebulaFragment = /* glsl */`
+    precision highp float;
+    uniform float uTime;
+    uniform vec3  uCol1;
+    uniform vec3  uCol2;
+    uniform vec3  uCol3;
+    uniform float uSeed;
+    uniform int   uType; // 0=cloud, 1=ring, 2=pillar
+    varying vec2 vUv;
+
+    float hash21(vec2 p) {
+      p = fract(p * vec2(123.34, 456.21));
+      p += dot(p, p + 45.32);
+      return fract(p.x * p.y);
+    }
+    float vnoise(vec2 p) {
+      vec2 i = floor(p), f = fract(p);
+      f = f * f * (3.0 - 2.0 * f);
+      return mix(mix(hash21(i), hash21(i + vec2(1,0)), f.x),
+                 mix(hash21(i + vec2(0,1)), hash21(i + vec2(1,1)), f.x), f.y);
+    }
+    float fbm(vec2 p) {
+      float v = 0.0, a = 0.5;
+      for (int i = 0; i < 6; i++) {
+        v += a * vnoise(p);
+        p *= 2.03;
+        a *= 0.5;
+      }
+      return v;
+    }
+    float fbm3(vec2 p) {
+      return fbm(p) * 0.6 + fbm(p * 2.7 + 5.0) * 0.3 + fbm(p * 7.1 + 12.0) * 0.1;
+    }
+
+    void main() {
+      vec2 uv = vUv - 0.5;
+      float d = length(uv);
+      float mask = smoothstep(0.5, 0.15, d);
+      if (mask < 0.01) { discard; }
+
+      vec3 col = vec3(0.0);
+
+      if (uType == 0) {
+        // CLOUD — tinh vân dạng mây
+        float n = fbm3(vUv * 4.0 + uSeed);
+        float n2 = fbm3(vUv * 8.0 - uSeed * 1.7);
+        float dens = smoothstep(0.25, 0.85, n + n2 * 0.4);
+        col = mix(uCol1, uCol2, n);
+        col = mix(col, uCol3, pow(n2, 2.0) * 0.7);
+        // Core sáng
+        float core = exp(-d * d * 20.0);
+        col += uCol3 * core * 1.2;
+        col *= dens * 1.3;
+      } else if (uType == 1) {
+        // RING — tinh vân vòng (Helix / Rosette)
+        float ringR = 0.28;
+        float ring = exp(-pow((d - ringR) * 6.0, 2.0));
+        float n = fbm3(vUv * 6.0 + uSeed);
+        float ang = atan(uv.y, uv.x);
+        float spokes = 0.7 + 0.3 * sin(ang * 22.0 + uSeed);
+        col = mix(uCol1, uCol2, n);
+        col = mix(col, uCol3, pow(n, 2.0));
+        col *= ring * (n * 0.7 + 0.5) * spokes * 1.6;
+        // Core xanh mờ ở tâm
+        float core = exp(-d * d * 50.0);
+        col += uCol1 * core * 0.8;
+      } else {
+        // PILLAR — cột mây (Eagle Nebula)
+        vec2 p = vUv * vec2(3.0, 6.0) + uSeed;
+        // Biến dạng theo trục y để tạo cột
+        float colShape = smoothstep(0.4, 0.15, abs(uv.x - uv.y * 0.15));
+        float top = smoothstep(0.55, 0.15, vUv.y);
+        float n = fbm3(p + vec2(0.0, uTime * 0.02));
+        float n2 = fbm3(p * 2.5 - uSeed);
+        float dens = colShape * top * smoothstep(0.15, 0.75, n + n2 * 0.4);
+        col = mix(uCol1, uCol2, n);
+        col = mix(col, uCol3, pow(n2, 1.5) * 0.5);
+        // Ánh sáng rìa
+        float rim = pow(1.0 - colShape, 3.0) * top;
+        col += uCol3 * rim * 0.5;
+        col *= dens * 1.8;
+      }
+
+      float alpha = mask * clamp(length(col) * 1.6, 0.0, 0.9);
+      gl_FragColor = vec4(col, alpha);
+    }
+  `;
+
+  function createNebula(config) {
+    const geo = new THREE.PlaneGeometry(config.size, config.size);
+    const mat = new THREE.ShaderMaterial({
+      uniforms: {
+        uTime: { value: 0 },
+        uCol1: { value: new THREE.Color(config.col1) },
+        uCol2: { value: new THREE.Color(config.col2) },
+        uCol3: { value: new THREE.Color(config.col3) },
+        uSeed: { value: config.seed },
+        uType: { value: config.type },
+      },
+      vertexShader: nebulaVertex,
+      fragmentShader: nebulaFragment,
+      transparent: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+      side: THREE.DoubleSide,
+    });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.copy(config.position);
+    mesh.lookAt(0, 0, 0);
+    return { mesh, mat };
+  }
+
+  // Định nghĩa 6 tinh vân nổi tiếng (RA, Dec, màu sắc, kích thước)
+  const NEBULA_DEFS = [
+    { // Orion Nebula — hồng/tím/xanh
+      name: 'Orion',
+      ra: 5.588, dec: -5.39, radius: 2200, size: 900, seed: 1.0, type: 0,
+      col1: [0.85, 0.25, 0.55], col2: [0.45, 0.20, 0.75], col3: [0.95, 0.85, 1.0],
+    },
+    { // Crab Nebula — cam/đỏ sợi
+      name: 'Crab',
+      ra: 1.563, dec: 22.01, radius: 2100, size: 700, seed: 7.3, type: 0,
+      col1: [0.9, 0.35, 0.15], col2: [0.6, 0.15, 0.45], col3: [1.0, 0.75, 0.3],
+    },
+    { // Eagle Nebula — lục/vàng cột
+      name: 'Eagle',
+      ra: 18.313, dec: -13.79, radius: 2300, size: 800, seed: 3.7, type: 2,
+      col1: [0.10, 0.35, 0.20], col2: [0.55, 0.65, 0.30], col3: [1.0, 0.90, 0.55],
+    },
+    { // Helix Nebula — mắt xanh cyan
+      name: 'Helix',
+      ra: 22.494, dec: -20.84, radius: 2150, size: 750, seed: 5.1, type: 1,
+      col1: [0.10, 0.65, 0.90], col2: [0.30, 0.80, 0.95], col3: [0.85, 0.95, 1.0],
+    },
+    { // Rosette Nebula — vòng hồng
+      name: 'Rosette',
+      ra: 6.520, dec: 4.95, radius: 2250, size: 780, seed: 9.4, type: 1,
+      col1: [0.85, 0.15, 0.35], col2: [0.95, 0.55, 0.65], col3: [1.0, 0.85, 0.90],
+    },
+    { // Carina Nebula — cam/hồng
+      name: 'Carina',
+      ra: 10.752, dec: -59.87, radius: 2200, size: 820, seed: 11.8, type: 0,
+      col1: [0.95, 0.45, 0.20], col2: [0.85, 0.25, 0.45], col3: [1.0, 0.85, 0.6],
+    },
+  ];
+
+  /* ============================================================
+     5. CONSTELLATIONS — dữ liệu sao thật
+  ============================================================ */
+  const CONSTELLATIONS = {
+    'Ursa Major': {
+      stars: [
+        { n:'Dubhe',   ra:11.062, dec: 61.75 },
+        { n:'Merak',   ra:11.031, dec: 56.38 },
+        { n:'Phecda',  ra:11.897, dec: 53.69 },
+        { n:'Megrez',  ra:12.257, dec: 57.03 },
+        { n:'Alioth',  ra:12.900, dec: 55.96 },
+        { n:'Mizar',   ra:13.399, dec: 54.93 },
+        { n:'Alkaid',  ra:13.792, dec: 49.31 },
+      ],
+      edges: [[0,1],[1,2],[2,3],[3,0],[3,4],[4,5],[5,6]],
+      bright: [0, 6],
+    },
+    'Orion': {
+      stars: [
+        { n:'Betelgeuse', ra: 5.919, dec:  7.41 },
+        { n:'Bellatrix',  ra: 5.418, dec:  6.35 },
+        { n:'Alnitak',    ra: 5.679, dec: -1.94 },
+        { n:'Alnilam',    ra: 5.604, dec: -1.20 },
+        { n:'Mintaka',    ra: 5.533, dec: -0.30 },
+        { n:'Saiph',      ra: 5.796, dec: -9.67 },
+        { n:'Rigel',      ra: 5.242, dec: -8.20 },
+      ],
+      edges: [[0,1],[0,2],[1,4],[2,3],[3,4],[2,5],[4,6],[5,6]],
+      bright: [0, 6],
+    },
+    'Cassiopeia': {
+      stars: [
+        { n:'Caph',     ra: 0.153, dec: 59.15 },
+        { n:'Schedar',  ra: 0.675, dec: 56.54 },
+        { n:'Gamma',    ra: 0.945, dec: 60.72 },
+        { n:'Ruchbah',  ra: 1.430, dec: 60.24 },
+        { n:'Segin',    ra: 1.907, dec: 63.67 },
+      ],
+      edges: [[0,1],[1,2],[2,3],[3,4]],
+      bright: [],
+    },
+    'Cygnus': {
+      stars: [
+        { n:'Deneb',    ra:20.690, dec: 45.28 },
+        { n:'Sadr',     ra:20.371, dec: 40.26 },
+        { n:'Gienah',   ra:20.770, dec: 33.97 },
+        { n:'Delta',    ra:19.750, dec: 45.13 },
+        { n:'Albireo',  ra:19.512, dec: 27.96 },
+      ],
+      edges: [[0,1],[1,2],[1,3],[1,4],[3,4]],
+      bright: [],
+    },
+    'Scorpius': {
+      stars: [
+        { n:'Antares',  ra:16.490, dec:-26.43 },
+        { n:'Graffias', ra:16.090, dec:-19.81 },
+        { n:'Dschubba', ra:16.005, dec:-22.62 },
+        { n:'Pi',       ra:15.981, dec:-26.11 },
+        { n:'Sigma',    ra:16.353, dec:-25.59 },
+        { n:'Tau',      ra:16.598, dec:-28.22 },
+        { n:'Epsilon',  ra:16.836, dec:-34.29 },
+        { n:'Shaula',   ra:17.560, dec:-37.10 },
+      ],
+      edges: [[0,1],[1,2],[2,3],[0,4],[4,5],[5,6],[6,7]],
+      bright: [0, 7],
+    },
+    'Lyra': {
+      stars: [
+        { n:'Vega',     ra:18.615, dec: 38.78 },
+        { n:'Sheliak',  ra:18.834, dec: 33.36 },
+        { n:'Sulafat',  ra:18.982, dec: 32.69 },
+        { n:'Delta2',   ra:18.908, dec: 36.90 },
+        { n:'Zeta',     ra:18.746, dec: 37.60 },
+      ],
+      edges: [[0,3],[3,4],[4,1],[1,2]],
+      bright: [0],
+    },
+  };
+
+  /* ============================================================
+     BUILD ALL
+  ============================================================ */
+  const groups = {
+    stars: new THREE.Group(),
+    milky: new THREE.Group(),
+    galaxy: new THREE.Group(),
+    nebula: new THREE.Group(),
+    constel: new THREE.Group(),
+    labels: new THREE.Group(),
+  };
+  Object.values(groups).forEach(g => scene.add(g));
+
+  // 1. Background stars
+  const starsObj = createStarField();
+  groups.stars.add(starsObj.points);
+
+  // 2. Milky Way band
+  const milkyObj = createMilkyWayBand();
+  groups.milky.add(milkyObj.points);
+
+  // 3. Spiral galaxy
+  const galaxyObj = createSpiralGalaxy();
+  galaxyObj.points.position.set(-250, 60, -300);
+  galaxyObj.points.rotation.set(0.55, 0.3, 0.25);
+  groups.galaxy.add(galaxyObj.points);
+
+  // 4. Nebulae
+  const nebulaMats = [];
+  NEBULA_DEFS.forEach(def => {
+    const pos = raDecToVec3(def.ra, def.dec, def.radius);
+    const { mesh, mat } = createNebula({
+      position: pos,
+      size: def.size,
+      seed: def.seed,
+      type: def.type,
+      col1: def.col1, col2: def.col2, col3: def.col3,
+    });
+    nebulaMats.push(mat);
+    groups.nebula.add(mesh);
+  });
+
+  // 5. Constellations
+  const CONSTEL_RADIUS = 2900;
+  const constelLabels = [];
+
+  function makeLabel(text) {
+    const c = document.createElement('canvas');
+    c.width = 512; c.height = 96;
+    const ctx = c.getContext('2d');
+    ctx.font = 'bold 44px "Segoe UI", Arial, sans-serif';
+    ctx.fillStyle = 'rgba(180, 220, 255, 0.95)';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.shadowColor = 'rgba(120, 200, 255, 1)';
+    ctx.shadowBlur = 22;
+    ctx.fillText(text, 256, 48);
+    const tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    const mat = new THREE.SpriteMaterial({
+      map: tex, transparent: true,
+      depthTest: false, depthWrite: false,
+      blending: THREE.AdditiveBlending,
+    });
+    const s = new THREE.Sprite(mat);
+    s.scale.set(420, 80, 1);
+    return s;
+  }
+
+  Object.entries(CONSTELLATIONS).forEach(([name, data]) => {
+    // Star positions
+    const positions = data.stars.map(s => raDecToVec3(s.ra, s.dec, CONSTEL_RADIUS));
+
+    // Bright stars (bigger points)
+    const starCount = data.stars.length;
+    const starPos = new Float32Array(starCount * 3);
+    const starCol = new Float32Array(starCount * 3);
+    const starSize = new Float32Array(starCount);
+    const starPhase = new Float32Array(starCount);
+    const rng = mulberry32(name.length * 100 + 42);
+
+    positions.forEach((p, i) => {
+      starPos[i*3] = p.x; starPos[i*3 + 1] = p.y; starPos[i*3 + 2] = p.z;
+      const isBright = data.bright.includes(i);
+      const c = isBright ? new THREE.Color('#ffddaa') : new THREE.Color('#e0e8ff');
+      starCol[i*3] = c.r; starCol[i*3 + 1] = c.g; starCol[i*3 + 2] = c.b;
+      starSize[i] = isBright ? 9.0 : 5.0;
+      starPhase[i] = rng() * 6.28;
+    });
+
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+    geo.setAttribute('aColor',   new THREE.BufferAttribute(starCol, 3));
+    geo.setAttribute('aSize',    new THREE.BufferAttribute(starSize, 1));
+    geo.setAttribute('aPhase',   new THREE.BufferAttribute(starPhase, 1));
+    const mat = makeStarMaterial();
+    mat.uniforms.uTwinkle.value = 0.4;
+    const pts = new THREE.Points(geo, mat);
+    pts.frustumCulled = false;
+    groups.constel.add(pts);
+
+    // Connecting lines
+    const linePositions = [];
+    data.edges.forEach(([a, b]) => {
+      linePositions.push(
+        positions[a].x, positions[a].y, positions[a].z,
+        positions[b].x, positions[b].y, positions[b].z
+      );
+    });
+    const lineGeo = new THREE.BufferGeometry();
+    lineGeo.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
+    const lineMat = new THREE.LineBasicMaterial({
+      color: 0x6090c8, transparent: true, opacity: 0.35,
+      blending: THREE.AdditiveBlending,
+    });
+    const line = new THREE.LineSegments(lineGeo, lineMat);
+    line.frustumCulled = false;
+    groups.constel.add(line);
+
+    // Label at centroid
+    const centroid = new THREE.Vector3();
+    positions.forEach(p => centroid.add(p));
+    centroid.multiplyScalar(1 / positions.length);
+    centroid.multiplyScalar(0.96);
+    const label = makeLabel(name);
+    label.position.copy(centroid);
+    groups.labels.add(label);
+    constelLabels.push(label);
+  });
+
+  /* ============================================================
+     POST PROCESSING
+  ============================================================ */
+  const composer = new EffectComposer(renderer);
+  composer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+  composer.setSize(innerWidth, innerHeight);
+  composer.addPass(new RenderPass(scene, camera));
+
+  const bloomPass = new UnrealBloomPass(
+    new THREE.Vector2(innerWidth, innerHeight),
+    0.95, 0.7, 0.28
+  );
+  composer.addPass(bloomPass);
+  composer.addPass(new OutputPass());
+
+  /* ============================================================
+     STATE & UI
+  ============================================================ */
+  const DEFAULTS = {
+    stars: true, milky: true, galaxy: true, nebula: true,
+    constel: true, labels: true,
+    auto: 0.15, galaxySpin: 0.25, bloom: 0.95, twinkle: 0.7,
+  };
+  const state = { ...DEFAULTS };
+
+  const $ = id => document.getElementById(id);
+  const ui = {
+    btn: $('settings-btn'), panel: $('settings-panel'), close: $('close-panel'),
+    tStars: $('t-stars'), tMilky: $('t-milky'), tGalaxy: $('t-galaxy'),
+    tNebula: $('t-nebula'), tConstel: $('t-constel'), tLabels: $('t-labels'),
+    sAuto: $('s-auto'), sGalaxy: $('s-galaxy'),
+    sBloom: $('s-bloom'), sTwinkle: $('s-twinkle'),
+    reset: $('reset-btn'),
+  };
+
+  function syncUI() {
+    ui.tStars.checked = state.stars;
+    ui.tMilky.checked = state.milky;
+    ui.tGalaxy.checked = state.galaxy;
+    ui.tNebula.checked = state.nebula;
+    ui.tConstel.checked = state.constel;
+    ui.tLabels.checked = state.labels;
+    ui.sAuto.value = state.auto;
+    ui.sGalaxy.value = state.galaxySpin;
+    ui.sBloom.value = state.bloom;
+    ui.sTwinkle.value = state.twinkle;
+  }
+
+  function applyAll() {
+    groups.stars.visible = state.stars;
+    groups.milky.visible = state.milky;
+    groups.galaxy.visible = state.galaxy;
+    groups.nebula.visible = state.nebula;
+    groups.constel.visible = state.constel;
+    groups.labels.visible = state.labels && state.constel;
+    bloomPass.strength = state.bloom;
+    starsObj.mat.uniforms.uTwinkle.value = state.twinkle;
+    milkyObj.mat.uniforms.uTwinkle.value = state.twinkle * 0.5;
+  }
+
+  ui.btn.addEventListener('click', () => ui.panel.classList.toggle('open'));
+  ui.close.addEventListener('click', () => ui.panel.classList.remove('open'));
+
+  ui.tStars.addEventListener('change', e => { state.stars = e.target.checked; applyAll(); });
+  ui.tMilky.addEventListener('change', e => { state.milky = e.target.checked; applyAll(); });
+  ui.tGalaxy.addEventListener('change', e => { state.galaxy = e.target.checked; applyAll(); });
+  ui.tNebula.addEventListener('change', e => { state.nebula = e.target.checked; applyAll(); });
+  ui.tConstel.addEventListener('change', e => { state.constel = e.target.checked; applyAll(); });
+  ui.tLabels.addEventListener('change', e => { state.labels = e.target.checked; applyAll(); });
+  ui.sAuto.addEventListener('input', e => { state.auto = +e.target.value; });
+  ui.sGalaxy.addEventListener('input', e => { state.galaxySpin = +e.target.value; });
+  ui.sBloom.addEventListener('input', e => { state.bloom = +e.target.value; applyAll(); });
+  ui.sTwinkle.addEventListener('input', e => { state.twinkle = +e.target.value; applyAll(); });
+
+  ui.reset.addEventListener('click', () => {
+    Object.assign(state, DEFAULTS);
+    applyAll();
+    syncUI();
+  });
+
+  syncUI();
+  applyAll();
+
+  /* ============================================================
+     INTERACTION — nhấp nháy tăng khi user tương tác
+  ============================================================ */
+  let interactionBoost = 0;
+  renderer.domElement.addEventListener('pointerdown', () => { interactionBoost = 1; });
+  renderer.domElement.addEventListener('pointerup', () => { interactionBoost = 0; });
+
+  /* ============================================================
+     ANIMATION LOOP
+  ============================================================ */
+  const clock = new THREE.Clock();
+  let frames = 0, fpsTime = 0;
+  const perfEl = document.getElementById('perf');
+
+  function animate() {
+    requestAnimationFrame(animate);
+    const t = clock.getElapsedTime();
+
+    // Update time uniforms
+    starsObj.mat.uniforms.uTime.value = t;
+    milkyObj.mat.uniforms.uTime.value = t;
+    galaxyObj.mat.uniforms.uTime.value = t;
+    nebulaMats.forEach(m => m.uniforms.uTime.value = t);
+
+    // Twinkle boost khi tương tác
+    const twinkleBoost = 1 + interactionBoost * 0.5;
+    starsObj.mat.uniforms.uTwinkle.value = Math.min(1, state.twinkle * twinkleBoost);
+
+    // Auto rotate camera
+    controls.autoRotate = state.auto > 0.001;
+    controls.autoRotateSpeed = state.auto * 0.8;
+
+    // Galaxy rotation
+    galaxyObj.points.rotation.y += state.galaxySpin * 0.002;
+
+    // Labels luôn hướng về camera (đã tự động với Sprite)
+
+    controls.update();
+    composer.render();
+
+    frames++;
+    if (t - fpsTime > 0.5) {
+      const fps = Math.round(frames / (t - fpsTime));
+      frames = 0; fpsTime = t;
+      perfEl.textContent = `${fps} FPS`;
+    }
+  }
+
+  /* ============================================================
+     RESIZE
+  ============================================================ */
+  addEventListener('resize', () => {
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+    composer.setSize(innerWidth, innerHeight);
+  });
+
+  /* ============================================================
+     START
+  ============================================================ */
+  animate();
+
+  setTimeout(() => {
+    const el = document.getElementById('loading');
+    if (el) { el.style.opacity = '0'; setTimeout(() => el.remove(), 1000); }
+  }, 800);
+  </script>
+</body>
+</html>
