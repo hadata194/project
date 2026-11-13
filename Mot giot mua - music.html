@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#092f3b"><meta name="description" content="Theo một giọt mưa qua thành phố. Qua ngày đêm, bốn mùa và những mầm sống trên Trái Đất.">
+<title>Một giọt mưa — Nhịp sống của Trái Đất</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M20 3C17 12 7 19 7 26a13 13 0 0026 0C33 19 23 12 20 3' fill='%235cded8'/%3E%3C/svg%3E">
+<style>
+:root{color-scheme:dark;--ink:#f4f5ee;--muted:#c5d9dd;--accent:#91f0df;--line:#ffffff29}*{box-sizing:border-box}html{scroll-behavior:smooth;text-size-adjust:100%;background:#092f3b}body{margin:0;font-family:'Segoe UI',Arial,sans-serif;font-size:18px;line-height:1.65;color:var(--ink);overflow-x:hidden}button,a{-webkit-tap-highlight-color:transparent}button{font:inherit;color:inherit;cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid #fbce8e;outline-offset:6px}button{border:0}a{color:inherit;text-decoration:none}.stage{position:fixed;inset:0;z-index:0;pointer-events:none}canvas{width:100%;height:100%;display:block}.grain{position:fixed;inset:0;z-index:1;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23fff' opacity='.1' filter='url(%23n)' d='M0 0h180v180H0z'/%3E%3C/svg%3E");opacity:.18}.shade{position:fixed;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(3,21,31,.58),transparent 78%)}header{position:fixed;z-index:10;top:0;left:0;right:0;padding:23px 4.5%;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(#06242cbb,transparent);gap:16px}.brand{display:flex;align-items:center;gap:12px;font-size:15px;font-weight:650;letter-spacing:.08em}.brand svg{width:19px;height:25px;fill:var(--accent)}.tools{display:flex;gap:10px}.tool{border:1px solid #ffffff42;background:#0c303b9c;backdrop-filter:blur(12px);border-radius:30px;padding:8px 15px;font-size:15px;white-space:nowrap}.tool:hover{background:#28515b}main{position:relative;z-index:2}.chapter{min-height:116vh;min-height:116svh;display:flex;align-items:center;padding:130px 9% 110px;position:relative}.chapter:first-child{min-height:106vh;min-height:106svh}.copy{width:min(560px,48%);min-width:0}.eyebrow{display:flex;align-items:center;gap:12px;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:650;margin-bottom:22px}.eyebrow:before{content:'';width:32px;height:1px;background:currentColor}h1,h2,p{margin:0}h1,h2{word-break:normal;overflow-wrap:normal;hyphens:none;white-space:normal;font-kerning:normal}h1 em,h2 em{font-family:inherit;letter-spacing:inherit}h1{font-family:'Segoe UI',Arial,'Noto Sans',sans-serif;font-size:clamp(42px,4.5vw,64px);font-weight:600;line-height:1.3;letter-spacing:normal;margin-bottom:28px}h1 em,h2 em{font-style:normal;color:var(--accent)}h2{font-family:'Segoe UI',Arial,'Noto Sans',sans-serif;font-size:clamp(32px,3.3vw,44px);font-weight:600;line-height:1.35;letter-spacing:normal;margin-bottom:24px}.lead{color:#d7e5e4;max-width:410px;font-size:19px;line-height:1.8}.small{font-size:15px;color:var(--muted)}.next{margin-top:30px;display:inline-flex;align-items:center;gap:20px;font-size:16px;font-weight:600;background:transparent;padding:0 0 9px;border-bottom:1px solid #b6e2dc77}.next span{color:var(--accent);font-size:24px;transition:transform .25s}.next:hover span{transform:translateY(5px)}.card{padding:32px;border:1px solid #ffffff2a;border-radius:5px;background:linear-gradient(135deg,#102f3cce,#0c293695);backdrop-filter:blur(18px);box-shadow:0 24px 80px #00182022}.card p{color:#d7e5e4;font-size:18px;line-height:1.8}.card p+p{margin-top:16px}.card .eyebrow{margin-bottom:18px}.hook{display:inline-block;margin-top:25px;color:var(--accent);font-size:16px}.choices{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}.choice{border-radius:30px;border:1px solid #ffffff45;padding:9px 16px;background:#122d35;font-size:16px}.choice[aria-pressed=true]{background:var(--accent);color:#103d41;border-color:var(--accent)}.response{min-height:54px;margin-top:14px!important;font-size:16px!important;color:var(--accent)!important}.end{margin-top:22px;font-size:17px;color:#b7d4d6}.rail{position:fixed;z-index:8;right:26px;top:50%;transform:translateY(-50%);display:grid;gap:17px}.rail a{position:relative;width:20px;height:20px;display:grid;place-items:center}.rail a:after{content:'';width:5px;height:5px;border-radius:50%;background:#a8c5ca;transition:.4s}.rail a[aria-current=true]:after{width:9px;height:9px;background:var(--accent);box-shadow:0 0 0 5px #91f0df1c}.rail a span{position:absolute;right:30px;white-space:nowrap;background:#0a2a34;padding:4px 12px;font-size:14px;border-radius:3px;opacity:0;pointer-events:none}.rail a:hover span,.rail a:focus-visible span{opacity:1}.footer{position:fixed;z-index:8;left:4.5%;right:4.5%;bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:20px;pointer-events:none;font-size:14px;color:#c6dddf}.count{font-variant-numeric:tabular-nums;letter-spacing:.12em}.place{font-size:14px;letter-spacing:.03em}.progress{height:2px;background:#ffffff20;position:fixed;bottom:0;left:0;right:0;z-index:10}.progress i{display:block;height:100%;width:0;background:var(--accent)}.scroll-note{display:flex;gap:10px;align-items:center}.scroll-note b{font-size:20px;font-weight:400;animation:float 2s ease-in-out infinite}@keyframes float{50%{transform:translateY(5px)}}.chapter:last-child{min-height:110svh}.last .copy{width:min(560px,50%)}.last h2{font-size:clamp(36px,3.8vw,50px)}noscript{position:fixed;z-index:50;bottom:70px;background:#123c46;padding:10px 20px;font-size:16px}.chapter .copy{opacity:.28;transform:translateY(22px);transition:opacity .6s,transform .8s}.chapter.active .copy{opacity:1;transform:none}.chapter:first-child .copy{opacity:1;transform:none}
+@media(min-width:1500px){.chapter{padding-left:max(9%,calc((100vw - 1250px)/2))}}
+@media(max-width:700px){header{padding:17px 20px}.brand{font-size:14px;letter-spacing:.03em;gap:8px}.tools{gap:6px}.tool{font-size:14px;padding:7px 11px}.pause-label{display:none}.chapter,.chapter:first-child{min-height:125svh;padding:100px 23px 95px;align-items:flex-start}.copy,.last .copy{width:100%;max-width:480px}.chapter:first-child .copy{padding-top:4svh}h1{font-size:clamp(36px,10vw,46px);line-height:1.35;max-width:100%;margin-bottom:20px}h2{font-size:clamp(28px,8vw,34px);line-height:1.4;margin-bottom:16px}.lead{font-size:18px;max-width:320px}.card{padding:22px 24px;background:#092e3cdb}.card p{font-size:17px;line-height:1.7}.eyebrow{font-size:14px;margin-bottom:16px}.rail{right:7px;gap:12px;top:auto;bottom:65px;transform:none}.rail a{width:16px;height:16px}.rail a span{display:none}.footer{left:23px;right:23px;bottom:19px}.place{max-width:50%;font-size:14px}.scroll-note{display:none}.shade{background:linear-gradient(#031f2b66,transparent 80%)}.last h2{font-size:clamp(30px,8vw,36px)}.last .copy{padding-top:3svh}.response{min-height:54px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.chapter .copy{transition:none;transform:none}.scroll-note b{animation:none}}
+
+.timepiece{position:fixed;z-index:8;right:4.5%;top:94px;display:flex;align-items:center;gap:13px;color:#e0edeb;font-size:15px;font-variant-numeric:tabular-nums;padding:9px 15px;background:#082c3ab8;border:1px solid #ffffff25;border-radius:40px;backdrop-filter:blur(12px)}.timepiece .orb{width:9px;height:9px;background:#f4d69b;border-radius:50%;box-shadow:0 0 14px #ffe1a055}.timepiece .weather{color:#91f0df;border-left:1px solid #ffffff30;padding-left:12px}.season-story{min-height:270svh;align-items:flex-start}.season-story .copy{position:sticky;top:21vh}.season-strip{display:flex;gap:6px;flex-wrap:wrap;margin-top:23px}.season-strip span{font-size:15px;padding:5px 12px;border:1px solid #ffffff30;border-radius:20px;color:#c5d9dd}.season-strip span.current{background:#91f0df;color:#12383e;border-color:#91f0df}.season-caption{min-height:92px;margin-top:18px!important;color:#cce6dc!important}.chapter:nth-last-child(3) .hook{max-width:100%}
+@media(max-width:700px){.timepiece{left:23px;right:auto;top:75px;font-size:14px;padding:6px 12px;gap:9px}.chapter,.chapter:first-child{padding-top:138px}.season-story{min-height:290svh}.season-story .copy{top:134px}.season-caption{min-height:100px}.rail{gap:7px}.season-strip span{font-size:14px;padding:4px 10px}}
+
+/* ===== Hộp nhạc YouTube (hiện hình, có điều khiển) ===== */
+.yt-box{
+  position:fixed;left:16px;bottom:16px;z-index:60;
+  width:min(360px,calc(100vw - 32px));
+  background:#0a2a34ee;border:1px solid #ffffff2e;border-radius:12px;
+  box-shadow:0 20px 60px #000a, 0 0 0 1px #91f0df11 inset;
+  backdrop-filter:blur(14px);
+  transform:translateY(140%);opacity:0;pointer-events:none;
+  transition:transform .45s cubic-bezier(.2,.8,.2,1),opacity .35s;
+}
+.yt-box.show{transform:none;opacity:1;pointer-events:auto}
+.yt-head{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid #ffffff1c}
+.yt-head .dot{width:8px;height:8px;border-radius:50%;background:#91f0df;box-shadow:0 0 10px #91f0df88;flex:none}
+.yt-head .ttl{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#cfe9e5;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.yt-head button{background:transparent;border:0;color:#cfe9e5;font-size:20px;line-height:1;padding:2px 6px;border-radius:6px;cursor:pointer}
+.yt-head button:hover{background:#ffffff14;color:#fff}
+.yt-frame-wrap{position:relative;width:100%;aspect-ratio:16/9;background:#000;overflow:hidden;border-radius:0 0 11px 11px}
+.yt-frame-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+.yt-hint{padding:7px 12px;font-size:12px;color:#9fc4c4;background:#07232c;border-top:1px solid #ffffff14;border-radius:0 0 11px 11px}
+@media(max-width:700px){
+  .yt-box{left:12px;right:12px;bottom:12px;width:auto}
+  .yt-hint{font-size:11.5px}
+}
+</style></head>
+<body>
+<div class="stage" aria-hidden="true"><canvas id="world"></canvas></div><div class="grain"></div><div class="shade"></div>
+<header><a class="brand" href="#bat-dau" aria-label="Về đầu câu chuyện"><svg viewBox="0 0 24 32"><path d="M12 1C10 9 2 15 2 21a10 10 0 0020 0C22 15 14 9 12 1Z"/></svg>CHUYỆN NHỎ CỦA NƯỚC</a><div class="tools"><button id="sound" class="tool" aria-pressed="false" aria-label="Bật nhạc nền">♪ Nhạc nền</button><button id="motion" class="tool" aria-pressed="false" aria-label="Tạm dừng chuyển động">Ⅱ<span class="pause-label"> Dừng</span></button></div></header>
+<div class="timepiece" aria-label="Nhịp thời gian của câu chuyện"><span class="orb"></span><span id="story-clock">06:00 · Bình minh</span><span class="weather" id="story-season">Xuân</span></div>
+<nav class="rail" aria-label="Các chặng của giọt mưa"></nav>
+<main>
+<section class="chapter active" id="bat-dau" data-place="Trên những tầng mây"><div class="copy"><div class="eyebrow">Một chuyến đi bằng cách cuộn</div><h1>Một giọt mưa.<br><em>Cả một<br>hành trình.</em></h1><p class="lead">Bạn từng nhìn mưa rơi.<br>Nhưng đã bao giờ đi cùng một giọt nước?</p><a class="next" href="#cham-pho">Thử theo tôi một đoạn <span>↓</span></a></div></section>
+<section class="chapter" id="cham-pho" data-place="Trên mặt phố"><div class="copy card"><div class="eyebrow">01 · Chạm thành phố</div><h2>Rơi xuống.<br>Và không thể<br><em>dừng lại.</em></h2><p>Tôi chạm mái nhà, trượt qua mép hiên rồi rơi xuống phố. Trên mặt đường kín, tôi khó tìm được một lối thấm xuống.</p><span class="hook">Phía trước có một khe tối. ↓</span></div></section>
+<section class="chapter" id="duoi-pho" data-place="Bên dưới vỉa hè"><div class="copy card"><div class="eyebrow">02 · Cánh cửa dưới chân</div><h2>Thành phố còn<br>một tầng <em>ẩn.</em></h2><p>Bên dưới tiếng xe là một mạng đường khác. Không dành cho con người. Dành cho những giọt nước như tôi.</p><p>Tôi lọt qua miệng thu và nhập vào dòng chảy trong cống.</p><span class="hook">Nhưng đường đi không phải lúc nào cũng rộng mở. ↓</span></div></section>
+<section class="chapter" id="doi-cho" data-place="Trong lòng đường"><div class="copy card"><div class="eyebrow">03 · Khi mọi giọt cùng đến</div><h2>Đôi khi,<br>nước cũng phải<br><em>xếp hàng.</em></h2><p>Khi quá nhiều nước cùng dồn tới, hoặc cửa ra bị cản, dòng nước có thể chậm lại. Phần chưa thoát kịp tích lên phía trên.</p><p>Một con đường ngập có thể bắt đầu từ điều bạn không nhìn thấy.</p><span class="hook">Nếu có một nơi để tạm nghỉ thì sao? ↓</span></div></section>
+<section class="chapter" id="khoang-xanh" data-place="Một khoảng xanh giữa phố"><div class="copy card"><div class="eyebrow">04 · Một lối đi khác</div><h2>Chỉ cần<br>một khoảng <em>xanh.</em></h2><p>Một vùng đất có cây và chỗ trũng có thể giữ nước lại, cho nước thời gian thấm xuống.</p><div class="choices" role="group" aria-label="Thử thay đổi mặt đất"><button class="choice" data-green="0" aria-pressed="false">Mặt kín</button><button class="choice" data-green="1" aria-pressed="true">Khoảng xanh</button></div><p class="response" id="response" aria-live="polite">Tôi được giữ lại một lúc, rồi chậm rãi đi vào đất.</p></div></section>
+<section class="chapter" id="mam-song" data-place="Nơi một mầm sống bắt đầu"><div class="copy card"><div class="eyebrow">05 · Một cuộc gặp trong đất</div><h2>Tôi gặp một<br><em>hạt đang ngủ.</em></h2><p>Nước làm hạt hút ẩm. Khi có đủ điều kiện, lớp vỏ mở ra. Một chiếc rễ nhỏ tìm xuống đất, còn mầm non hướng lên ánh sáng.</p><span class="hook">Tôi không chỉ đi qua. Tôi trở thành một phần của sự sống. ↓</span></div></section>
+<section class="chapter season-story" id="bon-mua" data-place="Bốn mùa đi qua một tán cây"><div class="copy card"><div class="eyebrow">06 · Thời gian có hình dáng</div><h2>Một mầm nhỏ.<br><em>Nhiều mùa sau.</em></h2><p>Ngày đêm nối nhau. Rễ vươn sâu, thân lớn lên. Nước đi từ đất, qua rễ, lên những chiếc lá.</p><div class="season-strip" aria-label="Bốn mùa"><span>Xuân</span><span>Hạ</span><span>Thu</span><span>Đông</span></div><p class="season-caption" id="season-caption">Xuân. Những chồi non mở ra, bắt đầu một vòng sống mới.</p><span class="hook">Cuộn chậm để nhìn thời gian đi qua tán cây. ↓</span></div></section>
+<section class="chapter" id="trai-dat" data-place="Cùng nhịp thở của Trái Đất"><div class="copy card"><div class="eyebrow">07 · Từ một chiếc lá đến hành tinh</div><h2>Nhỏ như tôi.<br>Vẫn góp một<br><em>màu xanh.</em></h2><p>Nước có trong chiếc lá, trong khu rừng, trong cơ thể muôn loài. Dưới ánh mặt trời, nước cùng tham gia vào quá trình nuôi lớn thế giới sống.</p><p>Một giọt thì nhỏ. Nhưng vòng tuần hoàn ấy kết nối cả Trái Đất.</p><span class="hook">Và hành trình vẫn chưa dừng lại. ↓</span></div></section>
+<section class="chapter" id="ra-song" data-place="Nơi dòng sông mở ra"><div class="copy card"><div class="eyebrow">08 · Ra khoảng rộng</div><h2>Cuối cùng,<br>được <em>thở.</em></h2><p>Những giọt khác tiếp tục thấm sâu hoặc tìm ra sông. Câu chuyện của chúng tôi lại gặp nhau trong dòng nước. Không còn mái nhà hay vỉa hè. Chỉ có dòng chảy và một khoảng trời rất rộng.</p><span class="hook">Bạn nghĩ hành trình đã kết thúc? ↓</span></div></section>
+<section class="chapter last" id="tro-lai" data-place="Trở về bầu trời"><div class="copy"><div class="eyebrow">09 · Điểm đến là một khởi đầu</div><h2>Tôi chưa biến mất.<br>Chỉ đang<br><em>trở lại bầu trời.</em></h2><p class="lead">Nắng lên. Nước dần hóa thành hơi.<br>Một ngày nào đó, tôi lại rơi xuống.<br>Có thể ngay trên bàn tay bạn.</p><p class="end">Lần tới gặp mưa, bạn sẽ nhìn thấy nhiều hơn.</p><a class="next" href="#bat-dau">Đi cùng tôi một lần nữa <span>↺</span></a></div></section>
+</main>
+<div class="footer"><span class="count">01 / 10</span><span class="place">Trên những tầng mây</span><span class="scroll-note">Cứ cuộn. Chuyện còn tiếp. <b>↓</b></span></div><div class="progress" role="progressbar" aria-label="Tiến trình câu chuyện" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div>
+
+<!-- ===== Hộp nhạc YouTube (hiển thị, có điều khiển) ===== -->
+<div class="yt-box" id="ytBox" aria-hidden="true">
+  <div class="yt-head">
+    <span class="dot"></span>
+    <span class="ttl" id="ytTitle">Nhạc nền · bắt đầu 38:05</span>
+    <button id="ytClose" aria-label="Đóng hộp nhạc">×</button>
+  </div>
+  <div class="yt-frame-wrap"><div id="yt-player"></div></div>
+  <div class="yt-hint">Nếu chưa có tiếng: bấm nút ▶ và biểu tượng loa trên khung.</div>
+</div>
+
+<noscript>Bật JavaScript để theo dõi chuyển động. Bạn vẫn có thể cuộn đọc toàn bộ câu chuyện.</noscript>
+<script>
+'use strict';
+/* ============================================================
+   PHẦN 1: HOẠT ẢNH CANVAS (giữ nguyên)
+============================================================ */
+const canvas=document.getElementById('world'),ctx=canvas.getContext('2d');
+const sections=[...document.querySelectorAll('.chapter')],rail=document.querySelector('.rail');
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let W=0,H=0,D=1,scroll=0,stage=0,phase=0,green=1,paused=reduced,visible=true,last=0,time=0,active=-1;
+const palette=[['#174855','#082e3b'],['#103542','#071f2d'],['#113840','#071c29'],['#16343e','#07202a'],['#184a4c','#082d37'],['#244c43','#17383d'],['#2c5c58','#143b43'],['#0d3045','#071b2a'],['#1c5362','#0b3448'],['#6b7273','#284655']];
+const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v)),mix=(a,b,p)=>a+(b-a)*p;
+function rgb(hex){return hex.match(/\w\w/g).map(x=>parseInt(x,16))}function color(a,b,p){a=rgb(a.slice(1));b=rgb(b.slice(1));return `rgb(${a.map((v,i)=>Math.round(mix(v,b[i],p))).join(',')})`}
+function resize(){W=innerWidth;H=innerHeight;D=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(W*D);canvas.height=Math.round(H*D);ctx.setTransform(D,0,0,D,0,0);update()}
+function update(){scroll=window.scrollY;let index=0;const focus=H*.5;sections.forEach((s,i)=>{if(s.getBoundingClientRect().top<=focus)index=i});const r=sections[index].getBoundingClientRect();const span=sections[index+1]?sections[index+1].getBoundingClientRect().top-r.top:r.height;stage=index;phase=clamp((focus-r.top)/span);if(index!==active){active=index;sections.forEach((s,i)=>s.classList.toggle('active',i===index));[...rail.children].forEach((a,i)=>a.setAttribute('aria-current',String(i===index)));document.querySelector('.count').textContent=String(index+1).padStart(2,'0')+' / '+String(sections.length).padStart(2,'0');document.querySelector('.place').textContent=sections[index].dataset.place}const p=clamp(scroll/Math.max(1,document.documentElement.scrollHeight-H));document.querySelector('.progress i').style.width=p*100+'%';document.querySelector('.progress').setAttribute('aria-valuenow',Math.round(p*100));if(paused)draw()}
+sections.forEach((s,i)=>{const a=document.createElement('a');a.href='#'+s.id;a.setAttribute('aria-label',s.dataset.place);a.innerHTML='<span>'+s.dataset.place+'</span>';rail.appendChild(a)});
+function path(points,stroke,width=1){ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.strokeStyle=stroke;ctx.lineWidth=width;ctx.stroke()}
+function ellipse(x,y,rx,ry,fill){ctx.beginPath();ctx.ellipse(x,y,Math.max(.01,rx),Math.max(.01,ry),0,0,Math.PI*2);ctx.fillStyle=fill;ctx.fill()}
+function glow(x,y,r,c){const g=ctx.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,c);g.addColorStop(1,'transparent');ctx.fillStyle=g;ctx.fillRect(x-r,y-r,r*2,r*2)}
+function droplet(x,y,r,alpha=1){ctx.save();ctx.globalAlpha*=alpha;const pulse=1+Math.sin(time*1.8)*.1;glow(x,y,r*5.6*pulse,'#70e8e72b');glow(x,y,r*2.3,'#a9fff04d');ctx.translate(x,y);ctx.beginPath();ctx.moveTo(0,-r*1.5);ctx.bezierCurveTo(-r*.35,-r*.65,-r,r*.05,-r,r*.6);ctx.bezierCurveTo(-r,r*1.9,r,r*1.9,r,r*.6);ctx.bezierCurveTo(r,r*.05,r*.35,-r*.65,0,-r*1.5);const g=ctx.createLinearGradient(-r,-r,r,r*1.5);g.addColorStop(0,'#e6fffa');g.addColorStop(.3,'#80eadd');g.addColorStop(1,'#1c91a4');ctx.fillStyle=g;ctx.fill();ctx.strokeStyle='#d1fff5cc';ctx.lineWidth=1;ctx.stroke();path([[-r*.48,r*.1],[-r*.58,r*.5],[-r*.4,r*.85]],'#e4fff4aa',Math.max(1,r*.055));ctx.beginPath();ctx.ellipse(-r*.34,-r*.4,r*.2,r*.26,-.3,0,Math.PI*2);ctx.fillStyle='#ffffffd9';ctx.fill();ctx.restore()}
+function cloud(x,y,s,alpha=.3){ctx.save();ctx.globalAlpha*=alpha;for(let j=0;j<6;j++){ellipse(x+(j-2.5)*s*.44,y-Math.sin(j*.9)*s*.21,s*.6,s*.32,'#c5e3df')}ctx.restore()}
+function stars(a=.25){for(let i=0;i<38;i++){const x=((i*187.3)%W),y=((i*73.7)%(H*.65));ellipse(x,y,i%4===0?1.3:.7,1,'rgba(212,255,244,'+(a*(.65+.35*Math.sin(time*.5+i)))+')')}}
+function sceneCloud(end=false){const x=W<700?W*.64:W*.73,y=W<700?H*.72:H*.51;stars(.24);glow(x,y,H*.48,end?'#f6d6a333':'#74d4ca20');for(let i=0;i<5;i++)cloud((W*(i*.29+.1)+Math.sin(time*.05+i)*20)%(W+180)-60,H*(.3+i*.12),W*.16,.05+i*.015);const ring=70+Math.sin(time*.6)*8;for(let i=0;i<3;i++){ctx.beginPath();ctx.ellipse(x,y+65,ring+i*47,(ring+i*47)*.32,-.3,0,Math.PI*2);ctx.strokeStyle='#b1e9de'+['28','19','10'][i];ctx.lineWidth=1;ctx.stroke()}if(end){for(let i=0;i<26;i++){const px=x+(Math.sin(i*5.2)*W*.22),py=H-((time*20+i*41)%H);ellipse(px,py,2+i%3,3+i%3,'#d6eee631')}cloud(x,H*.27,W*.2,.23)}droplet(x,y+Math.sin(time*1.1)*10,Math.min(W*.09,72));path([[x-10,y+135],[x-10,y+185]],'#a8dbd750',1);ellipse(x-10,y+190,3,3,'#a8dbd750')}
+const buildings=Array.from({length:21},(_,i)=>({x:i/21,h:.11+((i*37)%17)/80,w:.028+(i%3)*.008}));
+function city(base=H*.76,scale=1,alpha=1){ctx.save();ctx.globalAlpha*=alpha;for(let layer=0;layer<2;layer++){buildings.forEach((b,i)=>{const x=b.x*W+layer*20,w=b.w*W,h=b.h*H*scale*(layer?.8:1);ctx.fillStyle=layer?'#244d57':'#153c49';ctx.fillRect(x,base-h,w,h);ctx.strokeStyle=layer?'#709a9a44':'#89b3b02e';ctx.lineWidth=1;ctx.strokeRect(x,base-h,w,h);if(i===14){path([[x+w*.6,base-h],[x+w*.6,base-h-36*scale]],'#73a5ab77',2)}for(let r=0;r<Math.floor(h/16);r++)for(let c=0;c<Math.floor(w/10);c++){ctx.fillStyle=(r+c+i)%6===0?'#e8c78966':'#85c5c321';ctx.fillRect(x+5+c*10,base-h+8+r*16,3,5)}})}ctx.fillStyle='#0a2531';ctx.fillRect(0,base,W,H-base);path([[0,base],[W,base]],'#6fbfc35e',1);ctx.restore()}
+function rain(alpha=1,amount=90){ctx.save();ctx.globalAlpha*=alpha;ctx.lineWidth=1;for(let i=0;i<amount;i++){let x=((i*97.43+time*24)%(W+80))-40,y=((i*53.12+time*(220+i%5*25))%(H+70))-35;ctx.strokeStyle=i%5?'#b3dfeb3b':'#b3dfeb85';path([[x,y],[x-6,y+18]],ctx.strokeStyle,1)}ctx.restore()}
+function puddles(y,alpha=1){ctx.save();ctx.globalAlpha*=alpha;for(let i=0;i<9;i++){const x=(i*.147*W)%W,r=(time*15+i*13)%65;ctx.beginPath();ctx.ellipse(x,y+(i%3)*12,r,r*.15,0,0,Math.PI*2);ctx.strokeStyle='#87e3de'+Math.floor((1-r/65)*70).toString(16).padStart(2,'0');ctx.stroke()}ctx.restore()}
+function sceneCity(){city(H*.76);glow(W*.76,H*.55,H*.38,'#70d4d013');rain(.9);puddles(H*.83);droplet(W*.74,H*.59+Math.sin(time*1.4)*8,16);path([[W*.74,H*.66],[W*.74,H*.76],[W*.9,H*.76]],'#8aeece55',1)}
+function soil(top){ctx.fillStyle='#263b40';ctx.fillRect(0,top,W,H-top);for(let j=0;j<5;j++){const y=top+35+j*H*.08;ctx.beginPath();ctx.moveTo(0,y);for(let x=0;x<=W+20;x+=20)ctx.lineTo(x,y+Math.sin(x*.015+j*3)*7);ctx.strokeStyle='#b7a27722';ctx.lineWidth=1;ctx.stroke()}for(let i=0;i<70;i++)ellipse((i*137.2)%W,top+((i*37.6)%(H-top)),1.5,1,'#e0bf8b30')}
+function pipe(y,fill=.4){const x=W<700?W*.22:W*.6,w=W-x+30,h=Math.min(H*.095,90);ctx.fillStyle='#082834';ctx.fillRect(x,y,w,h);ctx.strokeStyle='#83b9b366';ctx.lineWidth=3;ctx.strokeRect(x,y,w,h);ctx.save();ctx.beginPath();ctx.rect(x+2,y+2,w-2,h-4);ctx.clip();const fy=y+h*(1-fill);ctx.beginPath();ctx.moveTo(x,y+h);ctx.lineTo(x,fy);for(let xx=x;xx<=W+40;xx+=10)ctx.lineTo(xx,fy+Math.sin(xx*.027-time*2)*3);ctx.lineTo(W+40,y+h);ctx.fillStyle='#53bfca88';ctx.fill();for(let i=0;i<10;i++){const xx=x+((time*60+i*93)%w);path([[xx,fy+15+i%3*10],[xx+28,fy+15+i%3*10]],'#acebe477',1)}ctx.restore();return {x,y,h}}
+function sceneDrain(congested=false){const top=H*(W<700?.63:.48);city(top,.55,.65);soil(top);const p=pipe(H*.78,congested?.86:.42);const xx=W*.76;ctx.fillStyle='#0a2630';ctx.fillRect(xx-26,top,52,H*.78-top);ctx.strokeStyle='#8fb6ac66';ctx.strokeRect(xx-26,top,52,H*.78-top);for(let i=0;i<6;i++)path([[xx-36+i*14,top-4],[xx-31+i*14,top-20]],'#96aeb4',4);for(let i=0;i<13;i++){const yy=top+((time*85+i*19)%(H*.78-top));path([[xx-14+i%3*12,yy],[xx-14+i%3*12,yy+12]],'#9fe3dd88',2)}if(congested){ctx.fillStyle='#dfad6877';ctx.fillRect(W*.9,p.y+3,13,p.h*.67);ellipse(xx,top-3,W*.15,7,'#75d6d77a');puddles(top-8,.7);glow(W*.9,p.y,90,'#ffb96c17')}droplet(W*.79,p.y+p.h*.6,9);rain(.22,45)}
+function tree(x,y,s){path([[x,y],[x,y-s*.7]],'#aac5a778',3);for(let i=0;i<3;i++)ellipse(x+Math.sin(i*4)*s*.2,y-s*.65-i*s*.17,s*.36,s*.34,i===1?'#76b79d':'#4b947e')}
+function sceneGreen(){const ground=H*(W<700?.74:.64);city(ground,.58,.4);soil(ground);const start=W<700?W*.12:W*.58,end=W*.95;ctx.beginPath();ctx.moveTo(start,ground);ctx.bezierCurveTo(start+40,ground+5,start+30,ground+55,start+100,ground+55);ctx.lineTo(end-90,ground+55);ctx.bezierCurveTo(end-30,ground+55,end-30,ground+3,end,ground);ctx.closePath();ctx.fillStyle=green?'#66a18b':'#747f81';ctx.fill();if(green){for(let i=0;i<5;i++)tree(start+35+(end-start-55)*i/5,ground,30+i%2*18);for(let i=0;i<23;i++){const x=start+35+((i*43)%(end-start-65)),y=ground+40+((time*22+i*17)%140);ellipse(x+Math.sin(y*.02)*8,y,1.7,4,'#84dfc477')}for(let i=0;i<4;i++){const x=start+60+i*(end-start-95)/4;path([[x,ground+65],[x-6,ground+90],[x+10,ground+120],[x,ground+160]],'#a0be8f44',1)}}else{ellipse((start+end)/2,ground+45,(end-start)*.42,12,'#8ed8dca6');puddles(ground+34)}rain(.35,55);droplet((start+end)/2,ground-70,16)}
+function sceneRiver(){const y=H*(W<700?.63:.53),x=W*.75;ctx.fillStyle='#102e3d';ctx.beginPath();ctx.moveTo(0,y);for(let i=0;i<=20;i++)ctx.lineTo(i*W/20,y-45-Math.sin(i*.7)*32);ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.fill();ctx.fillStyle='#235c6b';ctx.fillRect(0,y+15,W,H-y);for(let j=0;j<33;j++){const yy=y+25+j*(H-y)/33;const len=20+(j*27)%180,xx=(j*133+Math.sin(time*.4+j)*20)%W;path([[xx,yy],[xx+len,yy]],'#b4e3dc'+(j%4===0?'55':'1c'),1)}for(let j=0;j<18;j++){const yy=y+20+j*11,ww=15+j*3+Math.sin(time+j)*8;path([[x-ww,yy],[x+ww,yy]],'#f0d7ab33',2)}droplet(x,y+60+Math.sin(time)*7,12);for(let i=0;i<5;i++)path([[W*.1+i*8,y+12],[W*.1+i*9,y-20-i%3*17]],'#729a8a99',2)}
+
+const wrap=(v,m)=>((v%m)+m)%m;
+let vignetteCache=null,vignetteKey='';
+function vignette(s=.5){const key=W+'|'+H+'|'+s.toFixed(2);if(vignetteKey!==key){vignetteKey=key;const g=ctx.createRadialGradient(W*.5,H*.46,Math.min(W,H)*.24,W*.5,H*.5,Math.max(W,H)*.8);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(.55,'rgba(0,10,20,'+(s*.32)+')');g.addColorStop(1,'rgba(0,7,14,'+s+')');vignetteCache=g}ctx.fillStyle=vignetteCache;ctx.fillRect(0,0,W,H)}
+function horizonGlow(y,a,rgbc){if(a<=.01)return;ctx.save();ctx.globalCompositeOperation='screen';const g=ctx.createLinearGradient(0,y-H*.42,0,y+H*.06);g.addColorStop(0,'rgba('+rgbc+',0)');g.addColorStop(.62,'rgba('+rgbc+','+(a*.5)+')');g.addColorStop(1,'rgba('+rgbc+','+a+')');ctx.fillStyle=g;ctx.fillRect(0,y-H*.42,W,H*.48);ctx.restore()}
+function lightShafts(x,y,len,count,spread,rgbc,alpha=.12,speed=1){if(alpha<=.005)return;ctx.save();ctx.globalCompositeOperation='screen';for(let i=0;i<count;i++){const t=count>1?i/(count-1):.5;const a=(t-.5)*spread+Math.sin(time*.16*speed+i*.9)*.03;const w=len*(.035+.035*Math.abs(Math.sin(i*2.1+time*.3*speed)));const flick=.75+.25*Math.sin(time*.9*speed+i*1.7);ctx.save();ctx.translate(x,y);ctx.rotate(a);const g=ctx.createLinearGradient(0,0,0,len);g.addColorStop(0,'rgba('+rgbc+','+(alpha*flick)+')');g.addColorStop(.4,'rgba('+rgbc+','+(alpha*.32*flick)+')');g.addColorStop(1,'rgba('+rgbc+',0)');ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(-w*.3,0);ctx.lineTo(w*.3,0);ctx.lineTo(w*1.7,len);ctx.lineTo(-w*1.7,len);ctx.closePath();ctx.fill();ctx.restore()}ctx.restore()}
+function flare(x,y,scale,alpha){if(alpha<=.02)return;ctx.save();ctx.globalCompositeOperation='screen';ctx.globalAlpha=alpha;const dx=W*.5-x,dy=H*.5-y;for(let i=1;i<=4;i++){const p=i/5.5,fx=x+dx*p,fy=y+dy*p,rr=Math.max(1,scale*(.34-i*.06));ellipse(fx,fy,rr,rr,'rgba(255,226,178,'+(.10-i*.018)+')')}ctx.restore()}
+function motes(alpha=.22,count=22,rgbc='205,255,240'){ctx.save();ctx.globalCompositeOperation='screen';for(let i=0;i<count;i++){const x=((i*151.7+time*(7+(i%5)*4))%(W+80))-40;const y=H*.12+wrap(i*79.3+Math.sin(time*.35+i)*46+time*5,H*.76);const r=1+(i%3)*.85;const a=alpha*(.35+.65*Math.abs(Math.sin(time*.7+i)));ellipse(x,y,r,r,'rgba('+rgbc+','+a+')')}ctx.restore()}
+
+const seasonNames=['Xuân','Hạ','Thu','Đông'];
+const seasonLines=['Xuân. Chồi non hé mở. Một vòng sống mới bắt đầu trong những chiếc lá.','Hạ. Tán cây xanh dày, đón nắng. Nước tiếp tục đi từ rễ lên lá.','Thu. Với nhiều loài cây ở vùng ôn đới, lá đổi màu rồi nhẹ rời cành.','Đông. Cây ôn đới có thể nghỉ, chờ mùa ấm. Trong rễ, sự sống vẫn được giữ lại.'];
+function seasonValue(){return ((stage===6?phase*3.99:stage*.23)+time/65)%4}
+function dayHour(){return (5.5+(stage+phase)*5+time*.55)%24}
+function dayLight(){return clamp(Math.sin((dayHour()-6)*Math.PI/12)*1.4)}
+function celestial(){const hour=dayHour(),day=dayLight(),night=1-clamp(day*2),x=W*(.65+.15*Math.cos(hour/24*Math.PI*2)),y=H*(W<700?.63:.2);ctx.save();if(day>.03){glow(x,y,H*(.24+day*.16),'rgba(255,206,140,'+(.09+day*.09)+')');glow(x,y,H*.1,'#ffe6b444');lightShafts(x,y,H*1.2,7,.95,'255,224,170',.085*day,1);const R=25+day*10;ellipse(x,y,R*2.2,R*2.2,'rgba(255,214,150,'+(.09+.05*day)+')');ellipse(x,y,R,R,'#ffe9b8');ellipse(x-R*.26,y-R*.26,R*.5,R*.5,'#fffdf3');flare(x,y,H*.05,day*.85)}if(night>.05){ctx.globalAlpha=night;stars(.62);glow(x,y,H*.17,'#bcd9ff22');ellipse(x,y,25,25,'#e8f2f7');ellipse(x+11,y-6,22,22,'#193743');ellipse(x-7,y+5,4.5,4.5,'rgba(255,255,255,.32)');flare(x,y,H*.04,.4)}ctx.restore()}
+function timeHUD(){const h=dayHour(),hours=Math.floor(h),minutes=Math.floor((h-hours)*60),label=h<5?'Đêm yên':h<8?'Bình minh':h<16?'Ban ngày':h<19?'Hoàng hôn':'Đêm xanh';const stamp=String(hours).padStart(2,'0')+':'+String(minutes).padStart(2,'0')+' · '+label;const clock=document.getElementById('story-clock');if(clock.textContent!==stamp)clock.textContent=stamp;const sv=seasonValue(),si=Math.floor(sv);document.getElementById('story-season').textContent=seasonNames[si];const caption=document.getElementById('season-caption');if(caption.textContent!==seasonLines[si])caption.textContent=seasonLines[si];document.querySelectorAll('.season-strip span').forEach((x,i)=>x.classList.toggle('current',i===si))}
+function leaf(x,y,size,angle,c){ctx.save();ctx.translate(x,y);ctx.rotate(angle);ctx.beginPath();ctx.moveTo(0,0);ctx.bezierCurveTo(size*.2,-size*.8,size*.9,-size*.5,size,0);ctx.bezierCurveTo(size*.6,size*.5,size*.2,size*.4,0,0);ctx.fillStyle=c;ctx.fill();path([[0,0],[size*.8,0]],'#dce8bb35',1);ctx.restore()}
+function sceneSeed(){const x=W*(W<700?.58:.76),g=H*(W<700?.88:.67),grow=clamp(phase*1.6+.15);soil(g);ellipse(x,g+19,18,11,'#b88d57');glow(x,g+16,70,'#bfe6a323');const height=H*(W<700?.19:.24)*grow;path([[x,g+22],[x-8,g+50],[x+4,g+86]],'#d7c3a6aa',2);for(let i=0;i<6;i++){const yy=g+35+i*9,side=i%2?1:-1;path([[x,yy],[x+side*(10+i*3),yy+18]],'#cfc6a17a',1)}ctx.beginPath();ctx.moveTo(x,g+8);ctx.bezierCurveTo(x+16,g-height*.3,x-15,g-height*.7,x+4,g-height);ctx.strokeStyle='#83cba4';ctx.lineWidth=5;ctx.stroke();leaf(x,g-height*.55,40*grow,-.35,'#75b594');leaf(x,g-height*.75,-36*grow,.3,'#a6ce9c');for(let i=0;i<12;i++){const yy=g+90-((time*18+i*9)%100);ellipse(x+Math.sin(i*3)*20,yy,2,3,'#9be1cd88')}droplet(x+55,g-35,12);for(let i=0;i<8;i++){const xx=x-100+i*28;path([[xx,g],[xx+3,g-9-i%3*4]],'#91ba7d88',2)}}
+function grownTree(x,y,height,sv,growth=1){const si=Math.floor(sv),f=sv-si;ctx.save();ctx.translate(x,y);ctx.scale(growth,growth);const sway=Math.sin(time*.5)*3;ctx.rotate(sway*.003);path([[0,0],[sway*.3,-height*.48],[sway,-height*.9]],'#a4a68a',Math.max(3,height*.037));for(let j=0;j<12;j++){const side=j%2?1:-1,base=-height*(.18+j*.048),endX=side*height*(.18+(j%3)*.04),endY=base-height*.2;path([[sway*.3,base],[endX*.6,base-height*.1],[endX,endY]],'#a9b294',Math.max(1,4-j*.2));const count=si===3?1:si===2?Math.max(1,Math.round(5*(1-f))):5;for(let k=0;k<count;k++){const lx=endX+(k-2)*height*.05,ly=endY+Math.sin(k*2+j)*height*.05;const lc=si===0?'#a4d8a5':si===1?'#66b69a':si===2?(k%2?'#d5aa65':'#c57e57'):'#c4d2c5';leaf(lx,ly,height*.11,side<0?Math.PI+.2:-.2,lc);if(si===0&&k%3===0)ellipse(lx,ly,3,3,'#f5d8c3')}}ctx.restore()}
+function sceneSeasons(){const x=W*(W<700?.55:.77),ground=H*(W<700?.9:.84),height=Math.min(H*(W<700?.25:.48),W*.36),sv=seasonValue(),si=Math.floor(sv);soil(ground);glow(x,ground-height*.55,height*1.1,'#6ecbab15');grownTree(x,ground,height,sv,.82+clamp(phase)*.18);for(let i=0;i<14;i++){const side=i%2?1:-1,yy=ground+(i%7)*10;path([[x,ground],[x+side*(30+i*3),yy+25]],'#9ebc9b44',1)}if(si===0){for(let i=0;i<17;i++){const px=x+Math.sin(i*7+time*.3)*height*.6,py=ground-height+((i*29+time*15)%(height));ellipse(px,py,2.7,1.8,'#f2d0c977')}}if(si===1){for(let i=0;i<8;i++){const px=x+Math.sin(i*9+time*.3)*height*.5,py=ground-height*.2+Math.sin(time*.8+i)*35;glow(px,py,8,'#dbf1a145')}}if(si===2){for(let i=0;i<15;i++){const px=x+Math.sin(i*4+time*.5)*height*.5,py=ground-height+((i*31+time*25)%height);leaf(px,py,8,time*.4+i,'#d6a45d99')}}if(si===3){for(let i=0;i<42;i++){const px=(i*83+Math.sin(time*.4+i)*20)%W,py=(time*22+i*39)%H;ellipse(px,py,1.5+i%2,1.5+i%2,'#e8f2efaa')}ellipse(x,ground,height*.45,5,'#d2e3dc55')}for(let i=0;i<9;i++){const yy=ground-((time*26+i*23)%(height*.8));ellipse(x+Math.sin(i*2)*5,yy,1.5,3,'#b1f8e26a')}}
+function sceneEarth(){const x=W*(W<700?.53:.75),y=H*(W<700?.77:.57),r=Math.min(W*(W<700?.31:.19),H*.31);stars(.6);glow(x,y,r*1.5,'#60ccdb30');ctx.save();ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.clip();const g=ctx.createRadialGradient(x-r*.4,y-r*.5,0,x,y,r*1.2);g.addColorStop(0,'#5eacba');g.addColorStop(.6,'#297d93');g.addColorStop(1,'#0c354e');ctx.fillStyle=g;ctx.fillRect(x-r,y-r,r*2,r*2);for(let i=0;i<7;i++){const cx=x+Math.sin(i*2.3+time*.035)*r*.85,cy=y+(i%4-1.5)*r*.4;ctx.beginPath();for(let j=0;j<13;j++){const a=j/12*Math.PI*2,rr=r*(.16+.06*Math.sin(i*9+j*2));const xx=cx+Math.cos(a)*rr,yy=cy+Math.sin(a)*rr*1.7;j?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy)}ctx.closePath();ctx.fillStyle=i%2?'#7ab28d':'#a1bd91';ctx.fill()}for(let i=0;i<8;i++){ctx.save();ctx.translate(x,y);ctx.rotate(-.3);ellipse(Math.sin(i*3+time*.025)*r,r*(i/5-.7),r*.45,r*.035,'#effbf841');ctx.restore()}const n=ctx.createLinearGradient(x-r,y,x+r,y);n.addColorStop(0,'#00112500');n.addColorStop(.45,'#00112500');n.addColorStop(1,'#001125d0');ctx.fillStyle=n;ctx.fillRect(x-r,y-r,r*2,r*2);ctx.restore();ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.strokeStyle='#a2ebea88';ctx.lineWidth=2;ctx.stroke();ctx.beginPath();ctx.ellipse(x,y,r*1.28,r*.35,-.35,0,Math.PI*2);ctx.strokeStyle='#a8e6db40';ctx.lineWidth=1;ctx.stroke();const a=time*.17;droplet(x+Math.cos(a)*r*1.26,y+Math.sin(a)*r*.4,9)}
+function scene(i){if(i===0)sceneCloud();if(i===1)sceneCity();if(i===2)sceneDrain();if(i===3)sceneDrain(true);if(i===4)sceneGreen();if(i===5)sceneSeed();if(i===6)sceneSeasons();if(i===7)sceneEarth();if(i===8)sceneRiver();if(i===9)sceneCloud(true)}
+function draw(){ctx.setTransform(D,0,0,D,0,0);const next=Math.min(sections.length-1,stage+1),blend=clamp((phase-(stage===6?.94:.65))/(stage===6?.06:.35)),day=dayLight(),hour=dayHour();const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,color(palette[stage][0],palette[next][0],blend));g.addColorStop(1,color(palette[stage][1],palette[next][1],blend));ctx.fillStyle=g;ctx.fillRect(0,0,W,H);if(stage!==7){ctx.fillStyle='rgba(130,193,186,'+(day*.19)+')';ctx.fillRect(0,0,W,H);const dawn=clamp(1-Math.abs(hour-6.2)/2.4),dusk=clamp(1-Math.abs(hour-17.8)/2.6);if(dawn>.02)horizonGlow(H*(W<700?.72:.58),dawn*.26,'255,178,120');if(dusk>.02)horizonGlow(H*(W<700?.72:.58),dusk*.3,'255,146,96');celestial()}ctx.save();ctx.globalAlpha=1-blend;scene(stage);ctx.restore();if(blend>0){ctx.save();ctx.globalAlpha=blend;scene(next);ctx.restore()}if(stage!==7)motes(stage===6?.16:.22,(stage===1||stage===3)?34:22,'205,255,240');if(stage!==7){ctx.fillStyle='rgba(6,18,54,'+((1-day)*.3)+')';ctx.fillRect(0,0,W,H);const warmth=clamp(1-Math.abs(hour-17.5)/2)*.16;if(warmth>0){ctx.fillStyle='rgba(245,166,102,'+warmth+')';ctx.fillRect(0,0,W,H)}}vignette(stage===7?.62:.5);timeHUD()}
+function tick(ts){if(visible&&(!paused||!last)&&ts-last>=32){if(!paused)time+=Math.min((ts-(last||ts))/1000,.05);last=ts;draw()}requestAnimationFrame(tick)}
+addEventListener('resize',resize);addEventListener('scroll',update,{passive:true});document.addEventListener('visibilitychange',()=>{visible=!document.hidden;last=0});
+const motion=document.getElementById('motion');function motionUI(){motion.setAttribute('aria-pressed',String(paused));motion.setAttribute('aria-label',paused?'Tiếp tục chuyển động':'Tạm dừng chuyển động');motion.innerHTML=paused?'▶<span class="pause-label"> Tiếp</span>':'Ⅱ<span class="pause-label"> Dừng</span>'}motion.onclick=()=>{paused=!paused;motionUI();draw()};motionUI();
+document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{green=+b.dataset.green;document.querySelectorAll('.choice').forEach(x=>x.setAttribute('aria-pressed',String(+x.dataset.green===green)));document.getElementById('response').textContent=green?'Tôi được giữ lại một lúc, rồi chậm rãi đi vào đất.':'Tôi tiếp tục chảy trên bề mặt để tìm một cửa thoát.';draw()});
+
+/* ============================================================
+   PHẦN 2: NHẠC NỀN YOUTUBE — dùng IFrame API với player HIỂN THỊ
+   Bắt đầu tại 38:05 (= 2285s), video FRPpLbsri4U
+   Chiến lược để CHẮC CHẮN có tiếng:
+     - Player hiển thị (người dùng có thể bấm ▶ trực tiếp)
+     - Tự động: gọi playVideo() + unMute() từ cú click nút "Nhạc nền"
+     - Nếu vẫn bị chặn → người dùng bấm nút ▶ của YouTube ngay trên player
+============================================================ */
+const YT_ID='FRPpLbsri4U';
+const YT_START=2285;              // 38:05
+const YT_VOL=55;                  // 0..100
+
+const soundBtn=document.getElementById('sound');
+const ytBox=document.getElementById('ytBox');
+const ytClose=document.getElementById('ytClose');
+const ytTitle=document.getElementById('ytTitle');
+
+let ytPlayer=null;
+let ytReady=false;
+let ytApiLoaded=false;
+let wantPlay=false;
+let playing=false;
+let uiTick=null;
+
+function soundUI(){
+  soundBtn.setAttribute('aria-pressed',String(playing));
+  soundBtn.setAttribute('aria-label',playing?'Tắt nhạc nền':'Bật nhạc nền');
+  soundBtn.textContent=playing?'♪ Đang nghe':(wantPlay?'♪ Đang tải…':'♪ Nhạc nền');
+  ytBox.setAttribute('aria-hidden',String(!wantPlay));
+}
+
+/* --- 1) Nạp API YouTube --- */
+function loadYTAPI(cb){
+  if(ytApiLoaded&&window.YT&&window.YT.Player){cb&&cb();return}
+  if(window.YT&&window.YT.Player){ytApiLoaded=true;cb&&cb();return}
+  const prev=window.onYouTubeIframeAPIReady;
+  window.onYouTubeIframeAPIReady=function(){
+    ytApiLoaded=true;
+    if(typeof prev==='function'){try{prev()}catch(e){}}
+    cb&&cb();
+  };
+  if(!document.getElementById('yt-api')){
+    const s=document.createElement('script');
+    s.id='yt-api';s.async=true;
+    s.src='https://www.youtube.com/iframe_api';
+    s.onerror=()=>{console.warn('Không tải được YouTube API');};
+    document.head.appendChild(s);
+  }
+}
+
+/* --- 2) Tạo player (hiển thị, có điều khiển) --- */
+function createPlayer(){
+  if(ytPlayer)return;
+  ytPlayer=new YT.Player('yt-player',{
+    width:'100%',
+    height:'100%',
+    videoId:YT_ID,
+    playerVars:{
+      start:YT_START,
+      controls:1,
+      modestbranding:1,
+      rel:0,
+      playsinline:1,
+      iv_load_policy:3,
+      fs:1
+    },
+    events:{
+      onReady:e=>{
+        ytReady=true;
+        try{e.target.setVolume(YT_VOL)}catch(er){}
+        soundUI();
+        // Nếu user đã bấm nút trước khi player sẵn sàng → phát luôn
+        if(wantPlay)forcePlay();
+      },
+      onStateChange:e=>{
+        // 1 = đang phát
+        if(e.data===1){
+          playing=true;soundUI();
+          // Sau khi chắc chắn đang phát (đã có "user activation" từ chính player),
+          // thử bỏ mute để có tiếng
+          try{
+            if(e.target.isMuted&&e.target.isMuted()){
+              e.target.unMute();
+              e.target.setVolume(YT_VOL);
+            }
+          }catch(er){}
+        }
+        // 0 = kết thúc → lặp lại từ 38:05
+        if(e.data===0){
+          try{e.target.seekTo(YT_START,true);e.target.playVideo()}catch(er){}
+        }
+        // 2 = tạm dừng
+        if(e.data===2){playing=false;soundUI()}
+      },
+      onError:err=>{
+        console.warn('YouTube player error',err&&err.data);
+        const code=err&&err.data;
+        if(code===101||code===150){
+          ytTitle.textContent='Video này không cho phép nhúng';
+        }
+      }
+    }
+  });
+}
+
+/* --- 3) Phát: mute trước → play → unmute sau --- */
+function forcePlay(){
+  if(!ytPlayer||!ytReady)return;
+  try{
+    ytPlayer.mute();
+    ytPlayer.seekTo(YT_START,true);
+    ytPlayer.playVideo();
+    // Unmute sau 400ms — lúc này player đã bắt đầu chạy
+    setTimeout(()=>{
+      try{
+        ytPlayer.unMute();
+        ytPlayer.setVolume(YT_VOL);
+      }catch(er){}
+    },400);
+  }catch(e){console.warn(e)}
+}
+
+/* --- 4) Nút "♪ Nhạc nền" --- */
+soundBtn.onclick=()=>{
+  if(wantPlay&&playing){
+    // TẮT
+    wantPlay=false;
+    try{if(ytPlayer&&ytReady)ytPlayer.pauseVideo()}catch(e){}
+    playing=false;
+    soundUI();
+    return;
+  }
+  // BẬT
+  wantPlay=true;
+  ytBox.classList.add('show');
+  soundUI();
+  loadYTAPI(()=>{
+    if(!ytPlayer){
+      createPlayer();
+    }else if(ytReady){
+      forcePlay();
+    }
+  });
+};
+
+/* --- 5) Nút đóng hộp nhạc (vẫn giữ trạng thái đang phát) --- */
+ytClose.onclick=()=>{
+  ytBox.classList.remove('show');
+};
+
+/* --- 6) Đồng bộ UI trạng thái "đang phát" định kỳ --- */
+setInterval(()=>{
+  if(!ytPlayer||!ytReady)return;
+  try{
+    const st=ytPlayer.getPlayerState();
+    const isPlaying=(st===1);
+    if(isPlaying!==playing){playing=isPlaying;soundUI()}
+  }catch(e){}
+},1500);
+
+soundUI();
+resize();requestAnimationFrame(tick);
+</script></body></html>
