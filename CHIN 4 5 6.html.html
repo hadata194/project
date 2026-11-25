@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tiếng Hoa 5 Phút Mỗi Ngày — Ngày 4, 5, 6 (HTML Roll)</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #FAF8F5;
+      color: #1C1917;
+    }
+    .hanzi {
+      font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+    .tian-zi-ge {
+      background-color: #FFFDF9;
+      background-image:
+        linear-gradient(to right, transparent 49.5%, rgba(200, 62, 43, 0.22) 49.5%, rgba(200, 62, 43, 0.22) 50.5%, transparent 50.5%),
+        linear-gradient(to bottom, transparent 49.5%, rgba(200, 62, 43, 0.22) 49.5%, rgba(200, 62, 43, 0.22) 50.5%, transparent 50.5%),
+        linear-gradient(to bottom right, transparent 49.7%, rgba(200, 62, 43, 0.12) 49.7%, rgba(200, 62, 43, 0.12) 50.3%, transparent 50.3%),
+        linear-gradient(to top right, transparent 49.7%, rgba(200, 62, 43, 0.12) 49.7%, rgba(200, 62, 43, 0.12) 50.3%, transparent 50.3%);
+    }
+    canvas.draw-pad {
+      touch-action: none;
+      cursor: crosshair;
+    }
+    .step-badge {
+      background: linear-gradient(135deg, #C83E2B 0%, #A93222 100%);
+    }
+  </style>
+</head>
+<body class="min-h-screen antialiased selection:bg-amber-200 selection:text-stone-900">
+  <!-- Sticky Top Bar -->
+  <header class="sticky top-0 z-30 border-b border-stone-200/80 bg-[#FAF8F5]/95 backdrop-blur">
+    <div class="mx-auto flex max-w-2xl items-center justify-between gap-2 px-4 py-3">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <span class="hanzi flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#C83E2B] text-lg font-bold text-white shadow-sm">
+          汉
+        </span>
+        <div class="min-w-0">
+          <h1 class="truncate text-sm font-bold text-stone-900 sm:text-base">Tiếng Hoa 5 Phút</h1>
+          <p class="truncate text-xs text-stone-500">Cụm Ngày 4–5–6 · 2 từ/ngày</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button id="btn-roadmap" type="button" class="rounded-lg border border-stone-300 bg-white px-2.5 py-1.5 text-xs font-medium text-stone-700 hover:bg-stone-100 transition">
+          Lộ trình 30 ngày
+        </button>
+        <div class="flex items-center rounded-lg border border-stone-300 bg-white p-0.5 text-xs font-medium">
+          <button type="button" data-day="4" class="day-tab rounded-md px-2 py-1 transition">N4</button>
+          <button type="button" data-day="5" class="day-tab rounded-md px-2 py-1 transition">N5</button>
+          <button type="button" data-day="6" class="day-tab rounded-md px-2 py-1 transition">N6</button>
+        </div>
+      </div>
+    </div>
+    <!-- 5-Minute Scroll Progress Bar -->
+    <div class="h-1 w-full bg-stone-200">
+      <div id="scroll-progress" class="h-full w-0 bg-[#C83E2B] transition-all duration-150"></div>
+    </div>
+  </header>
+
+  <!-- Main Scrollable Roll -->
+  <main class="mx-auto max-w-2xl px-4 pb-20 pt-6 space-y-8">
+    <!-- Hero / Day Header -->
+    <section class="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <span id="lesson-badge" class="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-900">
+          Ngày 4 / 30 · ~5 phút
+        </span>
+        <span id="lesson-status-pill" class="inline-flex items-center gap-1 rounded-full bg-stone-100 px-3 py-1 text-xs font-medium text-stone-600">
+          Chưa hoàn thành
+        </span>
+      </div>
+      <h2 id="lesson-title" class="mt-3 text-xl font-bold tracking-tight text-stone-900 sm:text-2xl">
+        Mở rộng xưng hô: Anh ấy &amp; Số nhiều
+      </h2>
+      <p id="lesson-subtitle" class="mt-1.5 text-sm leading-relaxed text-stone-600">
+        Cuộn xuống theo từng bước: ôn lại các từ Ngày 1–3, học 2 từ mới hôm nay, tập viết và ghép thành câu giao tiếp.
+      </p>
+
+      <!-- Voice Status Notice -->
+      <div id="voice-status" class="mt-4 flex items-center justify-between gap-3 rounded-xl bg-stone-50 px-3.5 py-2.5 text-xs text-stone-600 border border-stone-200/70">
+        <span id="voice-status-text">Âm mẫu tiếng Trung (zh-CN) sẵn sàng. Nhấn nút loa ở mỗi thẻ để nghe.</span>
+        <button id="btn-test-voice" type="button" class="shrink-0 rounded-lg bg-stone-800 px-2.5 py-1 font-medium text-white hover:bg-stone-700 transition">
+          Thử loa
+        </button>
+      </div>
+    </section>
+
+    <!-- STEP 1: Spaced Repetition Review (Lặp lại ngắt quãng) -->
+    <section id="sec-srs" class="space-y-3">
+      <div class="flex items-center gap-2.5">
+        <span class="step-badge flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-white">1</span>
+        <div>
+          <h3 class="text-base font-bold text-stone-900">Ôn tập ngắt quãng (1 phút)</h3>
+          <p id="srs-desc" class="text-xs text-stone-500">Nhớ lại nghĩa và cách đọc trước khi bấm 'Hiện đáp án', sau đó tự chấm mức độ nhớ</p>
+        </div>
+      </div>
+
+      <div id="srs-container" class="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
+        <!-- Rendered dynamically by JS -->
+      </div>
+    </section>
+
+    <!-- STEP 2: 2 New Words + Pronounce + Mnemonics + Interactive Writing -->
+    <section id="sec-words" class="space-y-4">
+      <div class="flex items-center gap-2.5">
+        <span class="step-badge flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-white">2</span>
+        <div>
+          <h3 class="text-base font-bold text-stone-900">2 Từ mới hôm nay: Nghe, Nhớ &amp; Tập viết (2.5 phút)</h3>
+          <p class="text-xs text-stone-500">Nghe âm mẫu chuẩn &amp; chậm, đọc mẹo nhớ bộ thủ, rồi dùng tay/chuột viết ngay vào ô lưới</p>
+        </div>
+      </div>
+
+      <div id="words-container" class="space-y-5">
+        <!-- Rendered dynamically by JS -->
+      </div>
+    </section>
+
+    <!-- STEP 3: Full Sentences in Context -->
+    <section id="sec-sentences" class="space-y-3">
+      <div class="flex items-center gap-2.5">
+        <span class="step-badge flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-white">3</span>
+        <div>
+          <h3 class="text-base font-bold text-stone-900">Ghép thành câu giao tiếp (1 phút)</h3>
+          <p class="text-xs text-stone-500">Nghe cả câu và nói nhẩm theo để phản xạ tự nhiên</p>
+        </div>
+      </div>
+
+      <div id="sentences-container" class="space-y-3">
+        <!-- Rendered dynamically by JS -->
+      </div>
+    </section>
+
+    <!-- STEP 4: 30-Second Quick Check & Complete -->
+    <section id="sec-quiz" class="space-y-3">
+      <div class="flex items-center gap-2.5">
+        <span class="step-badge flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-white">4</span>
+        <div>
+          <h3 class="text-base font-bold text-stone-900">Kiểm tra nhanh 30 giây</h3>
+          <p class="text-xs text-stone-500">Chốt lại 2 từ vừa học trước khi kết thúc bài 5 phút</p>
+        </div>
+      </div>
+
+      <div id="quiz-container" class="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm space-y-5">
+        <!-- Rendered dynamically by JS -->
+      </div>
+    </section>
+
+    <!-- Footer Completion CTA -->
+    <section class="rounded-2xl border border-emerald-200 bg-emerald-50/70 p-5 text-center space-y-3">
+      <p id="complete-summary" class="text-sm font-medium text-emerald-950">
+        Đã sẵn sàng? Đánh dấu hoàn thành để lưu 2 từ hôm nay vào lịch lặp lại ngắt quãng!
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-2.5">
+        <button id="btn-complete-day" type="button" class="rounded-xl bg-[#1F6E58] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 transition">
+          Hoàn thành bài hôm nay (5/5 phút)
+        </button>
+        <button id="btn-next-day" type="button" class="hidden rounded-xl border border-emerald-700 bg-white px-4 py-2.5 text-sm font-semibold text-emerald-800 hover:bg-emerald-50 transition">
+          Chuyển sang Ngày tiếp theo →
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- 30-Day Roadmap Modal -->
+  <div id="roadmap-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-stone-900/50 p-4 backdrop-blur-xs">
+    <div class="max-h-[85vh] w-full max-w-xl overflow-y-auto rounded-2xl bg-white p-5 shadow-xl">
+      <div class="flex items-center justify-between border-b border-stone-200 pb-3">
+        <div>
+          <h3 class="text-lg font-bold text-stone-900">Lộ trình 30 ngày · 60 từ cốt lõi</h3>
+          <p class="text-xs text-stone-500">Bạn đang ở Cụm Ngày 4–5–6 (Tuần 1: Chào hỏi &amp; Xưng hô)</p>
+        </div>
+        <button id="btn-close-roadmap" type="button" class="rounded-lg p-1.5 text-stone-500 hover:bg-stone-100 hover:text-stone-800">
+          ✕
+        </button>
+      </div>
+      <div id="roadmap-body" class="mt-4 space-y-4 text-sm">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="pointer-events-none fixed bottom-5 left-1/2 z-50 -translate-x-1/2 translate-y-4 rounded-xl bg-stone-900 px-4 py-2.5 text-xs font-medium text-white opacity-0 shadow-lg transition-all duration-200">
+    Đã lưu tiến độ!
+  </div>
+
+  <script>
+    // =========================================================================
+    // PREVIOUS WORDS ARCHIVE (Days 1–3) for Spaced Repetition
+    // =========================================================================
+    const ARCHIVE_WORDS = {
+      1: [
+        { id: "ni", hanzi: "你", pinyin: "nǐ", meaning: "Bạn / Anh / Chị", fromDay: 1, cycleLabel: "Chu kỳ 3 ngày" },
+        { id: "hao", hanzi: "好", pinyin: "hǎo", meaning: "Tốt / Khỏe / Hay", fromDay: 1, cycleLabel: "Chu kỳ 3 ngày" }
+      ],
+      2: [
+        { id: "wo", hanzi: "我", pinyin: "wǒ", meaning: "Tôi / Mình", fromDay: 2, cycleLabel: "Chu kỳ 3 ngày" },
+        { id: "shi", hanzi: "是", pinyin: "shì", meaning: "Là / Đúng", fromDay: 2, cycleLabel: "Chu kỳ 3 ngày" }
+      ],
+      3: [
+        { id: "xie", hanzi: "谢", pinyin: "xiè", meaning: "Cảm ơn (谢谢 xièxie)", fromDay: 3, cycleLabel: "Chu kỳ 1 ngày" },
+        { id: "bu", hanzi: "不", pinyin: "bù", meaning: "Không", fromDay: 3, cycleLabel: "Chu kỳ 1 ngày" }
+      ]
+    };
+
+    // =========================================================================
+    // LESSONS: DAYS 4, 5, 6
+    // =========================================================================
+    const LESSONS = {
+      4: {
+        day: 4,
+        title: "Mở rộng xưng hô: Anh ấy & Số nhiều",
+        subtitle: "Ôn lại từ Ngày 3 (chu kỳ 1 ngày) & Ngày 1 (chu kỳ 3 ngày), rồi học 2 chữ mới để nói 'chúng tôi', 'các bạn', 'anh ấy'.",
+        srsRefs: [
+          { fromDay: 3, cycleLabel: "Ôn lại sau 1 ngày" },
+          { fromDay: 1, cycleLabel: "Ôn lại sau 3 ngày" }
+        ],
+        words: [
+          {
+            id: "ta",
+            hanzi: "他",
+            pinyin: "tā",
+            toneLabel: "Thanh 1",
+            meaning: "Anh ấy / Ông ấy / Người ấy (nam hoặc nói chung)",
+            pronounceTip: "Âm 't' bật hơi nhẹ (như 'th' trong tiếng Việt nhưng rõ hơi hơn), đọc cao và ngang đều như 'tha' kéo dài ở thanh 1.",
+            mnemonic: "Bên trái là bộ Nhân đứng (亻 = người), bên phải là chữ Dã (也 = cũng). Mẹo nhớ: 'Cũng (也) là một người (亻) khác đứng bên cạnh → ANH ẤY!' (Giống chữ 你 là bạn, đổi vế phải thành 也 là anh ấy).",
+            strokes: [
+              "1. Phẩy xuống từ trên bên trái (丿 - bộ Nhân đứng)",
+              "2. Sổ thẳng xuống bên trái (丨)",
+              "3. Ngang gập móc lên ở giữa sang phải (㇆)",
+              "4. Sổ thẳng xuyên qua phần giữa (丨)",
+              "5. Sổ cong móc sang phải (乚)"
+            ],
+            strokeCount: 5
+          },
+          {
+            id: "men",
+            hanzi: "们",
+            pinyin: "men",
+            toneLabel: "Thanh nhẹ",
+            meaning: "Chúng / Các (hậu tố tạo số nhiều cho người)",
+            pronounceTip: "Đọc nhẹ và ngắn gọn như 'mân' (thanh nhẹ, không nhấn mạnh). Ghép vào sau đại từ: 我们 (wǒmen - chúng tôi), 你们 (nǐmen - các bạn), 他们 (tāmen - họ).",
+            mnemonic: "Bên trái là bộ Nhân đứng (亻 = người), bên phải là chữ Môn (门 = cánh cửa). Mẹo nhớ: 'Nhiều người (亻) cùng đứng trước cánh cửa (门) → SỐ NHIỀU (các / chúng)!'",
+            strokes: [
+              "1. Phẩy xuống bên trái (丿 - bộ Nhân đứng)",
+              "2. Sổ thẳng xuống bên trái (丨)",
+              "3. Chấm nhỏ ở trên bên phải (丶 - bắt đầu chữ Môn)",
+              "4. Sổ thẳng xuống ở giữa (丨)",
+              "5. Ngang gập móc xuống bên phải (㇆)"
+            ],
+            strokeCount: 5
+          }
+        ],
+        sentences: [
+          {
+            hanzi: "你们好！",
+            pinyin: "Nǐmen hǎo!",
+            vi: "Xin chào các bạn!",
+            note: "Ghép 你 (Ngày 1) + 们 (Ngày 4) + 好 (Ngày 1). Dùng khi chào từ 2 người trở lên."
+          },
+          {
+            hanzi: "我们很好，谢谢！",
+            pinyin: "Wǒmen hěn hǎo, xièxie!",
+            vi: "Chúng tôi rất khỏe, cảm ơn!",
+            note: "Kết hợp 我 (Ngày 2) + 们 (Ngày 4) + 好 (Ngày 1) + 谢 (Ngày 3)."
+          },
+          {
+            hanzi: "他们好！",
+            pinyin: "Tāmen hǎo!",
+            vi: "Chào các anh ấy / Chào họ!",
+            note: "'他们 (tāmen)' vừa là 'các anh ấy', vừa dùng chung cho nhóm người gồm cả nam và nữ."
+          },
+          {
+            hanzi: "他不是我。",
+            pinyin: "Tā bú shì wǒ.",
+            vi: "Anh ấy không phải là tôi.",
+            note: "Ôn lại biến âm: 不 đứng trước thanh 4 'shì' đọc thành 'bú'."
+          }
+        ],
+        quiz: [
+          {
+            question: "Nghe âm mẫu và chọn nghĩa đúng của cụm từ:",
+            speakText: "我们",
+            options: [
+              { label: "Chúng tôi / Chúng ta", correct: true },
+              { label: "Các bạn", correct: false },
+              { label: "Họ / Các anh ấy", correct: false }
+            ]
+          },
+          {
+            question: "Chữ '他' (anh ấy) có bộ thủ nào ở bên trái giống chữ '你' (bạn)?",
+            speakText: "他",
+            options: [
+              { label: "Bộ Nhân đứng (亻 - người)", correct: true },
+              { label: "Bộ Nữ (女 - phụ nữ)", correct: false },
+              { label: "Bộ Ngôn (讠 - lời nói)", correct: false }
+            ]
+          }
+        ]
+      },
+
+      5: {
+        day: 5,
+        title: "Hỏi tên & Giới thiệu: Tên là & Cái gì",
+        subtitle: "Ôn lại từ Ngày 4 (1 ngày trước) & Ngày 2 (3 ngày trước), sau đó học cách nói tên mình và đặt câu hỏi 'gì?'.",
+        srsRefs: [
+          { fromDay: 4, cycleLabel: "Ôn lại sau 1 ngày" },
+          { fromDay: 2, cycleLabel: "Ôn lại sau 3 ngày" }
+        ],
+        words: [
+          {
+            id: "jiao",
+            hanzi: "叫",
+            pinyin: "jiào",
+            toneLabel: "Thanh 4",
+            meaning: "Tên là / Gọi là / Kêu",
+            pronounceTip: "Âm 'j' đọc gần như 'ch' nhẹ trong tiếng Việt (đầu lưỡi chạm chân răng dưới), ghép với 'iao' thành 'chiao', thanh 4 rơi mạnh dứt khoát.",
+            mnemonic: "Bên trái là bộ Khẩu (口 = cái miệng), bên phải là nét sổ gập giống số 4. Mẹo nhớ: 'Dùng cái miệng (口) để GỌI TÊN ai đó!'",
+            strokes: [
+              "1. Sổ trái (丨 - khung bộ Khẩu)",
+              "2. Ngang gập (ㄱ)",
+              "3. Ngang đáy (一 - đóng bộ Khẩu 口)",
+              "4. Sổ gập ngang (㇄ - nét gập bên phải)",
+              "5. Sổ thẳng dài từ trên xuống dưới (丨)"
+            ],
+            strokeCount: 5
+          },
+          {
+            id: "shen",
+            hanzi: "什",
+            pinyin: "shén",
+            toneLabel: "Thanh 2",
+            meaning: "Gì / Cái gì (đi cặp thành 什么 shénme)",
+            pronounceTip: "Uốn nhẹ đầu lưỡi khi đọc 'sh', vần 'en' đọc gần như 'ân' → 'sấn' (giọng đi lên ở thanh 2). Lưu ý: '什' hầu như luôn đi cùng '么' (học ở Ngày 6) thành '什么 (shénme)'.",
+            mnemonic: "Bên trái là bộ Nhân đứng (亻 = người), bên phải là chữ Thập (十 = số mười). Mẹo nhớ: 'Một người (亻) hỏi tới mười (十) câu hỏi → CÁI GÌ (什么)?'",
+            strokes: [
+              "1. Phẩy xuống bên trái (丿 - bộ Nhân đứng)",
+              "2. Sổ thẳng xuống bên trái (丨)",
+              "3. Ngang ở giữa bên phải (一 - bắt đầu chữ Thập)",
+              "4. Sổ thẳng cắt qua nét ngang (丨 - hoàn thành chữ Thập 十)"
+            ],
+            strokeCount: 4
+          }
+        ],
+        sentences: [
+          {
+            hanzi: "我叫...",
+            pinyin: "Wǒ jiào...",
+            vi: "Tôi tên là...",
+            note: "Cách giới thiệu tên tự nhiên nhất trong giao tiếp hằng ngày (tự nhiên hơn '我是...')."
+          },
+          {
+            hanzi: "他叫...",
+            pinyin: "Tā jiào...",
+            vi: "Anh ấy tên là...",
+            note: "Ghép 他 (Ngày 4) + 叫 (Ngày 5)."
+          },
+          {
+            hanzi: "你叫什么？",
+            pinyin: "Nǐ jiào shénme?",
+            vi: "Bạn tên là gì?",
+            note: "Chữ '么 (me)' đi sau '什' tạo thành '什么 (cái gì)' — chúng ta sẽ học kỹ mặt chữ '么' ở Ngày 6!"
+          },
+          {
+            hanzi: "他们叫什么？",
+            pinyin: "Tāmen jiào shénme?",
+            vi: "Họ tên là gì?",
+            note: "Ghép đại từ số nhiều 他们 (Ngày 4) + 叫什么 (Ngày 5)."
+          }
+        ],
+        quiz: [
+          {
+            question: "Nghe âm mẫu và chọn nghĩa đúng:",
+            speakText: "我叫",
+            options: [
+              { label: "Tôi tên là...", correct: true },
+              { label: "Tôi cảm ơn...", correct: false },
+              { label: "Tôi không phải...", correct: false }
+            ]
+          },
+          {
+            question: "Bộ thủ nào ở bên trái chữ '叫' (gọi / tên là)?",
+            speakText: "叫",
+            options: [
+              { label: "Bộ Khẩu (口 - cái miệng)", correct: true },
+              { label: "Bộ Nhật (日 - mặt trời)", correct: false },
+              { label: "Bộ Nhân đứng (亻 - người)", correct: false }
+            ]
+          }
+        ]
+      },
+
+      6: {
+        day: 6,
+        title: "Hoàn thiện câu hỏi: Gì & Không?",
+        subtitle: "Ôn lại từ Ngày 5 (1 ngày trước) & Ngày 3 (3 ngày trước), rồi chốt 2 trợ từ hỏi cực kỳ thông dụng để bạn hỏi đáp mượt mà.",
+        srsRefs: [
+          { fromDay: 5, cycleLabel: "Ôn lại sau 1 ngày" },
+          { fromDay: 3, cycleLabel: "Ôn lại sau 3 ngày" }
+        ],
+        words: [
+          {
+            id: "me",
+            hanzi: "么",
+            pinyin: "me",
+            toneLabel: "Thanh nhẹ",
+            meaning: "Gì / Sao (ghép với 什 thành 什么 shénme = cái gì)",
+            pronounceTip: "Đọc nhẹ và ngắn như 'mơ' (không lên xuống giọng). Khi ghép thành '什么 (shénme)', chữ '什' đọc rõ thanh 2 (sấn), còn '么' đọc lướt nhẹ (mơ).",
+            mnemonic: "Gồm nét phẩy ở trên, nét gập hất ở giữa và một dấu chấm chốt lại ở góc dưới. Mẹo nhớ: 'Như một sợi dây móc câu hỏi (?) đang treo lơ lửng!'",
+            strokes: [
+              "1. Phẩy xiên từ trên xuống trái (丿)",
+              "2. Phẩy gập hất ngang sang phải (𠃋)",
+              "3. Chấm nhỏ chốt ở góc dưới phải (丶)"
+            ],
+            strokeCount: 3
+          },
+          {
+            id: "ma",
+            hanzi: "吗",
+            pinyin: "ma",
+            toneLabel: "Thanh nhẹ",
+            meaning: "Không? / À? / Phải không? (đặt cuối câu hỏi Có/Không)",
+            pronounceTip: "Đọc nhẹ như 'ma' (thanh nhẹ). Chỉ cần đặt '吗' vào cuối BẤT KỲ câu khẳng định nào là lập tức biến nó thành câu hỏi Có/Không!",
+            mnemonic: "Bên trái là bộ Khẩu (口 = cái miệng), bên phải là chữ Mã (马 = con ngựa). Mẹo nhớ: 'Mở miệng (口) hỏi con ngựa (马): Khỏe KHÔNG (吗)?'",
+            strokes: [
+              "1. Sổ trái (丨 - bộ Khẩu)",
+              "2. Ngang gập (ㄱ)",
+              "3. Ngang đáy (一 - đóng bộ Khẩu 口)",
+              "4. Ngang gập (ㄱ - bắt đầu chữ Mã)",
+              "5. Sổ gập móc (㇉)",
+              "6. Ngang dài cắt ngang bên dưới (一 - hoàn thành chữ Mã 马)"
+            ],
+            strokeCount: 6
+          }
+        ],
+        sentences: [
+          {
+            hanzi: "你好吗？",
+            pinyin: "Nǐ hǎo ma?",
+            vi: "Bạn khỏe không?",
+            note: "Câu khẳng định '你好' thêm '吗' ở cuối lập tức thành câu hỏi."
+          },
+          {
+            hanzi: "你们好吗？",
+            pinyin: "Nǐmen hǎo ma?",
+            vi: "Các bạn có khỏe không?",
+            note: "Dùng với nhóm bạn hoặc đồng nghiệp (你们 + 好 + 吗)."
+          },
+          {
+            hanzi: "你叫什么？",
+            pinyin: "Nǐ jiào shénme?",
+            vi: "Bạn tên là gì?",
+            note: "Bây giờ bạn đã đọc và viết được trọn vẹn 100% chữ Hán trong câu này rồi!"
+          },
+          {
+            hanzi: "他是吗？不是，他不是。",
+            pinyin: "Tā shì ma? Bú shì, tā bú shì.",
+            vi: "Anh ấy phải không? Không phải, anh ấy không phải.",
+            note: "Tổng ôn cực xịn toàn bộ từ Ngày 1 đến Ngày 6 trong một đoạn hỏi-đáp hoàn chỉnh!"
+          }
+        ],
+        quiz: [
+          {
+            question: "Nghe âm mẫu và chọn câu hỏi đúng nghĩa 'Bạn tên là gì?':",
+            speakText: "你叫什么",
+            options: [
+              { label: "你叫什么？ (Nǐ jiào shénme?)", correct: true },
+              { label: "你好吗？ (Nǐ hǎo ma?)", correct: false },
+              { label: "你是吗？ (Nǐ shì ma?)", correct: false }
+            ]
+          },
+          {
+            question: "Muốn biến câu '你是...' (Bạn là...) thành câu hỏi 'Bạn là... phải không?', ta thêm chữ nào vào cuối câu?",
+            speakText: "吗",
+            options: [
+              { label: "吗 (ma)", correct: true },
+              { label: "么 (me)", correct: false },
+              { label: "们 (men)", correct: false }
+            ]
+          }
+        ]
+      }
+    };
+
+    const ROADMAP = [
+      {
+        week: "Tuần 1 (Ngày 1–7): Chào hỏi, Xưng hô & Lịch sự",
+        goal: "Chào hỏi, cảm ơn, hỏi tên, đặt câu hỏi Có/Không.",
+        days: [
+          "N1: 你, 好 ✓",
+          "N2: 我, 是 ✓",
+          "N3: 谢, 不 ✓",
+          "N4: 他, 们 (Đang học)",
+          "N5: 叫, 什 (Đang học)",
+          "N6: 么, 吗 (Đang học)",
+          "N7: 再, 见"
+        ]
+      },
+      {
+        week: "Tuần 2 (Ngày 8–14): Số đếm, Thời gian & Hỏi đáp",
+        goal: "Đếm số, hỏi giờ, nói hôm nay/ngày mai.",
+        days: [
+          "N8: 一 (1), 二 (2)",
+          "N9: 三 (3), 十 (10)",
+          "N10: 今 (nay), 天 (ngày)",
+          "N11: 明 (mai), 年 (năm)",
+          "N12: 几 (mấy), 点 (giờ)",
+          "N13: 有 (có), 没 (không có)",
+          "N14: 这 (này), 那 (kia)"
+        ]
+      },
+      {
+        week: "Tuần 3 (Ngày 15–21): Ăn uống, Mua sắm & Giá cả",
+        goal: "Gọi đồ ăn, uống nước/trà, hỏi giá bao nhiêu tiền.",
+        days: [
+          "N15: 吃 (ăn), 喝 (uống)",
+          "N16: 水 (nước), 茶 (trà)",
+          "N17: 饭 (cơm), 菜 (món ăn)",
+          "N18: 买 (mua), 钱 (tiền)",
+          "N19: 多 (nhiều), 少 (ít)",
+          "N20: 要 (muốn), 给 (cho)",
+          "N21: 太 (quá), 贵 (đắt)"
+        ]
+      },
+      {
+        week: "Tuần 4 (Ngày 22–30): Đi lại, Hỏi đường & Sinh hoạt",
+        goal: "Hỏi đường đi đâu, ở đâu, thích/làm việc gì.",
+        days: [
+          "N22: 去 (đi), 来 (đến)",
+          "N23: 在 (ở tại), 哪 (đâu)",
+          "N24: 家 (nhà), 里 (bên trong)",
+          "N25: 看 (xem), 听 (nghe)",
+          "N26: 说 (nói), 写 (viết)",
+          "N27: 工 (công), 作 (việc)",
+          "N28: 喜 (thích), 欢 (vui)",
+          "N29: 爱 (yêu), 会 (biết/sẽ)",
+          "N30: Ôn tổng hợp 60 từ & Hội thoại thực chiến"
+        ]
+      }
+    ];
+
+    // =========================================================================
+    // STATE MANAGEMENT
+    // =========================================================================
+    let currentDay = 4;
+    let progress = { completedDays: [1, 2, 3], srsRatings: {}, quizAnswers: {} };
+
+    function loadProgress() {
+      try {
+        const raw = localStorage.getItem("zh_5min_progress_v1");
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          progress = {
+            completedDays: Array.isArray(parsed.completedDays) ? parsed.completedDays : [1, 2, 3],
+            srsRatings: parsed.srsRatings || {},
+            quizAnswers: parsed.quizAnswers || {}
+          };
+        }
+      } catch (e) {
+        // Ignore storage errors
+      }
+    }
+
+    function saveProgress() {
+      try {
+        localStorage.setItem("zh_5min_progress_v1", JSON.stringify(progress));
+      } catch (e) {
+        // Ignore storage errors
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      toast.textContent = msg;
+      toast.classList.remove("opacity-0", "translate-y-4");
+      toast.classList.add("opacity-100", "translate-y-0");
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        toast.classList.add("opacity-0", "translate-y-4");
+        toast.classList.remove("opacity-100", "translate-y-0");
+      }, 2400);
+    }
+
+    // =========================================================================
+    // CHINESE AUDIO (Web Speech API zh-CN)
+    // =========================================================================
+    let selectedZhVoice = null;
+
+    function detectZhVoice() {
+      if (!("speechSynthesis" in window)) return null;
+      const voices = window.speechSynthesis.getVoices();
+      selectedZhVoice =
+        voices.find(v => v.lang.toLowerCase() === "zh-cn") ||
+        voices.find(v => v.lang.toLowerCase().startsWith("zh-")) ||
+        voices.find(v => v.lang.toLowerCase().includes("zh")) ||
+        null;
+
+      const statusEl = document.getElementById("voice-status-text");
+      if (statusEl) {
+        if (selectedZhVoice) {
+          statusEl.textContent = `Âm mẫu chuẩn (${selectedZhVoice.lang}) đã sẵn sàng. Nhấn biểu tượng loa để nghe.`;
+        } else if (voices.length > 0) {
+          statusEl.textContent = "Thiết bị chưa cài gói giọng zh-CN; hệ thống sẽ cố gắng đọc với mã tiếng Trung.";
+        }
+      }
+      return selectedZhVoice;
+    }
+
+    if ("speechSynthesis" in window) {
+      detectZhVoice();
+      window.speechSynthesis.onvoiceschanged = detectZhVoice;
+    }
+
+    function speakChinese(text, rate = 0.95) {
+      if (!("speechSynthesis" in window)) {
+        showToast("Trình duyệt này không hỗ trợ phát âm tự động.");
+        return;
+      }
+      try {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = "zh-CN";
+        utter.rate = rate;
+        if (selectedZhVoice) utter.voice = selectedZhVoice;
+        utter.onerror = () => {
+          showToast("Không phát được âm thanh trên thiết bị này.");
+        };
+        window.speechSynthesis.speak(utter);
+      } catch (e) {
+        showToast("Không thể khởi tạo âm thanh.");
+      }
+    }
+
+    // =========================================================================
+    // INTERACTIVE WRITING CANVAS (Tian Zi Ge)
+    // =========================================================================
+    function initCanvasPad(canvasId, guideChar, clearBtnId, toggleGuideBtnId) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      let drawing = false;
+      let showGuide = true;
+      let strokes = [];
+      let currentStroke = [];
+
+      function resizeAndRedraw() {
+        const rect = canvas.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        const size = Math.min(rect.width || 200, 220);
+        canvas.width = size * dpr;
+        canvas.height = size * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        redraw(size);
+      }
+
+      function redraw(size) {
+        ctx.clearRect(0, 0, size, size);
+        if (showGuide) {
+          ctx.save();
+          ctx.font = `500 ${size * 0.72}px "Noto Sans SC", "PingFang SC", sans-serif`;
+          ctx.fillStyle = "rgba(28, 25, 23, 0.12)";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(guideChar, size / 2, size / 2 + size * 0.03);
+          ctx.restore();
+        }
+        ctx.save();
+        ctx.strokeStyle = "#1C1917";
+        ctx.lineWidth = 7;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        for (const s of strokes) {
+          if (s.length < 2) continue;
+          ctx.beginPath();
+          ctx.moveTo(s[0].x, s[0].y);
+          for (let i = 1; i < s.length; i++) {
+            ctx.lineTo(s[i].x, s[i].y);
+          }
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+          x: clientX - rect.left,
+          y: clientY - rect.top
+        };
+      }
+
+      function startDraw(e) {
+        e.preventDefault();
+        drawing = true;
+        currentStroke = [getPos(e)];
+        strokes.push(currentStroke);
+      }
+
+      function moveDraw(e) {
+        if (!drawing) return;
+        e.preventDefault();
+        currentStroke.push(getPos(e));
+        const size = canvas.getBoundingClientRect().width || 200;
+        redraw(size);
+      }
+
+      function endDraw() {
+        drawing = false;
+      }
+
+      canvas.addEventListener("mousedown", startDraw);
+      canvas.addEventListener("mousemove", moveDraw);
+      window.addEventListener("mouseup", endDraw);
+
+      canvas.addEventListener("touchstart", startDraw, { passive: false });
+      canvas.addEventListener("touchmove", moveDraw, { passive: false });
+      canvas.addEventListener("touchend", endDraw);
+
+      const clearBtn = document.getElementById(clearBtnId);
+      if (clearBtn) {
+        clearBtn.addEventListener("click", () => {
+          strokes = [];
+          const size = canvas.getBoundingClientRect().width || 200;
+          redraw(size);
+        });
+      }
+
+      const toggleBtn = document.getElementById(toggleGuideBtnId);
+      if (toggleBtn) {
+        toggleBtn.addEventListener("click", () => {
+          showGuide = !showGuide;
+          toggleBtn.textContent = showGuide ? "Ẩn chữ mờ" : "Hiện chữ mờ";
+          const size = canvas.getBoundingClientRect().width || 200;
+          redraw(size);
+        });
+      }
+
+      resizeAndRedraw();
+    }
+
+    // =========================================================================
+    // RENDER LESSON
+    // =========================================================================
+    function getSrsWordsForDay(dayNum) {
+      const lesson = LESSONS[dayNum];
+      const list = [];
+      (lesson.srsRefs || []).forEach(ref => {
+        const prevDay = ref.fromDay;
+        let sourceWords = [];
+        if (ARCHIVE_WORDS[prevDay]) {
+          sourceWords = ARCHIVE_WORDS[prevDay];
+        } else if (LESSONS[prevDay]) {
+          sourceWords = LESSONS[prevDay].words.map(w => ({
+            id: w.id,
+            hanzi: w.hanzi,
+            pinyin: w.pinyin,
+            meaning: w.meaning,
+            fromDay: prevDay
+          }));
+        }
+        sourceWords.forEach(w => {
+          list.push({ ...w, cycleLabel: ref.cycleLabel });
+        });
+      });
+      return list;
+    }
+
+    function renderLesson(dayNum) {
+      currentDay = dayNum;
+      const lesson = LESSONS[dayNum];
+      if (!lesson) return;
+
+      // Update Day Tabs
+      document.querySelectorAll(".day-tab").forEach(btn => {
+        const d = Number(btn.dataset.day);
+        if (d === dayNum) {
+          btn.classList.add("bg-[#C83E2B]", "text-white");
+          btn.classList.remove("text-stone-600", "hover:bg-stone-100");
+        } else {
+          btn.classList.remove("bg-[#C83E2B]", "text-white");
+          btn.classList.add("text-stone-600", "hover:bg-stone-100");
+        }
+      });
+
+      // Header
+      document.getElementById("lesson-badge").textContent = `Ngày ${lesson.day} / 30 · ~5 phút`;
+      document.getElementById("lesson-title").textContent = lesson.title;
+      document.getElementById("lesson-subtitle").textContent = lesson.subtitle;
+
+      const isDone = progress.completedDays.includes(dayNum);
+      const statusPill = document.getElementById("lesson-status-pill");
+      if (isDone) {
+        statusPill.textContent = "Đã hoàn thành ✓";
+        statusPill.className = "inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800";
+      } else {
+        statusPill.textContent = "Chưa hoàn thành";
+        statusPill.className = "inline-flex items-center gap-1 rounded-full bg-stone-100 px-3 py-1 text-xs font-medium text-stone-600";
+      }
+
+      // -----------------------------------------------------------------------
+      // STEP 1: Spaced Repetition Review
+      // -----------------------------------------------------------------------
+      const srsContainer = document.getElementById("srs-container");
+      const reviewWords = getSrsWordsForDay(dayNum);
+
+      srsContainer.innerHTML = `
+        <div class="space-y-3">
+          ${reviewWords.map(w => {
+            const ratingKey = `d${dayNum}_${w.id}`;
+            const rating = progress.srsRatings[ratingKey] || "";
+            return `
+              <div class="rounded-xl border border-stone-200 bg-stone-50/70 p-3.5">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                  <div class="flex items-center gap-3">
+                    <span class="hanzi flex h-12 w-12 items-center justify-center rounded-xl bg-white border border-stone-200 text-2xl font-bold text-stone-900">${w.hanzi}</span>
+                    <div>
+                      <span class="text-[11px] font-semibold uppercase tracking-wide text-stone-500">Từ Ngày ${w.fromDay} · ${w.cycleLabel}</span>
+                      <div class="srs-answer hidden mt-0.5" id="srs-ans-${w.id}">
+                        <span class="text-sm font-bold text-[#C83E2B]">${w.pinyin}</span>
+                        <span class="text-sm text-stone-700"> — ${w.meaning}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <button type="button" data-speak="${w.hanzi}" class="speak-btn rounded-lg border border-stone-300 bg-white px-2.5 py-1.5 text-xs font-medium text-stone-700 hover:bg-stone-100">🔊 Nghe</button>
+                    <button type="button" data-reveal="srs-ans-${w.id}" class="reveal-btn rounded-lg bg-stone-800 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-stone-700">Hiện đáp án</button>
+                  </div>
+                </div>
+                <div class="mt-2.5 flex flex-wrap items-center gap-1.5 border-t border-stone-200/70 pt-2.5">
+                  <span class="text-xs text-stone-500 mr-1">Mức độ nhớ:</span>
+                  <button type="button" data-srs-key="${ratingKey}" data-srs-val="good" class="srs-rate-btn rounded-md px-2 py-1 text-xs font-medium border transition ${rating === 'good' ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-stone-700 border-stone-300 hover:bg-stone-100'}">Nhớ rõ (7 ngày)</button>
+                  <button type="button" data-srs-key="${ratingKey}" data-srs-val="hard" class="srs-rate-btn rounded-md px-2 py-1 text-xs font-medium border transition ${rating === 'hard' ? 'bg-amber-500 text-white border-amber-500' : 'bg-white text-stone-700 border-stone-300 hover:bg-stone-100'}">Hơi quên (3 ngày)</button>
+                  <button type="button" data-srs-key="${ratingKey}" data-srs-val="again" class="srs-rate-btn rounded-md px-2 py-1 text-xs font-medium border transition ${rating === 'again' ? 'bg-rose-600 text-white border-rose-600' : 'bg-white text-stone-700 border-stone-300 hover:bg-stone-100'}">Quên rồi (Học lại)</button>
+                </div>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      `;
+
+      // -----------------------------------------------------------------------
+      // STEP 2: 2 New Words
+      // -----------------------------------------------------------------------
+      const wordsContainer = document.getElementById("words-container");
+      wordsContainer.innerHTML = lesson.words.map((w, idx) => `
+        <article class="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm space-y-4">
+          <div class="flex flex-wrap items-start justify-between gap-4 border-b border-stone-100 pb-4">
+            <div class="flex items-center gap-4">
+              <div class="hanzi flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl border-2 border-[#C83E2B]/25 bg-[#FAF8F5] text-5xl font-bold text-stone-900">
+                ${w.hanzi}
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="rounded-md bg-stone-100 px-2 py-0.5 text-[11px] font-semibold text-stone-600">Từ ${idx + 1}/2</span>
+                  <span class="rounded-md bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-900">${w.toneLabel}</span>
+                </div>
+                <div class="mt-1 flex items-baseline gap-2">
+                  <span class="text-2xl font-bold text-[#C83E2B]">${w.pinyin}</span>
+                </div>
+                <p class="text-sm font-semibold text-stone-800 mt-0.5">${w.meaning}</p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button type="button" data-speak="${w.hanzi}" data-rate="0.95" class="speak-btn inline-flex items-center gap-1.5 rounded-xl bg-[#C83E2B] px-3.5 py-2 text-xs font-semibold text-white hover:bg-[#A93222] transition shadow-xs">
+                🔊 Nghe chuẩn
+              </button>
+              <button type="button" data-speak="${w.hanzi}" data-rate="0.55" class="speak-btn inline-flex items-center gap-1 rounded-xl border border-stone-300 bg-white px-3 py-2 text-xs font-semibold text-stone-700 hover:bg-stone-100 transition">
+                🐢 Chậm
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div class="rounded-xl bg-stone-50 p-3.5 border border-stone-200/70">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-stone-500">Cách phát âm dễ hiểu</h4>
+              <p class="mt-1.5 text-xs leading-relaxed text-stone-700">${w.pronounceTip}</p>
+            </div>
+            <div class="rounded-xl bg-amber-50/70 p-3.5 border border-amber-200/60">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-amber-900">Mẹo nhớ mặt chữ</h4>
+              <p class="mt-1.5 text-xs leading-relaxed text-stone-800">${w.mnemonic}</p>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-stone-200 bg-[#FAF8F5] p-4">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-start">
+              <div class="flex-1 space-y-2">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-stone-600">
+                  Thứ tự viết (${w.strokeCount} nét · Trái → Phải, Trên → Dưới)
+                </h4>
+                <ol class="space-y-1 text-xs text-stone-700">
+                  ${w.strokes.map(st => `<li class="leading-relaxed">${st}</li>`).join("")}
+                </ol>
+              </div>
+
+              <div class="flex flex-col items-center shrink-0">
+                <canvas id="pad-${w.id}" class="draw-pad tian-zi-ge h-[200px] w-[200px] rounded-xl border-2 border-stone-300 shadow-inner"></canvas>
+                <div class="mt-2 flex items-center gap-2">
+                  <button id="clear-${w.id}" type="button" class="rounded-lg border border-stone-300 bg-white px-2.5 py-1 text-xs font-medium text-stone-700 hover:bg-stone-100">
+                    Xóa viết lại
+                  </button>
+                  <button id="guide-${w.id}" type="button" class="rounded-lg border border-stone-300 bg-white px-2.5 py-1 text-xs font-medium text-stone-700 hover:bg-stone-100">
+                    Ẩn chữ mờ
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      `).join("");
+
+      lesson.words.forEach(w => {
+        initCanvasPad(`pad-${w.id}`, w.hanzi, `clear-${w.id}`, `guide-${w.id}`);
+      });
+
+      // -----------------------------------------------------------------------
+      // STEP 3: Full Sentences
+      // -----------------------------------------------------------------------
+      const sentencesContainer = document.getElementById("sentences-container");
+      sentencesContainer.innerHTML = lesson.sentences.map(s => `
+        <div class="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <div class="hanzi text-xl font-bold text-stone-900">${s.hanzi}</div>
+              <div class="text-sm font-medium text-[#C83E2B] mt-0.5">${s.pinyin}</div>
+              <div class="text-sm font-semibold text-stone-800 mt-1">→ ${s.vi}</div>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button type="button" data-speak="${s.hanzi}" data-rate="0.92" class="speak-btn rounded-xl bg-stone-900 px-3 py-2 text-xs font-semibold text-white hover:bg-stone-700 transition">
+                🔊 Nghe câu
+              </button>
+              <button type="button" data-speak="${s.hanzi}" data-rate="0.6" class="speak-btn rounded-xl border border-stone-300 bg-white px-2.5 py-2 text-xs font-medium text-stone-700 hover:bg-stone-100 transition">
+                🐢
+              </button>
+            </div>
+          </div>
+          <p class="mt-2.5 rounded-lg bg-stone-50 px-3 py-2 text-xs text-stone-600">${s.note}</p>
+        </div>
+      `).join("");
+
+      // -----------------------------------------------------------------------
+      // STEP 4: Mini Quiz
+      // -----------------------------------------------------------------------
+      const quizContainer = document.getElementById("quiz-container");
+      quizContainer.innerHTML = lesson.quiz.map((q, qIdx) => {
+        const key = `d${dayNum}_q${qIdx}`;
+        const savedChoice = progress.quizAnswers[key];
+        return `
+          <div class="space-y-2.5">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <p class="text-sm font-semibold text-stone-900">Câu ${qIdx + 1}: ${q.question}</p>
+              <button type="button" data-speak="${q.speakText}" class="speak-btn rounded-lg border border-stone-300 bg-stone-50 px-2.5 py-1 text-xs font-medium text-stone-700 hover:bg-stone-100">
+                🔊 Nghe lại
+              </button>
+            </div>
+            <div class="grid grid-cols-1 gap-2">
+              ${q.options.map((opt, oIdx) => {
+                let btnClass = "border-stone-200 bg-white text-stone-800 hover:bg-stone-50";
+                if (savedChoice !== undefined) {
+                  if (oIdx === savedChoice) {
+                    btnClass = opt.correct
+                      ? "border-emerald-500 bg-emerald-50 text-emerald-900 font-semibold"
+                      : "border-rose-400 bg-rose-50 text-rose-900";
+                  } else if (opt.correct) {
+                    btnClass = "border-emerald-400 bg-emerald-50/50 text-emerald-800";
+                  }
+                }
+                return `
+                  <button type="button" data-qidx="${qIdx}" data-oidx="${oIdx}" class="quiz-opt-btn flex items-center justify-between rounded-xl border px-3.5 py-2.5 text-left text-xs sm:text-sm transition ${btnClass}">
+                    <span>${opt.label}</span>
+                    ${savedChoice !== undefined && oIdx === savedChoice ? `<span>${opt.correct ? "✓ Chính xác" : "✕ Thử lại"}</span>` : ""}
+                  </button>
+                `;
+              }).join("")}
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      // Footer Complete Button state
+      const completeBtn = document.getElementById("btn-complete-day");
+      const nextBtn = document.getElementById("btn-next-day");
+      const completeSummary = document.getElementById("complete-summary");
+
+      if (isDone) {
+        completeBtn.textContent = "Đã hoàn thành bài Ngày " + dayNum + " ✓";
+        completeSummary.textContent = "Tuyệt vời! 2 từ hôm nay đã được đưa vào danh sách lặp lại ngắt quãng cho các ngày tiếp theo.";
+        if (LESSONS[dayNum + 1]) {
+          nextBtn.classList.remove("hidden");
+        } else {
+          nextBtn.classList.add("hidden");
+        }
+      } else {
+        completeBtn.textContent = "Hoàn thành bài hôm nay (5/5 phút)";
+        completeSummary.textContent = "Đã sẵn sàng? Đánh dấu hoàn thành để lưu 2 từ hôm nay vào lịch lặp lại ngắt quãng!";
+        nextBtn.classList.add("hidden");
+      }
+
+      bindDynamicEvents();
+    }
+
+    // =========================================================================
+    // EVENT BINDING
+    // =========================================================================
+    function bindDynamicEvents() {
+      document.querySelectorAll(".speak-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const text = btn.dataset.speak;
+          const rate = parseFloat(btn.dataset.rate || "0.92");
+          speakChinese(text, rate);
+        });
+      });
+
+      document.querySelectorAll(".reveal-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const target = document.getElementById(btn.dataset.reveal);
+          if (target) {
+            target.classList.toggle("hidden");
+            btn.textContent = target.classList.contains("hidden") ? "Hiện đáp án" : "Ẩn đáp án";
+          }
+        });
+      });
+
+      document.querySelectorAll(".srs-rate-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const key = btn.dataset.srsKey;
+          const val = btn.dataset.srsVal;
+          progress.srsRatings[key] = val;
+          saveProgress();
+          showToast("Đã cập nhật lịch ôn tập ngắt quãng!");
+          renderLesson(currentDay);
+        });
+      });
+
+      document.querySelectorAll(".quiz-opt-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const qIdx = Number(btn.dataset.qidx);
+          const oIdx = Number(btn.dataset.oidx);
+          const key = `d${currentDay}_q${qIdx}`;
+          progress.quizAnswers[key] = oIdx;
+          saveProgress();
+          const isCorrect = LESSONS[currentDay].quiz[qIdx].options[oIdx].correct;
+          showToast(isCorrect ? "Chính xác! 🎉" : "Chưa đúng, nghe lại âm mẫu nhé!");
+          renderLesson(currentDay);
+        });
+      });
+    }
+
+    // =========================================================================
+    // INIT & STATIC CONTROLS
+    // =========================================================================
+    function initApp() {
+      loadProgress();
+
+      document.querySelectorAll(".day-tab").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const d = Number(btn.dataset.day);
+          renderLesson(d);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      });
+
+      document.getElementById("btn-test-voice").addEventListener("click", () => {
+        speakChinese("你好！欢迎继续学习中文。", 0.95);
+      });
+
+      document.getElementById("btn-complete-day").addEventListener("click", () => {
+        if (!progress.completedDays.includes(currentDay)) {
+          progress.completedDays.push(currentDay);
+          saveProgress();
+        }
+        showToast(`Đã hoàn thành Ngày ${currentDay}!`);
+        renderLesson(currentDay);
+      });
+
+      document.getElementById("btn-next-day").addEventListener("click", () => {
+        if (LESSONS[currentDay + 1]) {
+          renderLesson(currentDay + 1);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      });
+
+      const roadmapBody = document.getElementById("roadmap-body");
+      roadmapBody.innerHTML = ROADMAP.map(w => `
+        <div class="rounded-xl border border-stone-200 bg-stone-50 p-3.5">
+          <h4 class="font-bold text-stone-900">${w.week}</h4>
+          <p class="text-xs text-stone-600 mt-0.5">${w.goal}</p>
+          <div class="mt-2 flex flex-wrap gap-1.5">
+            ${w.days.map(d => `<span class="hanzi rounded-md bg-white border border-stone-200 px-2 py-0.5 text-xs text-stone-800">${d}</span>`).join("")}
+          </div>
+        </div>
+      `).join("");
+
+      const modal = document.getElementById("roadmap-modal");
+      document.getElementById("btn-roadmap").addEventListener("click", () => {
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+      });
+      document.getElementById("btn-close-roadmap").addEventListener("click", () => {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+      });
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+          modal.classList.add("hidden");
+          modal.classList.remove("flex");
+        }
+      });
+
+      window.addEventListener("scroll", () => {
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = docHeight > 0 ? Math.min(100, Math.round((window.scrollY / docHeight) * 100)) : 0;
+        document.getElementById("scroll-progress").style.width = pct + "%";
+      });
+
+      renderLesson(4);
+    }
+
+    window.addEventListener("DOMContentLoaded", initApp);
+  </script>
+</body>
+</html>
